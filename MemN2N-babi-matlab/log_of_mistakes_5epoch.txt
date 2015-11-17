@@ -1,0 +1,3659 @@
+>> run_babi
+1 | train error: 0.58494 | val error: 0.15039
+2 | train error: 0.13066 | val error: 0.10352
+3 | train error: 0.1013 | val error: 0.074219
+4 | train error: 0.080117 | val error: 0.058594
+5 | train error: 0.052223 | val error: 0.044922
+The target is :  
+iii = 
+
+    '12,月,4,日,早上,七,点,半,上海'
+
+The answer is :  
+iii = 
+
+    '12,月,4,日,早上,七,点,半,北京'
+
+The answer is :  
+iii = 
+
+    '79867310'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '79867310'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '、'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '上海,青岛'
+
+The answer is :  
+iii = 
+
+    '13761956'
+
+The answer is :  
+iii = 
+
+    '七月,八,日,晚上,七,点钟,北京'
+
+The target is :  
+iii = 
+
+    '上海,昆明'
+
+The target is :  
+iii = 
+
+    '广州,长春'
+
+The answer is :  
+iii = 
+
+    '深圳,青岛'
+
+The answer is :  
+iii = 
+
+    '79867310'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '北京'
+
+The target is :  
+iii = 
+
+    '北京,石家庄'
+
+The target is :  
+iii = 
+
+    '上海,昆明'
+
+The answer is :  
+iii = 
+
+    '飞往'
+
+The answer is :  
+iii = 
+
+    '79867310'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '北京,石家庄'
+
+The answer is :  
+iii = 
+
+    '这,周六,上午,十,点'
+
+The answer is :  
+iii = 
+
+    '24505669'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '24505669'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '广州,昆明'
+
+The answer is :  
+iii = 
+
+    '这,周六,上午,十,点,广州'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '赵六'
+
+The target is :  
+iii = 
+
+    '广州,青岛'
+
+The answer is :  
+iii = 
+
+    '广州,长春'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '赵六'
+
+The target is :  
+iii = 
+
+    '北京,长春'
+
+The answer is :  
+iii = 
+
+    '广州,长春'
+
+The target is :  
+iii = 
+
+    '上海,石家庄'
+
+The answer is :  
+iii = 
+
+    '石家庄'
+
+The answer is :  
+iii = 
+
+    '40641015'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '七月,八,日,晚上,七,点钟,北京'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '深圳,昆明'
+
+The target is :  
+iii = 
+
+    '深圳,青岛'
+
+The answer is :  
+iii = 
+
+    '40641015'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '18884187'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '深圳,昆明'
+
+The answer is :  
+iii = 
+
+    '深圳,青岛'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '时候'
+
+The answer is :  
+iii = 
+
+    '71249780'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '79867310'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '79867310'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '34051203'
+
+The target is :  
+iii = 
+
+    '深圳,长春'
+
+The answer is :  
+iii = 
+
+    '18884187'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '七月,八,日,晚上,七,点钟'
+
+The answer is :  
+iii = 
+
+    '广州,长春'
+
+The target is :  
+iii = 
+
+    '上海,青岛'
+
+The answer is :  
+iii = 
+
+    '88981486'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '许八'
+
+The answer is :  
+iii = 
+
+    '北京,昆明'
+
+The target is :  
+iii = 
+
+    '广州,昆明'
+
+The answer is :  
+iii = 
+
+    '79867310'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '这个,周三,下午,三点,半'
+
+The target is :  
+iii = 
+
+    '这个,周三,下午,三点,半,上海'
+
+The answer is :  
+iii = 
+
+    '97360169'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '54362998'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '明天,中午,十二,点,广州'
+
+The target is :  
+iii = 
+
+    '明天,中午,十二,点,深圳'
+
+The answer is :  
+iii = 
+
+    '79867310'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '周杰伦'
+
+The answer is :  
+iii = 
+
+    '昆明'
+
+The target is :  
+iii = 
+
+    '广州,昆明'
+
+The answer is :  
+iii = 
+
+    '79867310'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '上海,长春'
+
+The answer is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '昆明'
+
+The target is :  
+iii = 
+
+    '上海,昆明'
+
+The answer is :  
+iii = 
+
+    '北京,昆明'
+
+The target is :  
+iii = 
+
+    '深圳,昆明'
+
+The target is :  
+iii = 
+
+    '广州,青岛'
+
+The answer is :  
+iii = 
+
+    '广州,长春'
+
+The answer is :  
+iii = 
+
+    '深圳,石家庄'
+
+The target is :  
+iii = 
+
+    '石家庄'
+
+The target is :  
+iii = 
+
+    '北京,石家庄'
+
+The answer is :  
+iii = 
+
+    '这个,周三,下午,三点,半'
+
+The target is :  
+iii = 
+
+    '七月,八,日,晚上,七,点钟,北京'
+
+The answer is :  
+iii = 
+
+    '北京'
+
+The target is :  
+iii = 
+
+    '北京,青岛'
+
+The answer is :  
+iii = 
+
+    '北京,长春'
+
+The target is :  
+iii = 
+
+    '这,周六,上午,十,点,上海'
+
+The answer is :  
+iii = 
+
+    '这,周六,上午,十,点,深圳'
+
+The answer is :  
+iii = 
+
+    '上海,石家庄'
+
+The target is :  
+iii = 
+
+    '石家庄'
+
+The answer is :  
+iii = 
+
+    '这个,周三,下午,三点,半,北京'
+
+The target is :  
+iii = 
+
+    '这个,周三,下午,三点,半,深圳'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '深圳,昆明'
+
+The answer is :  
+iii = 
+
+    '97360169'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '79867310'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '18884187'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '40641015'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '45259233'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '北京,石家庄'
+
+The answer is :  
+iii = 
+
+    '石家庄'
+
+The answer is :  
+iii = 
+
+    '昆明'
+
+The target is :  
+iii = 
+
+    '上海,昆明'
+
+The target is :  
+iii = 
+
+    '北京,石家庄'
+
+The answer is :  
+iii = 
+
+    '石家庄'
+
+The answer is :  
+iii = 
+
+    '北京,昆明'
+
+The target is :  
+iii = 
+
+    '北京,石家庄'
+
+The target is :  
+iii = 
+
+    '这,周六,上午,十,点,上海'
+
+The answer is :  
+iii = 
+
+    '这,周六,上午,十,点,深圳'
+
+The answer is :  
+iii = 
+
+    '这个,周三,下午,三点,半,北京'
+
+The target is :  
+iii = 
+
+    '这个,周三,下午,三点,半,深圳'
+
+The answer is :  
+iii = 
+
+    '94978284'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '这个,周三,下午,三点,半,上海'
+
+The answer is :  
+iii = 
+
+    '这个,周三,下午,三点,半,广州'
+
+The answer is :  
+iii = 
+
+    '45261053'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '上海,长春'
+
+The answer is :  
+iii = 
+
+    '41068371'
+
+The answer is :  
+iii = 
+
+    '北京'
+
+The target is :  
+iii = 
+
+    '北京,石家庄'
+
+The target is :  
+iii = 
+
+    '上海,昆明'
+
+The answer is :  
+iii = 
+
+    '十分'
+
+The answer is :  
+iii = 
+
+    '63724605'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '这,周六,上午,十,点'
+
+The answer is :  
+iii = 
+
+    '41385538'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '上海,昆明'
+
+The answer is :  
+iii = 
+
+    '48037090'
+
+The answer is :  
+iii = 
+
+    '明天,中午,十二,点,深圳'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '半'
+
+The target is :  
+iii = 
+
+    '深圳,长春'
+
+The answer is :  
+iii = 
+
+    '这,周六,上午,十,点'
+
+The target is :  
+iii = 
+
+    '这,周六,上午,十,点,上海'
+
+The target is :  
+iii = 
+
+    '北京,青岛'
+
+The answer is :  
+iii = 
+
+    '北京,长春'
+
+The answer is :  
+iii = 
+
+    '18884187'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '广州,青岛'
+
+The answer is :  
+iii = 
+
+    '深圳,青岛'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '这,周六,上午,十,点'
+
+The answer is :  
+iii = 
+
+    '28069663'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '这个,周三,下午,三点,半,北京'
+
+The answer is :  
+iii = 
+
+    '这个,周三,下午,三点,半,广州'
+
+The target is :  
+iii = 
+
+    '上海,长春'
+
+The answer is :  
+iii = 
+
+    '长春'
+
+The answer is :  
+iii = 
+
+    '这,周六,上午,十,点'
+
+The target is :  
+iii = 
+
+    '这,周六,上午,十,点,上海'
+
+The answer is :  
+iii = 
+
+    '89159294'
+
+The target is :  
+iii = 
+
+    '深圳,昆明'
+
+The answer is :  
+iii = 
+
+    '58952951'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '12,月,4,日,早上,七,点,半,上海'
+
+The answer is :  
+iii = 
+
+    '12,月,4,日,早上,七,点,半,深圳'
+
+The target is :  
+iii = 
+
+    '这个,周三,下午,三点,半,上海'
+
+The answer is :  
+iii = 
+
+    '这个,周三,下午,三点,半,深圳'
+
+The answer is :  
+iii = 
+
+    '40641015'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '广州,长春'
+
+The answer is :  
+iii = 
+
+    '长春'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '解晓东'
+
+The answer is :  
+iii = 
+
+    '12,月,4,日,早上,七,点,半'
+
+The target is :  
+iii = 
+
+    '12,月,4,日,早上,七,点,半,上海'
+
+The answer is :  
+iii = 
+
+    '明天,中午,十二,点'
+
+The target is :  
+iii = 
+
+    '明天,中午,十二,点,广州'
+
+The target is :  
+iii = 
+
+    '上海,长春'
+
+The answer is :  
+iii = 
+
+    '长春'
+
+The answer is :  
+iii = 
+
+    '79867310'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '上海'
+
+The answer is :  
+iii = 
+
+    '上海,石家庄'
+
+The answer is :  
+iii = 
+
+    '明天,中午,十二,点,广州'
+
+The target is :  
+iii = 
+
+    '明天,中午,十二,点,深圳'
+
+The target is :  
+iii = 
+
+    '明天,中午,十二,点,北京'
+
+The answer is :  
+iii = 
+
+    '明天,中午,十二,点,广州'
+
+The target is :  
+iii = 
+
+    '上海,青岛'
+
+The answer is :  
+iii = 
+
+    '半'
+
+The target is :  
+iii = 
+
+    '上海,长春'
+
+The answer is :  
+iii = 
+
+    '广州,长春'
+
+The target is :  
+iii = 
+
+    '上海,青岛'
+
+The answer is :  
+iii = 
+
+    '44753648'
+
+The answer is :  
+iii = 
+
+    '广州,长春'
+
+The target is :  
+iii = 
+
+    '深圳,长春'
+
+The answer is :  
+iii = 
+
+    '79867310'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '这,周六,上午,十,点,上海'
+
+The answer is :  
+iii = 
+
+    '这,周六,上午,十,点,深圳'
+
+The answer is :  
+iii = 
+
+    '83782631'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '广州,青岛'
+
+The answer is :  
+iii = 
+
+    '广州,长春'
+
+The answer is :  
+iii = 
+
+    '广州,长春'
+
+The target is :  
+iii = 
+
+    '深圳,长春'
+
+The target is :  
+iii = 
+
+    '深圳,石家庄'
+
+The answer is :  
+iii = 
+
+    '石家庄'
+
+The answer is :  
+iii = 
+
+    '北京'
+
+The target is :  
+iii = 
+
+    '北京,昆明'
+
+The answer is :  
+iii = 
+
+    '12,月,4,日,早上,七,点,半'
+
+The target is :  
+iii = 
+
+    '石家庄'
+
+The answer is :  
+iii = 
+
+    '昆明'
+
+The target is :  
+iii = 
+
+    '上海,昆明'
+
+The target is :  
+iii = 
+
+    '12,月,4,日,早上,七,点,半,上海'
+
+The answer is :  
+iii = 
+
+    '12,月,4,日,早上,七,点,半,深圳'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '深圳,昆明'
+
+The answer is :  
+iii = 
+
+    '58952951'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '上海,长春'
+
+The answer is :  
+iii = 
+
+    '长春'
+
+The answer is :  
+iii = 
+
+    '上海,石家庄'
+
+The target is :  
+iii = 
+
+    '12,月,4,日,早上,七,点,半,上海'
+
+The answer is :  
+iii = 
+
+    '79867310'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '79867310'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '这个,周三,下午,三点,半,北京'
+
+The target is :  
+iii = 
+
+    '这个,周三,下午,三点,半,深圳'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '这,周六,上午,十,点'
+
+The answer is :  
+iii = 
+
+    '这个,周三,下午,三点,半'
+
+The target is :  
+iii = 
+
+    '这个,周三,下午,三点,半,北京'
+
+The target is :  
+iii = 
+
+    '上海,青岛'
+
+The answer is :  
+iii = 
+
+    '广州,青岛'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '这,周六,上午,十,点'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '周杰伦'
+
+The answer is :  
+iii = 
+
+    '票'
+
+The target is :  
+iii = 
+
+    '广州,昆明'
+
+The target is :  
+iii = 
+
+    '广州,青岛'
+
+The answer is :  
+iii = 
+
+    '广州,长春'
+
+The target is :  
+iii = 
+
+    '上海,长春'
+
+The answer is :  
+iii = 
+
+    '深圳,长春'
+
+The answer is :  
+iii = 
+
+    '七月,八,日,晚上,七,点钟'
+
+The target is :  
+iii = 
+
+    '上海,青岛'
+
+The answer is :  
+iii = 
+
+    '77957188'
+
+The target is :  
+iii = 
+
+    '这个,周三,下午,三点,半,广州'
+
+The target is :  
+iii = 
+
+    '上海,昆明'
+
+The answer is :  
+iii = 
+
+    '80378752'
+
+The answer is :  
+iii = 
+
+    '79867310'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '这个,周三,下午,三点,半,北京'
+
+The target is :  
+iii = 
+
+    '这个,周三,下午,三点,半,深圳'
+
+The answer is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '石家庄'
+
+The answer is :  
+iii = 
+
+    '北京,青岛'
+
+The target is :  
+iii = 
+
+    '深圳,青岛'
+
+The answer is :  
+iii = 
+
+    '北京,昆明'
+
+The target is :  
+iii = 
+
+    '深圳,青岛'
+
+The target is :  
+iii = 
+
+    '上海,长春'
+
+The answer is :  
+iii = 
+
+    '深圳,长春'
+
+The answer is :  
+iii = 
+
+    '40641015'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '40641015'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '12,月,4,日,早上,七,点,半,上海'
+
+The answer is :  
+iii = 
+
+    '12,月,4,日,早上,七,点,半,深圳'
+
+The answer is :  
+iii = 
+
+    '北京'
+
+The target is :  
+iii = 
+
+    '北京,昆明'
+
+The answer is :  
+iii = 
+
+    '79867310'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '这个,周三,下午,三点,半'
+
+The target is :  
+iii = 
+
+    '这个,周三,下午,三点,半,深圳'
+
+The answer is :  
+iii = 
+
+    '广州,长春'
+
+The target is :  
+iii = 
+
+    '深圳,昆明'
+
+The answer is :  
+iii = 
+
+    '18884187'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '明天,中午,十二,点,北京'
+
+The answer is :  
+iii = 
+
+    '北京'
+
+The target is :  
+iii = 
+
+    '北京,石家庄'
+
+The answer is :  
+iii = 
+
+    '这个,周三,下午,三点,半'
+
+The answer is :  
+iii = 
+
+    '上海'
+
+The target is :  
+iii = 
+
+    '明天,中午,十二,点,上海'
+
+The target is :  
+iii = 
+
+    '北京,昆明'
+
+The answer is :  
+iii = 
+
+    '56323184'
+
+The answer is :  
+iii = 
+
+    '这个,周三,下午,三点,半'
+
+The target is :  
+iii = 
+
+    '这个,周三,下午,三点,半,北京'
+
+The answer is :  
+iii = 
+
+    '昆明'
+
+The target is :  
+iii = 
+
+    '深圳,昆明'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '这,周六,上午,十,点'
+
+The answer is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '深圳'
+
+The answer is :  
+iii = 
+
+    '广州,石家庄'
+
+The target is :  
+iii = 
+
+    '深圳,青岛'
+
+The answer is :  
+iii = 
+
+    '这个,周三,下午,三点,半'
+
+The target is :  
+iii = 
+
+    '深圳,昆明'
+
+The target is :  
+iii = 
+
+    '上海,石家庄'
+
+The answer is :  
+iii = 
+
+    '石家庄'
+
+The target is :  
+iii = 
+
+    '这,周六,上午,十,点,上海'
+
+The answer is :  
+iii = 
+
+    '这,周六,上午,十,点,北京'
+
+The answer is :  
+iii = 
+
+    '79867310'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '北京,昆明'
+
+The answer is :  
+iii = 
+
+    '深圳,昆明'
+
+The target is :  
+iii = 
+
+    '这,周六,上午,十,点,上海'
+
+The answer is :  
+iii = 
+
+    '这,周六,上午,十,点,深圳'
+
+The answer is :  
+iii = 
+
+    '北京'
+
+The target is :  
+iii = 
+
+    '北京,石家庄'
+
+The answer is :  
+iii = 
+
+    '广州'
+
+The target is :  
+iii = 
+
+    '广州,昆明'
+
+The target is :  
+iii = 
+
+    '上海,青岛'
+
+The answer is :  
+iii = 
+
+    '67810596'
+
+The answer is :  
+iii = 
+
+    '上海,长春'
+
+The target is :  
+iii = 
+
+    '深圳,长春'
+
+The target is :  
+iii = 
+
+    '北京,昆明'
+
+The answer is :  
+iii = 
+
+    '赵六'
+
+The target is :  
+iii = 
+
+    '上海,青岛'
+
+The answer is :  
+iii = 
+
+    '半'
+
+The answer is :  
+iii = 
+
+    '这个,周三,下午,三点,半,北京'
+
+The target is :  
+iii = 
+
+    '这个,周三,下午,三点,半,广州'
+
+The answer is :  
+iii = 
+
+    '79867310'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '广州,青岛'
+
+The answer is :  
+iii = 
+
+    '广州,长春'
+
+The answer is :  
+iii = 
+
+    '75070121'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '广州,青岛'
+
+The answer is :  
+iii = 
+
+    '广州,长春'
+
+The answer is :  
+iii = 
+
+    '79867310'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '七月,八,日,晚上,七,点钟,北京'
+
+The target is :  
+iii = 
+
+    '明天,中午,十二,点'
+
+The answer is :  
+iii = 
+
+    '北京'
+
+The target is :  
+iii = 
+
+    '北京,石家庄'
+
+The answer is :  
+iii = 
+
+    '60758931'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '上海,长春'
+
+The answer is :  
+iii = 
+
+    '广州,长春'
+
+The target is :  
+iii = 
+
+    '七月,八,日,晚上,七,点钟'
+
+The answer is :  
+iii = 
+
+    '广州,长春'
+
+The target is :  
+iii = 
+
+    '北京,长春'
+
+The answer is :  
+iii = 
+
+    '广州,长春'
+
+The answer is :  
+iii = 
+
+    '97360169'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '上海,长春'
+
+The answer is :  
+iii = 
+
+    '深圳,长春'
+
+The answer is :  
+iii = 
+
+    '明天,中午,十二,点,深圳'
+
+The target is :  
+iii = 
+
+    '深圳,石家庄'
+
+The target is :  
+iii = 
+
+    '上海,石家庄'
+
+The answer is :  
+iii = 
+
+    '石家庄'
+
+The answer is :  
+iii = 
+
+    '广州,青岛'
+
+The target is :  
+iii = 
+
+    '深圳,青岛'
+
+The answer is :  
+iii = 
+
+    '昆明'
+
+The target is :  
+iii = 
+
+    '深圳,昆明'
+
+The answer is :  
+iii = 
+
+    '12,月,4,日,早上,七,点,半'
+
+The target is :  
+iii = 
+
+    '12,月,4,日,早上,七,点,半,上海'
+
+The answer is :  
+iii = 
+
+    '97360169'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '40641015'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '上海,长春'
+
+The answer is :  
+iii = 
+
+    '深圳,长春'
+
+The answer is :  
+iii = 
+
+    '广州,青岛'
+
+The target is :  
+iii = 
+
+    '深圳,青岛'
+
+The target is :  
+iii = 
+
+    '上海,青岛'
+
+The answer is :  
+iii = 
+
+    '深圳,青岛'
+
+The answer is :  
+iii = 
+
+    '这个,周三,下午,三点,半'
+
+The target is :  
+iii = 
+
+    '这个,周三,下午,三点,半,上海'
+
+The answer is :  
+iii = 
+
+    '昆明'
+
+The target is :  
+iii = 
+
+    '深圳,昆明'
+
+The answer is :  
+iii = 
+
+    '深圳'
+
+The target is :  
+iii = 
+
+    '深圳,石家庄'
+
+The answer is :  
+iii = 
+
+    '79867310'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '上海,长春'
+
+The answer is :  
+iii = 
+
+    '19046089'
+
+The answer is :  
+iii = 
+
+    '广州,长春'
+
+The target is :  
+iii = 
+
+    '深圳,长春'
+
+The target is :  
+iii = 
+
+    '这个,周三,下午,三点,半,深圳'
+
+The answer is :  
+iii = 
+
+    '这,周六,上午,十,点,深圳'
+
+The target is :  
+iii = 
+
+    '广州,青岛'
+
+The answer is :  
+iii = 
+
+    '深圳,青岛'
+
+The answer is :  
+iii = 
+
+    '昆明'
+
+The target is :  
+iii = 
+
+    '深圳,昆明'
+
+The answer is :  
+iii = 
+
+    '明天,中午,十二,点,北京'
+
+The target is :  
+iii = 
+
+    '广州,青岛'
+
+The answer is :  
+iii = 
+
+    '79867310'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '昆明'
+
+The target is :  
+iii = 
+
+    '深圳,昆明'
+
+The target is :  
+iii = 
+
+    '广州,昆明'
+
+The answer is :  
+iii = 
+
+    '广州,长春'
+
+The answer is :  
+iii = 
+
+    '一,张'
+
+The target is :  
+iii = 
+
+    '深圳,昆明'
+
+The target is :  
+iii = 
+
+    '12,月,4,日,早上,七,点,半,上海'
+
+The answer is :  
+iii = 
+
+    '12,月,4,日,早上,七,点,半,北京'
+
+The target is :  
+iii = 
+
+    '12,月,4,日,早上,七,点,半,上海'
+
+The answer is :  
+iii = 
+
+    '12,月,4,日,早上,七,点,半,北京'
+
+The answer is :  
+iii = 
+
+    '北京'
+
+The target is :  
+iii = 
+
+    '北京,石家庄'
+
+The answer is :  
+iii = 
+
+    '上海'
+
+The target is :  
+iii = 
+
+    '明天,中午,十二,点,上海'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '赵六'
+
+The answer is :  
+iii = 
+
+    '40641015'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '上海,青岛'
+
+The answer is :  
+iii = 
+
+    '田七'
+
+The answer is :  
+iii = 
+
+    '昆明'
+
+The target is :  
+iii = 
+
+    '广州,昆明'
+
+The answer is :  
+iii = 
+
+    '广州,长春'
+
+The target is :  
+iii = 
+
+    '深圳,长春'
+
+The answer is :  
+iii = 
+
+    '七月,八,日,晚上,七,点钟'
+
+The target is :  
+iii = 
+
+    '上海,青岛'
+
+The answer is :  
+iii = 
+
+    '这个,周三,下午,三点,半'
+
+The target is :  
+iii = 
+
+    '这个,周三,下午,三点,半,上海'
+
+The answer is :  
+iii = 
+
+    '71249780'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '广州'
+
+The target is :  
+iii = 
+
+    '广州,昆明'
+
+The answer is :  
+iii = 
+
+    '97360169'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '这,周六,上午,十,点,上海'
+
+The answer is :  
+iii = 
+
+    '这,周六,上午,十,点,深圳'
+
+The answer is :  
+iii = 
+
+    '北京,昆明'
+
+The target is :  
+iii = 
+
+    '北京,长春'
+
+The answer is :  
+iii = 
+
+    '七月,八,日,晚上,七,点钟,北京'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '79867310'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '北京,石家庄'
+
+The answer is :  
+iii = 
+
+    '90837475'
+
+The answer is :  
+iii = 
+
+    '一,张'
+
+The target is :  
+iii = 
+
+    '上海,长春'
+
+The target is :  
+iii = 
+
+    '广州,青岛'
+
+The answer is :  
+iii = 
+
+    '深圳,青岛'
+
+The answer is :  
+iii = 
+
+    '七月,八,日,晚上,七,点钟,北京'
+
+The target is :  
+iii = 
+
+    '七月,八,日,晚上,七,点钟,广州'
+
+The answer is :  
+iii = 
+
+    '七月,八,日,晚上,七,点钟,北京'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '七月,八,日,晚上,七,点钟,北京'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '昆明'
+
+The target is :  
+iii = 
+
+    '广州,昆明'
+
+The answer is :  
+iii = 
+
+    '七月,八,日,晚上,七,点钟,北京'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '上海,长春'
+
+The answer is :  
+iii = 
+
+    '广州,长春'
+
+The target is :  
+iii = 
+
+    '广州,昆明'
+
+The answer is :  
+iii = 
+
+    '许八'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '这,周六,上午,十,点'
+
+The answer is :  
+iii = 
+
+    '56323184'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '广州,长春'
+
+The target is :  
+iii = 
+
+    '深圳,长春'
+
+The answer is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '深圳,昆明'
+
+The answer is :  
+iii = 
+
+    '昆明'
+
+The target is :  
+iii = 
+
+    '上海,昆明'
+
+The target is :  
+iii = 
+
+    '上海,昆明'
+
+The answer is :  
+iii = 
+
+    '这,周六,上午,十,点,上海'
+
+The answer is :  
+iii = 
+
+    '18274677'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '79867310'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '上海,长春'
+
+The answer is :  
+iii = 
+
+    '12,月,4,日,早上,七,点,半'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '解晓东'
+
+The answer is :  
+iii = 
+
+    '七月,八,日,晚上,七,点钟,北京'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '40641015'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '昆明'
+
+The target is :  
+iii = 
+
+    '上海,昆明'
+
+The target is :  
+iii = 
+
+    '七月,八,日,晚上,七,点钟'
+
+The answer is :  
+iii = 
+
+    '广州,长春'
+
+The answer is :  
+iii = 
+
+    '上海,长春'
+
+The target is :  
+iii = 
+
+    '深圳,昆明'
+
+The target is :  
+iii = 
+
+    '明天,中午,十二,点,北京'
+
+The answer is :  
+iii = 
+
+    '北京'
+
+The answer is :  
+iii = 
+
+    '七月,八,日,晚上,七,点钟,北京'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '79867310'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '广州,长春'
+
+The target is :  
+iii = 
+
+    '深圳,长春'
+
+The answer is :  
+iii = 
+
+    '七月,八,日,晚上,七,点钟'
+
+The target is :  
+iii = 
+
+    '上海,青岛'
+
+The answer is :  
+iii = 
+
+    '53008987'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '深圳,石家庄'
+
+The answer is :  
+iii = 
+
+    '石家庄'
+
+The target is :  
+iii = 
+
+    '广州,青岛'
+
+The answer is :  
+iii = 
+
+    '广州,长春'
+
+The answer is :  
+iii = 
+
+    '79867310'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '七月,八,日,晚上,七,点钟,北京'
+
+The target is :  
+iii = 
+
+    '明天,中午,十二,点'
+
+The answer is :  
+iii = 
+
+    '83782631'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '79867310'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '18884187'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '广州,青岛'
+
+The answer is :  
+iii = 
+
+    '广州,长春'
+
+The answer is :  
+iii = 
+
+    '昆明'
+
+The target is :  
+iii = 
+
+    '上海,昆明'
+
+The answer is :  
+iii = 
+
+    '七月,八,日,晚上,七,点钟,深圳'
+
+The target is :  
+iii = 
+
+    '石家庄'
+
+The answer is :  
+iii = 
+
+    '60758931'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '明天,中午,十二,点'
+
+The target is :  
+iii = 
+
+    '明天,中午,十二,点,北京'
+
+The answer is :  
+iii = 
+
+    '80378752'
+
+The target is :  
+iii = 
+
+    '深圳,昆明'
+
+The answer is :  
+iii = 
+
+    '七月,八,日,晚上,七,点钟,北京'
+
+The target is :  
+iii = 
+
+    '明天,中午,十二,点'
+
+The target is :  
+iii = 
+
+    '上海,长春'
+
+The answer is :  
+iii = 
+
+    '想要'
+
+The target is :  
+iii = 
+
+    '这个,周三,下午,三点,半,上海'
+
+The answer is :  
+iii = 
+
+    '这个,周三,下午,三点,半,广州'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '解晓东'
+
+The answer is :  
+iii = 
+
+    '79867310'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '七月,八,日,晚上,七,点钟'
+
+The target is :  
+iii = 
+
+    '七月,八,日,晚上,七,点钟,北京'
+
+The answer is :  
+iii = 
+
+    '昆明'
+
+The target is :  
+iii = 
+
+    '这个,周三,下午,三点,半,广州'
+
+The answer is :  
+iii = 
+
+    '七月,八,日,晚上,七,点钟,北京'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '许八'
+
+The answer is :  
+iii = 
+
+    '广州,长春'
+
+The target is :  
+iii = 
+
+    '深圳,长春'
+
+The answer is :  
+iii = 
+
+    '北京'
+
+The target is :  
+iii = 
+
+    '北京,石家庄'
+
+The answer is :  
+iii = 
+
+    '广州,长春'
+
+The target is :  
+iii = 
+
+    '深圳,长春'
+
+The answer is :  
+iii = 
+
+    '昆明'
+
+The target is :  
+iii = 
+
+    '广州,昆明'
+
+The target is :  
+iii = 
+
+    '上海,长春'
+
+The answer is :  
+iii = 
+
+    '深圳,长春'
+
+The target is :  
+iii = 
+
+    '12,月,4,日,早上,七,点,半,上海'
+
+The answer is :  
+iii = 
+
+    '12,月,4,日,早上,七,点,半,北京'
+
+The answer is :  
+iii = 
+
+    '、'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '昆明'
+
+The target is :  
+iii = 
+
+    '上海,昆明'
+
+The target is :  
+iii = 
+
+    '北京,昆明'
+
+The answer is :  
+iii = 
+
+    '广州,青岛'
+
+The answer is :  
+iii = 
+
+    '上海,长春'
+
+The target is :  
+iii = 
+
+    '深圳,青岛'
+
+The target is :  
+iii = 
+
+    '上海,石家庄'
+
+The answer is :  
+iii = 
+
+    '石家庄'
+
+The target is :  
+iii = 
+
+    '上海'
+
+The answer is :  
+iii = 
+
+    '上海,石家庄'
+
+The target is :  
+iii = 
+
+    '广州,昆明'
+
+The answer is :  
+iii = 
+
+    '广州,长春'
+
+The target is :  
+iii = 
+
+    '这,周六,上午,十,点,上海'
+
+The answer is :  
+iii = 
+
+    '这,周六,上午,十,点,深圳'
+
+The answer is :  
+iii = 
+
+    '79867310'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '上海,长春'
+
+The answer is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '北京'
+
+The target is :  
+iii = 
+
+    '北京,石家庄'
+
+The target is :  
+iii = 
+
+    '上海,青岛'
+
+The answer is :  
+iii = 
+
+    '56323184'
+
+The target is :  
+iii = 
+
+    '七月,八,日,晚上,七,点钟,北京'
+
+The answer is :  
+iii = 
+
+    '七月,八,日,晚上,七,点钟,深圳'
+
+The answer is :  
+iii = 
+
+    '这个,周三,下午,三点,半,北京'
+
+The target is :  
+iii = 
+
+    '这个,周三,下午,三点,半,广州'
+
+The answer is :  
+iii = 
+
+    '七月,八,日,晚上,七,点钟,北京'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '许八'
+
+The target is :  
+iii = 
+
+    '这,周六,上午,十,点,上海'
+
+The answer is :  
+iii = 
+
+    '这,周六,上午,十,点,北京'
+
+The target is :  
+iii = 
+
+    '上海,长春'
+
+The answer is :  
+iii = 
+
+    '深圳,长春'
+
+The answer is :  
+iii = 
+
+    '54362998'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '广州,青岛'
+
+The target is :  
+iii = 
+
+    '深圳,青岛'
+
+The target is :  
+iii = 
+
+    '上海,长春'
+
+The answer is :  
+iii = 
+
+    '长春'
+
+The answer is :  
+iii = 
+
+    '明天,中午,十二,点'
+
+The target is :  
+iii = 
+
+    '明天,中午,十二,点,北京'
+
+The answer is :  
+iii = 
+
+    '64424007'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '这个,周三,下午,三点,半,深圳'
+
+The answer is :  
+iii = 
+
+    '石家庄'
+
+The target is :  
+iii = 
+
+    '七月,八,日,晚上,七,点钟'
+
+The answer is :  
+iii = 
+
+    '广州,长春'
+
+The answer is :  
+iii = 
+
+    '上海,石家庄'
+
+The target is :  
+iii = 
+
+    '12,月,4,日,早上,七,点,半,上海'
+
+The target is :  
+iii = 
+
+    '上海'
+
+The answer is :  
+iii = 
+
+    '上海,昆明'
+
+The answer is :  
+iii = 
+
+    '广州'
+
+The target is :  
+iii = 
+
+    '广州,青岛'
+
+The target is :  
+iii = 
+
+    '上海'
+
+The answer is :  
+iii = 
+
+    '上海,昆明'
+
+The answer is :  
+iii = 
+
+    '昆明'
+
+The target is :  
+iii = 
+
+    '广州,昆明'
+
+The target is :  
+iii = 
+
+    '上海,长春'
+
+The answer is :  
+iii = 
+
+    '63724605'
+
+The target is :  
+iii = 
+
+    '上海,青岛'
+
+The answer is :  
+iii = 
+
+    '45990373'
+
+The answer is :  
+iii = 
+
+    '北京'
+
+The target is :  
+iii = 
+
+    '北京,石家庄'
+
+The answer is :  
+iii = 
+
+    '79867310'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '七月,八,日,晚上,七,点钟'
+
+The target is :  
+iii = 
+
+    '七月,八,日,晚上,七,点钟,上海'
+
+The answer is :  
+iii = 
+
+    '明天,中午,十二,点'
+
+The target is :  
+iii = 
+
+    '明天,中午,十二,点,北京'
+
+The target is :  
+iii = 
+
+    '昆明'
+
+The answer is :  
+iii = 
+
+    '明天,中午,十二,点'
+
+The answer is :  
+iii = 
+
+    '明天,中午,十二,点,广州'
+
+The target is :  
+iii = 
+
+    '广州'
+
+The answer is :  
+iii = 
+
+    '92059923'
+
+The target is :  
+iii = 
+
+    '深圳,昆明'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '这,周六,上午,十,点'
+
+The answer is :  
+iii = 
+
+    '45259233'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '92446311'
+
+The target is :  
+iii = 
+
+    '深圳,昆明'
+
+The answer is :  
+iii = 
+
+    '73644093'
+
+The target is :  
+iii = 
+
+    '广州,昆明'
+
+The answer is :  
+iii = 
+
+    '明天,中午,十二,点,深圳'
+
+The target is :  
+iii = 
+
+    '12,月,4,日,早上,七,点,半,深圳'
+
+The target is :  
+iii = 
+
+    '上海,长春'
+
+The answer is :  
+iii = 
+
+    '29582479'
+
+The answer is :  
+iii = 
+
+    '下午'
+
+The target is :  
+iii = 
+
+    '北京,长春'
+
+The target is :  
+iii = 
+
+    '上海,石家庄'
+
+The answer is :  
+iii = 
+
+    '石家庄'
+
+The answer is :  
+iii = 
+
+    '许八'
+
+The target is :  
+iii = 
+
+    '深圳,昆明'
+
+The answer is :  
+iii = 
+
+    '41385538'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '18884187'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '七月,八,日,晚上,七,点钟,上海'
+
+The target is :  
+iii = 
+
+    '七月,八,日,晚上,七,点钟,深圳'
+
+The answer is :  
+iii = 
+
+    '这个,周三,下午,三点,半'
+
+The target is :  
+iii = 
+
+    '这个,周三,下午,三点,半,北京'
+
+The target is :  
+iii = 
+
+    '北京,青岛'
+
+The answer is :  
+iii = 
+
+    '北京,长春'
+
+The answer is :  
+iii = 
+
+    '明天,中午,十二,点,上海'
+
+The target is :  
+iii = 
+
+    '深圳,青岛'
+
+The answer is :  
+iii = 
+
+    '这个,周三,下午,三点,半,北京'
+
+The target is :  
+iii = 
+
+    '这个,周三,下午,三点,半,深圳'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '赵六'
+
+The target is :  
+iii = 
+
+    '12,月,4,日,早上,七,点,半'
+
+The answer is :  
+iii = 
+
+    '长春'
+
+The answer is :  
+iii = 
+
+    '昆明'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '79867310'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '上海,长春'
+
+The answer is :  
+iii = 
+
+    '张'
+
+The answer is :  
+iii = 
+
+    '昆明'
+
+The target is :  
+iii = 
+
+    '广州,昆明'
+
+The answer is :  
+iii = 
+
+    '79867310'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '深圳,石家庄'
+
+The answer is :  
+iii = 
+
+    '石家庄'
+
+The answer is :  
+iii = 
+
+    '79867310'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '这,周六,上午,十,点'
+
+The target is :  
+iii = 
+
+    '这,周六,上午,十,点,上海'
+
+The answer is :  
+iii = 
+
+    '40641015'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '明天,中午,十二,点,上海'
+
+The target is :  
+iii = 
+
+    '明天,中午,十二,点,北京'
+
+The target is :  
+iii = 
+
+    '广州,青岛'
+
+The answer is :  
+iii = 
+
+    '深圳,青岛'
+
+The answer is :  
+iii = 
+
+    '北京'
+
+The target is :  
+iii = 
+
+    '北京,石家庄'
+
+The answer is :  
+iii = 
+
+    '广州,长春'
+
+The target is :  
+iii = 
+
+    '深圳,长春'
+
+The target is :  
+iii = 
+
+    '上海,石家庄'
+
+The answer is :  
+iii = 
+
+    '石家庄'
+
+The answer is :  
+iii = 
+
+    '这个,周三,下午,三点,半'
+
+The target is :  
+iii = 
+
+    '这个,周三,下午,三点,半,上海'
+
+The target is :  
+iii = 
+
+    '这个,周三,下午,三点,半,深圳'
+
+The answer is :  
+iii = 
+
+    '这,周六,上午,十,点,深圳'
+
+The answer is :  
+iii = 
+
+    '79867310'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The answer is :  
+iii = 
+
+    '40641015'
+
+The target is :  
+iii = 
+
+    'Unknown1'
+
+The target is :  
+iii = 
+
+    '广州,青岛'
+
+The answer is :  
+iii = 
+
+    '深圳,青岛'
+
+The answer is :  
+iii = 
+
+    '北京,昆明'
+
+The target is :  
+iii = 
+
+    '广州,昆明'
+
+The answer is :  
+iii = 
+
+    '广州,石家庄'
+
+The target is :  
+iii = 
+
+    '深圳,昆明'
+
+The answer is :  
+iii = 
+
+    '这个,周三,下午,三点,半'
+
+The target is :  
+iii = 
+
+    '深圳,青岛'
+
+The target is :  
+iii = 
+
+    '上海,石家庄'
+
+The answer is :  
+iii = 
+
+    '石家庄'
+
+test error: 0.069129
+
+>> 
