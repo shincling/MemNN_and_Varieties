@@ -9,6 +9,8 @@
 global wrong_index;
 total_test_err = 0;
 total_test_num = 0;
+ddd=cell(1,batch_size);
+
 for k = 1:floor(size(test_questions,2)/batch_size)
     batch = (1:batch_size) + (k-1) * batch_size;
     input = zeros(size(story,1),batch_size,'single');
@@ -19,6 +21,7 @@ for k = 1:floor(size(test_questions,2)/batch_size)
         d = test_story(:,1:test_questions(2,batch(b)),test_questions(1,batch(b)));
         d = d(:,max(1,end-config.sz+1):end);
         memory{1}.data(1:size(d,1),1:size(d,2),b) = d;
+        ddd(1,b)={d};
         if enable_time
             memory{1}.data(end,1:size(d,2),b) = (size(d,2):-1:1) + length(dict); % time words
         end
@@ -34,21 +37,44 @@ for k = 1:floor(size(test_questions,2)/batch_size)
     
 
      for aaa =[1:size(wrong_index,2)]
-                    for iii=dict.keys()
+         fprintf('The story is : \n');
+         for sss_index =wrong_index(3,:)
+             evi=cell2mat(ddd(1,sss_index));
+                for sent=evi(:,size(evi,2))
+                    for word=1:size(sent)
+                        fprintf(real_word(sent(word),dict));
+                        fprintf('    ');
+                    end
+                    fprintf('\n');
+                end
+         end
+         
+         fprintf('The question is : \n');
+         for sss_index =wrong_index(3,:)
+             for q_sent=input(:,sss_index);
+                 for q_word=1:size(q_sent)
+                     fprintf(real_word(q_sent(q_word),dict));
+                     fprintf('    ');
+                 end
+                 fprintf('\n');
+             end
+         end
+
+         for iii=dict.keys()
                         try
                                 if isequal(dict(cell2mat(iii)),wrong_index(1,aaa))
-                                    fprintf('The answer is :  ');
+                                    fprintf('\nThe answer is :  ');
                                     iii=iii
                                 end
                                 if isequal(dict(cell2mat(iii)),wrong_index(2,aaa))
-                                    fprintf('The target is :  ');
+                                    fprintf('\nThe target is :  ');
                                     iii=iii
                                 end
                         catch 
                             continue 
                         end
                     end
-                   fprintf('---------------------------------------------------------------------');
+                   fprintf('---------------------------------------------------------------------\n');
      end
     
     

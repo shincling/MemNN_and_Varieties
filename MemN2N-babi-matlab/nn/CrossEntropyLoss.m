@@ -44,6 +44,7 @@ classdef CrossEntropyLoss < Loss
             wrong_index=[];
             wrong_index(1,:)=y(incorrect);
             wrong_index(2,:)=target(incorrect);
+            wrong_index(3,:)=incorrect;
         end
     end    
 end

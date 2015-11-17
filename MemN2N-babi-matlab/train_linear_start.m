@@ -14,7 +14,7 @@ nepochs2 = nepochs;
 lrate_decay_step2 = lrate_decay_step;
 init_lrate2 = config.init_lrate;
 nepochs = ls_nepochs;
-nepochs = 20;%%%%%%%
+nepochs = 2;%%%%%%%
 lrate_decay_step = ls_lrate_decay_step;
 config.init_lrate = ls_init_lrate;
 
