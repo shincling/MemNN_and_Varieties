@@ -38,19 +38,21 @@ for k = 1:floor(size(test_questions,2)/batch_size)
 
      for aaa =[1:size(wrong_index,2)]
          fprintf('The story is : \n');
-         for sss_index =wrong_index(3,:)
+         for sss_index =wrong_index(3,aaa)
              evi=cell2mat(ddd(1,sss_index));
-                for sent=evi(:,size(evi,2))
+                for sent_index=1:size(evi,2)
+                    sent=evi(:,sent_index);
                     for word=1:size(sent)
                         fprintf(real_word(sent(word),dict));
                         fprintf('    ');
                     end
                     fprintf('\n');
                 end
+         
          end
          
          fprintf('The question is : \n');
-         for sss_index =wrong_index(3,:)
+         for sss_index =wrong_index(3,aaa)
              for q_sent=input(:,sss_index);
                  for q_word=1:size(q_sent)
                      fprintf(real_word(q_sent(q_word),dict));
@@ -63,18 +65,24 @@ for k = 1:floor(size(test_questions,2)/batch_size)
          for iii=dict.keys()
                         try
                                 if isequal(dict(cell2mat(iii)),wrong_index(1,aaa))
-                                    fprintf('\nThe answer is :  ');
-                                    iii=iii
+                                   
+                                    generation=iii;
                                 end
                                 if isequal(dict(cell2mat(iii)),wrong_index(2,aaa))
-                                    fprintf('\nThe target is :  ');
-                                    iii=iii
+                                    
+                                    target=iii;
                                 end
                         catch 
                             continue 
                         end
-                    end
-                   fprintf('---------------------------------------------------------------------\n');
+         end
+         fprintf('\nThe target is : \n %s',cell2mat(target));
+         fprintf('\nThe answer is : \n %s  ',cell2mat(generation));     
+         
+         
+         
+         
+         fprintf('\n---------------------------------------------------------------------\n');
      end
     
     
