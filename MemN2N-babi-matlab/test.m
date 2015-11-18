@@ -43,7 +43,7 @@ for k = 1:floor(size(test_questions,2)/batch_size)
                 for sent_index=1:size(evi,2)
                     sent=evi(:,sent_index);
                     for word=1:size(sent)
-                        fprintf(real_word(sent(word),dict));
+                        fprintf(real_word(sent(word),dict,test_questions(1,batch(sss_index)),dict_un));
                         fprintf('    ');
                     end
                     fprintf('\n');
