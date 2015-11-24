@@ -89,7 +89,8 @@ if train_or_test==1
                         for h = k+2:length(words)
                             questions(2+h-k,question_ind) = map(str2num(words{h}));
                         end
-                        questions(10,question_ind) = line_ind;
+                        %questions(10,question_ind) = line_ind; %shin
+                        questions(10,question_ind) = 0;
                         break
                     end
                 end
@@ -213,7 +214,8 @@ if train_or_test==0
                         for h = k+2:length(words)
                             questions(2+h-k,question_ind) = map(str2num(words{h}));
                         end
-                        questions(10,question_ind) = line_ind;
+                        %questions(10,question_ind) = line_ind; %shin
+                        questions(10,question_ind) = 0;
                         break
                     end
                 end

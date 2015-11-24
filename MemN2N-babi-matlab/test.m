@@ -76,6 +76,8 @@ for k = 1:floor(size(test_questions,2)/batch_size)
                             continue 
                         end
          end
+         
+         
          fprintf('\nThe target is : \n %s',cell2mat(target));
          fprintf('\nThe answer is : \n %s  ',cell2mat(generation));     
          
