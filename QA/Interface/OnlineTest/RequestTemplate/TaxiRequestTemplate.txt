@@ -1,0 +1,7 @@
+greeting=您好，很高兴为您服务
+name=能告诉我您的姓名吗
+destination=您要去哪里
+departure=您从哪里出发呢
+phone=您的电话号码方便告诉我一下吗
+order_time=请问您哪天出发
+end=(正在调用APP为您查询天气，请稍等。。。) 

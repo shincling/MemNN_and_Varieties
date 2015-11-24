@@ -1,0 +1,8 @@
+greeting=您好，很高兴为您服务
+name=能告诉我您的姓名吗
+idnumber=请问您的身份证号码是多少
+count=请问您要订几张机票
+destination=您要去哪里
+departure=您要从哪里出发
+time=请问您哪天出发
+end=(正在调用APP为您查询天气，请稍等。。。) 
