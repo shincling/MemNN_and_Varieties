@@ -1,6 +1,11 @@
 function  response = OnlineTest_shin( story_path,slot_number)%,slot_number,slot_departure,slot_destination,slot_name,slot_idnumber,slot_time,slot_count) )
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
+addpath nn;
+addpath memory;
+dict = containers.Map;
+
+
 ResultFilePath = '/home/shin/DeepLearning/MemoryNetwork/QA/Interface/OnlineTest/Result.txt';
 base_dir = '/home/shin/DeepLearning/MemoryNetwork/QA/copus/'; % path to data
 %base_dir = [base_dir, topic];
@@ -14,8 +19,13 @@ f = dir(fullfile(base_dir,['Story.txt']));
 StoryFilePath = {fullfile(base_dir,f(1).name)};
     
     include_question=false
-    [online_story, online_questions, online_qstory] = parseTestTask_shin(StoryFilePath, dict, include_question,dict_unknown,num_of_unknown)
-
+    [online_story, online_questions, online_qstory,online_dict_un] = parseTestTask_shin(StoryFilePath, dict, include_question,dict_unknown,num_of_unknown);
+    
+    soft_area=unique(sort(online_story(:)));
+    
+    
+    
+    
     online_story(end+1:max_words,:)=1;
     online_story(:,end+1:32)=1;
     online_qstory(end+1:max_words,:)=1;
@@ -30,8 +40,9 @@ StoryFilePath = {fullfile(base_dir,f(1).name)};
     
     input(:) = dict('nil');
     memory{1}.data(:) = dict('nil');
+    %memory{1}.data(:) = 1;
    
-   % input=online_qstory
+    % input=online_qstory
    
      % b=1;
     for b = 1:32%1:batch_size 
@@ -49,15 +60,17 @@ StoryFilePath = {fullfile(base_dir,f(1).name)};
     end
     
     out = model.fprop(input);
+    out = out(soft_area,:);
     [ppp,m_index]=max(out(:,1:6));
+    m_index=soft_area(m_index);  %shin 
    % cost = loss.fprop(out, target);
    out_word=cell(1,6);
-   out_word_1=cell(1);
+   
    for qqqq=1:6
     for iiii=dict.keys()
            try
                 if isequal(dict(cell2mat(iiii)),m_index(qqqq))
-                    out_word(qqqq)=iiii%cell2mat(iiii);
+                    out_word(qqqq)=iiii;%cell2mat(iiii);
                     break
                
                 end
@@ -67,8 +80,14 @@ StoryFilePath = {fullfile(base_dir,f(1).name)};
            end
     end
    end
+   
+ for qqqq=1:6
+    if (m_index(qqqq)>=dict('Unknown1'))&(m_index(qqqq)<(dict('Unknown10')+1))
+        out_word(qqqq)=online_dict_un(m_index(qqqq)-dict('Unknown1')+1,1);
+   end
+   
     
     
-    
+   response = out_word
 end
 

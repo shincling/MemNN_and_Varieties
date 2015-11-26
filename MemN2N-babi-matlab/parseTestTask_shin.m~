@@ -5,7 +5,7 @@
 % LICENSE file in the root directory of this source tree. An additional grant 
 % of patent rights can be found in the PATENTS file in the same directory.
 
-function [story, questions, qstory,dict_un] = parseBabiTask(data_path, dict, include_question,dict_unknown,num_of_unknown,train_or_test)
+function [story, questions, qstory,dict_un] = parseTestTask_shin(data_path, dict, include_question,dict_unknown,num_of_unknown)
 
         
         story = zeros(25, 1000, 1000, 'single');
@@ -13,30 +13,32 @@ function [story, questions, qstory,dict_un] = parseBabiTask(data_path, dict, inc
         sentence_ind = 0;
         max_words = 0;
         max_sentences = 0;
+        
+        dict_unknown=cell(20,1);
 
         questions = zeros(10,1000, 'single');
         question_ind = 0;
 
         qstory = zeros(25,1000, 'single');
+        
         fi = 1;
-       
-        data_path='/home/shin/DeepLearning/MemoryNetwork/QA/Interface/OnlineTest/Story.txt'
-        fd = fopen(data_path);
+        fd = fopen(data_path{fi});
         line_ind = 0;
+
 
         while true
             line = fgets(fd);
-%             if ischar(line) == false
-%                 fclose(fd);
-%                 if fi < length(data_path)
-%                     fi = fi + 1;
-%                     fd = fopen(data_path{fi});
-%                     line_ind = 0;
-%                     line = fgets(fd);
-%                 else
-%                     break
-%                 end
-%             end
+            if ischar(line) == false
+                fclose(fd);
+                if fi < length(data_path)
+                    fi = fi + 1;
+                    fd = fopen(data_path{fi});
+                    line_ind = 0;
+                    line = fgets(fd);
+                else
+                    break
+                end
+            end
             line_ind = line_ind + 1;
             words = textscan(line, '%s');
             words = words{1}; %��line��仰 ת����Ϊ length*1��cell
@@ -69,7 +71,23 @@ function [story, questions, qstory,dict_un] = parseBabiTask(data_path, dict, inc
                 if w(end) == '.' || w(end) == '?'
                     w = w(1:end-1);
                 end        
-                if isKey(dict, w) == false
+%                 if isKey(dict, w) == false
+%                     %dict(w) = length(dict) + 1;
+%                     if ismember({w},dict_unknown(:,story_ind))
+%                         for iii =[1:num_of_unknown]
+%                             if isequal(dict_unknown(iii,story_ind),{w})
+%                                 w=strcat('Unknown',int2str(iii));
+%                             end
+%                         end
+%                     else
+%                         dict_unknown(un_index,story_ind)={w};  % by shin
+%                         w=strcat('Unknown',int2str(un_index));
+%                         un_index=un_index+1;
+%                     end
+%                 end        
+
+%--------------------------------------------------------------------------------------------
+                    if isKey(dict, w) == false
                     %dict(w) = length(dict) + 1;
                     if ismember({w},dict_unknown(:,story_ind))
                         for iii =[1:num_of_unknown]
@@ -82,7 +100,9 @@ function [story, questions, qstory,dict_un] = parseBabiTask(data_path, dict, inc
                         w=strcat('Unknown',int2str(un_index));
                         un_index=un_index+1;
                     end
-                end        
+                    end 
+                
+%--------------------------------------------------------------------------------------------
                 max_words = max(max_words, k-1);%һ�仰����󳤶� 
 
                 if is_question == false
@@ -97,19 +117,19 @@ function [story, questions, qstory,dict_un] = parseBabiTask(data_path, dict, inc
                         answer = words{k+1};
                         answer = lower(answer);
                        
-                        if isKey(dict, answer) == false         % by shin
-                            if ismember(answer,dict_unknown(:,story_ind))
-                                for iii =[1:num_of_unknown]
-                                	if  isequal(dict_unknown(iii,story_ind),{answer})
-                                        answer=strcat('Unknown',int2str(iii));
-                                    end
-                                end
-                            else
-                            	dict_unknown(un_index,story_ind)={answer}; 
-                            	answer=strcat('Unknown',int2str(un_index));
-                             	un_index=un_index+1;
-                            end
-                        end
+%                         if isKey(dict, answer) == false         % by shin
+%                             if ismember(answer,dict_unknown(:,story_ind))
+%                                 for iii =[1:num_of_unknown]
+%                                 	if  isequal(dict_unknown(iii,story_ind),{answer})
+%                                         answer=strcat('Unknown',int2str(iii));
+%                                     end
+%                                 end
+%                             else
+%                             	dict_unknown(un_index,story_ind)={answer}; 
+%                             	answer=strcat('Unknown',int2str(un_index));
+%                              	un_index=un_index+1;
+%                             end
+%                         end
                         
                         
                         

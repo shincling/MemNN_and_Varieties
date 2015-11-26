@@ -13,6 +13,8 @@ function [story, questions, qstory,dict_un] = parseTestTask_shin(data_path, dict
         sentence_ind = 0;
         max_words = 0;
         max_sentences = 0;
+        
+        %dict_unknown=cell(10,1);
 
         questions = zeros(10,1000, 'single');
         question_ind = 0;
@@ -69,7 +71,23 @@ function [story, questions, qstory,dict_un] = parseTestTask_shin(data_path, dict
                 if w(end) == '.' || w(end) == '?'
                     w = w(1:end-1);
                 end        
-                if isKey(dict, w) == false
+%                 if isKey(dict, w) == false
+%                     %dict(w) = length(dict) + 1;
+%                     if ismember({w},dict_unknown(:,story_ind))
+%                         for iii =[1:num_of_unknown]
+%                             if isequal(dict_unknown(iii,story_ind),{w})
+%                                 w=strcat('Unknown',int2str(iii));
+%                             end
+%                         end
+%                     else
+%                         dict_unknown(un_index,story_ind)={w};  % by shin
+%                         w=strcat('Unknown',int2str(un_index));
+%                         un_index=un_index+1;
+%                     end
+%                 end        
+
+%--------------------------------------------------------------------------------------------
+                    if isKey(dict, w) == false
                     %dict(w) = length(dict) + 1;
                     if ismember({w},dict_unknown(:,story_ind))
                         for iii =[1:num_of_unknown]
@@ -82,7 +100,9 @@ function [story, questions, qstory,dict_un] = parseTestTask_shin(data_path, dict
                         w=strcat('Unknown',int2str(un_index));
                         un_index=un_index+1;
                     end
-                end        
+                    end 
+                
+%--------------------------------------------------------------------------------------------
                 max_words = max(max_words, k-1);%һ�仰����󳤶� 
 
                 if is_question == false
@@ -97,19 +117,19 @@ function [story, questions, qstory,dict_un] = parseTestTask_shin(data_path, dict
                         answer = words{k+1};
                         answer = lower(answer);
                        
-                        if isKey(dict, answer) == false         % by shin
-                            if ismember(answer,dict_unknown(:,story_ind))
-                                for iii =[1:num_of_unknown]
-                                	if  isequal(dict_unknown(iii,story_ind),{answer})
-                                        answer=strcat('Unknown',int2str(iii));
-                                    end
-                                end
-                            else
-                            	dict_unknown(un_index,story_ind)={answer}; 
-                            	answer=strcat('Unknown',int2str(un_index));
-                             	un_index=un_index+1;
-                            end
-                        end
+%                         if isKey(dict, answer) == false         % by shin
+%                             if ismember(answer,dict_unknown(:,story_ind))
+%                                 for iii =[1:num_of_unknown]
+%                                 	if  isequal(dict_unknown(iii,story_ind),{answer})
+%                                         answer=strcat('Unknown',int2str(iii));
+%                                     end
+%                                 end
+%                             else
+%                             	dict_unknown(un_index,story_ind)={answer}; 
+%                             	answer=strcat('Unknown',int2str(un_index));
+%                              	un_index=un_index+1;
+%                             end
+%                         end
                         
                         
                         
@@ -132,4 +152,5 @@ function [story, questions, qstory,dict_un] = parseTestTask_shin(data_path, dict
 
         story(story == 0) = dict('nil');
         qstory(qstory == 0) = dict('nil');
+        dict_un=dict_unknown;
 end

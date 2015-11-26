@@ -3,7 +3,7 @@ function word = real_word( index,dict,story_id,dict_of_unknown )
 %   Detailed explanation goes here
       if index==1
           word='';
-      elseif  index>=dict('Unknown1')
+      elseif  (index>=dict('Unknown1'))%&(index<dict('Unknown10')+1)
           word=dict_of_unknown{index-dict('Unknown1')+1,story_id};
       else
           for iiii=dict.keys()
