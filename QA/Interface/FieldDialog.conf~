@@ -1,0 +1,18 @@
+[PathConfig]
+MatlabPath = D:\\360pan\\lstm\\MemNN-master\\MemNN-master\\MemN2N-babi-matlab\\
+StoryPath = D:/360pan/Data/FieldDialog/copus/OnlineTest/Story.txt
+ResultPath = D:/360pan/Data/FieldDialog/copus/OnlineTest/Result.txt
+ErrorPath = D:/360pan/Data/FieldDialog/copus/OnlineTest/ErrorLog.txt
+
+[PropertyConfig]
+TicketSlot = time,destination,departure,name,idnumber,count
+WeatherSlot = area,time
+TaxiSlot = time,destination,order_time,phone,name
+RestauSlot = order_time, name, client_count
+HotelSlot = client_phone,order_time,room_type,room_count,client_name,order_how_long
+RechargeSlot = price,phone
+
+[OtherConfig]
+Field = Weather
+MachineName = MM
+UserName = USER
