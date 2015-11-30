@@ -22,7 +22,8 @@ StoryFilePath = {fullfile(base_dir,f(1).name)};
     include_question=false
     [online_story, online_questions, online_qstory,online_dict_un] = parseTestTask_shin(StoryFilePath, dict, include_question,dict_unknown,num_of_unknown);
     
-    soft_area=unique(sort(online_story(:)));
+    oushulie=online_story(:,2:2:end);
+    soft_area=unique(sort(oushulie(:)));
     
     
     
