@@ -1,6 +1,6 @@
 # -*- coding: utf8 -*-
 __author__ = 'shin'
-
+import jieba
 
 namelist_question=[]
 namelist_question.append('您好，请问您的姓名是？')
@@ -43,3 +43,14 @@ namelist_question.append('麻烦您说一下您的姓名可以吗？')
 namelist_question.append('麻烦说下您的名字？谢谢。')
 namelist_question.append('请告知姓名，谢谢。')
 namelist_question.append('麻烦您告诉我您的名字，非常感谢。')
+
+namelist_question_cut=[]
+for ans in namelist_question:
+    w_sent=''
+    sent=jieba._lcut(ans)
+    for word in (sent):
+        w_sent +=' '
+        w_sent +=word
+    w_sent += '\n'
+    namelist_question_cut.append(w_sent)
+pass

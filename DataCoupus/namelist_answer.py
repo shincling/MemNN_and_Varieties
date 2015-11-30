@@ -41,6 +41,7 @@ namelist_answer.append('姓名是周杰伦。')
 namelist_answer.append('周杰伦是我的名字。')
 namelist_answer.append('我名叫周杰伦。')
 namelist_answer.append('我是周杰伦啊。')
+
 namelist_answer_cut=[]
 for ans in namelist_answer:
     w_sent=''
