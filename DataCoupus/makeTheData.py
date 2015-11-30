@@ -29,11 +29,11 @@ def namePart(f,ind):
 
     fullname=random.choice(familyName)+random.choice(lastName)
 
-    f.write('%d%s'%(ind+1,random.choice(namelist_question_cut)))
-    ans_sent=random.choice(namelist_answer_cut).replace('[slot_name]',fullname)
-    f.write('%d%s'%(ind+2,ans_sent))
+    f.write('%d%s'%(ind+1,random.choice(namelist_question_cut).encode('utf8')))
+    ans_sent=random.choice(namelist_answer_cut).replace('[slot_name]',fullname.decode('utf8'))
+    f.write('%d%s'%(ind+2,ans_sent.encode('utf8')))
     f.write('%d count ?\tnil\t%d\n'%(ind+3,ind+2))
-    f.write('%d name ?\t%s\t%d'%(ind+4,fullname,ind+2))
+    f.write('%d name ?\t%s\t%d\n'%(ind+4,fullname,ind+2))
     f.write('%d destination ?\tnil\t%d\n'%(ind+5,ind+2))
     f.write('%d departure ?\tnil\t%d\n'%(ind+6,ind+2))
     f.write('%d idnumber ?\tnil\t%d\n'%(ind+7,ind+2))
@@ -62,6 +62,7 @@ for story_ind in range(storyNumber):
     '''---------------greeting--------------'''
 
     fw,line_ind=namePart(fw,line_ind)
+    pass
 
 
 
