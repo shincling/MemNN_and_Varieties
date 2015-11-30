@@ -1,7 +1,8 @@
 1 您好 ， 很 高兴 为您服务
-2 你好
-3 您 的 电话号码 方便 告诉 我 一下 吗
-4 4324242423
-5 您 的 电话号码 方便 告诉 我 一下 吗
-6 243242
-7 phone ?	nil	6
+2 你好 啊 ， 小美女 。
+3 count ?	nil	2
+3 name ?	nil	2
+3 destination ?	nil	2
+3 departure ?	nil	2
+3 idnumber ?	nil	2
+3 time ?	nil	2
