@@ -16,6 +16,7 @@ load confidence
 %batch_size=slot_number
 base_dir = '/home/shin/DeepLearning/MemoryNetwork/QA/Interface/OnlineTest';
 f = dir(fullfile(base_dir,['Story.txt']));
+fp = fopen(ResultFilePath, 'wt','n', 'utf-8');
 StoryFilePath = {fullfile(base_dir,f(1).name)};
     
     include_question=false
@@ -84,10 +85,11 @@ StoryFilePath = {fullfile(base_dir,f(1).name)};
  for qqqq=1:6
     if (m_index(qqqq)>=dict('Unknown1'))&(m_index(qqqq)<(dict('Unknown10')+1))
         out_word(qqqq)=online_dict_un(m_index(qqqq)-dict('Unknown1')+1,1);
-   end
-   
+    end
     
     
-   response = out_word
+    
+    
+    response = out_word
 end
 
