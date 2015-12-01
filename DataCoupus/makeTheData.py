@@ -5,6 +5,8 @@ import jieba
 import random
 from namelist_question import namelist_question_cut
 from namelist_answer import namelist_answer_cut
+from countlist_question import countlist_question_cut
+from countlist_answer import countlist_question_cut
 
 print 'name question:%d'%len(namelist_question_cut)
 print 'name answer:%d\n'%len(namelist_answer_cut)
@@ -40,14 +42,31 @@ def namePart(f,ind):
     f.write('%d time ?\tnil\t%d\n'%(ind+8,ind+2))
     f.write('%d phone ?\tnil\t%d\n'%(ind+9,ind+2))
 
-
-
     ind=ind+10
-
-
-
     return f,ind
 
+def countPart(f,ind):
+
+    f.write('%d%s'%(ind+1,random.choice(countlist_question_cut).encode('utf8')))
+
+
+
+    return
+
+def departurePart(f,ind):
+    return
+
+def destinationPart(ind):
+    return
+
+def timePart(f,ind):
+    return
+
+def idnumberPart(f,ind):
+    return
+
+def phonePart(f,ind):
+    return
 
 
 for story_ind in range(storyNumber):
@@ -62,7 +81,13 @@ for story_ind in range(storyNumber):
     '''---------------greeting--------------'''
 
     fw,line_ind=namePart(fw,line_ind)
-    pass
+    fw,line_ind=countPart(fw,line_ind)
+    fw,line_ind=departurePart(fw,line_ind)
+    fw,line_ind=destinationPart(fw,line_ind)
+    fw,line_ind=timePart(fw,line_ind)
+    fw,line_ind=idnumberPart(fw,line_ind)
+    fw,line_ind=phonePart(fw,line_ind)
+
 
 
 
