@@ -1,137 +1,254 @@
 1 您好 ， 机票 预订 中心 ， 需要 我 为 你 做些 什么 ？
 2 我 想 预订 机票 。
-4 请 告知 姓名 ， 谢谢 。
-5 我 的 名字 是 程和畅 。
+4 麻烦 您 告诉 我 您 的 名字 ， 非常感谢 。
+5 您好 ， 我 叫 周安歌 。
 6 count ?	nil	5
-7 name ?	程和畅	5
+7 name ?	周安歌	5
 8 destination ?	nil	5
 9 departure ?	nil	5
 10 idnumber ?	nil	5
 11 time ?	nil	5
 12 phone ?	nil	5
 14 小姐 买 几张 票 ？
-15 23290号 机票 。
-16 count ?	23290号	15
+15 机票 数量 是 二号 。
+16 count ?	二号	15
 17 name ?	nil	15
 18 destination ?	nil	15
 19 departure ?	nil	15
 20 idnumber ?	nil	15
 21 time ?	nil	15
 22 phone ?	nil	15
-24 从 哪 走 ？
-25 墨西哥城
+24 说 下 您 的 出发地 ？
+25 帮 我 预订 地方代号：37821 的 机票 。
 26 count ?	nil	25
 27 name ?	nil	25
 28 destination ?	nil	25
-29 departure ?	墨西哥城	25
+29 departure ?	地方代号：37821	25
 30 idnumber ?	nil	25
 31 time ?	nil	25
 32 phone ?	nil	25
-34 去 哪 ？
-35 目的地 是 地方代号：6657 。
+34 您 要 订 飞往 那里 的 票 ？
+35 目的地 是 上海 。
 36 count ?	nil	35
 37 name ?	nil	35
-38 destination ?	地方代号：6657	35
+38 destination ?	上海	35
 39 departure ?	nil	35
 40 idnumber ?	nil	35
 41 time ?	nil	35
 42 phone ?	nil	35
-44 您 要 订 什么 时候 的 机票 ？
-45 2016年02月21日16点17分
+44 何时 出发 ？
+45 在 2015年12月02日06点47分 走 。
 46 count ?	nil	45
 47 name ?	nil	45
 48 destination ?	nil	45
 49 departure ?	nil	45
 50 idnumber ?	nil	45
-51 time ?	2016年02月21日16点17分	45
+51 time ?	2015年12月02日06点47分	45
 52 phone ?	nil	45
-54 您 怎么 称呼 ？
-55 名叫 公羊琨瑜 。
+54 先生 的 身份证 号码 是 多少 呢 ？
+55 身份证 号码 是 6886282319280978 。
 56 count ?	nil	55
-57 name ?	公羊琨瑜	55
+57 name ?	nil	55
 58 destination ?	nil	55
 59 departure ?	nil	55
-60 idnumber ?	nil	55
+60 idnumber ?	6886282319280978	55
 61 time ?	nil	55
 62 phone ?	nil	55
-64 明白 了 ， 麻烦 说 下 买 几张 ？
-65 可能 需要 两号 。
-66 count ?	两号	65
+64 身份证件 ？
+65 9051428570571272 我 的 号码 。
+66 count ?	nil	65
 67 name ?	nil	65
 68 destination ?	nil	65
 69 departure ?	nil	65
-70 idnumber ?	nil	65
+70 idnumber ?	9051428570571272	65
 71 time ?	nil	65
 72 phone ?	nil	65
-74 从 哪 走 ？
-75 帮 我 预订 卢森堡 的 机票 。
+74 小姐 您 叫 什么 名字 ？
+75 我 是 司马娜 啊 。
 76 count ?	nil	75
-77 name ?	nil	75
+77 name ?	司马娜	75
 78 destination ?	nil	75
-79 departure ?	卢森堡	75
+79 departure ?	nil	75
 80 idnumber ?	nil	75
 81 time ?	nil	75
 82 phone ?	nil	75
-84 去 哪 ？
-85 去 加尔各答 。
-86 count ?	nil	85
+84 订购 数量 ？
+85 21754号 即可 。
+86 count ?	21754号	85
 87 name ?	nil	85
-88 destination ?	加尔各答	85
+88 destination ?	nil	85
 89 departure ?	nil	85
 90 idnumber ?	nil	85
 91 time ?	nil	85
 92 phone ?	nil	85
-94 好 的 ， 请 提供 出行 时间 。
-95 于 2015年12月04日05点17分 出行 。
+94 说 下 您 的 出发地 ？
+95 胡志明市
 96 count ?	nil	95
 97 name ?	nil	95
 98 destination ?	nil	95
-99 departure ?	nil	95
+99 departure ?	胡志明市	95
 100 idnumber ?	nil	95
-101 time ?	2015年12月04日05点17分	95
+101 time ?	nil	95
 102 phone ?	nil	95
-104 您 怎么 称呼 ？
-105 没 问题 ， 我 叫 董舒敏 。
+104 去 哪儿 ？
+105 地方代号：30571 。
 106 count ?	nil	105
-107 name ?	董舒敏	105
-108 destination ?	nil	105
+107 name ?	nil	105
+108 destination ?	地方代号：30571	105
 109 departure ?	nil	105
 110 idnumber ?	nil	105
 111 time ?	nil	105
 112 phone ?	nil	105
-114 您 要 买 多少 张 ？
-115 想 订购 52646号 机票 。
-116 count ?	52646号	115
+114 请 告诉 我 您 预计 的 出行 时间 是 ？
+115 2016年03月09日23点47分 。
+116 count ?	nil	115
 117 name ?	nil	115
 118 destination ?	nil	115
 119 departure ?	nil	115
 120 idnumber ?	nil	115
-121 time ?	nil	115
+121 time ?	2016年03月09日23点47分	115
 122 phone ?	nil	115
-124 请 告知 您 的 出行 时间 。
-125 圣彼得堡.
+124 明白 了 ， 请 告诉 我 您 的 身份证 号码 。
+125 7958952078455113
 126 count ?	nil	125
 127 name ?	nil	125
 128 destination ?	nil	125
-129 departure ?	圣彼得堡.	125
-130 idnumber ?	nil	125
+129 departure ?	nil	125
+130 idnumber ?	7958952078455113	125
 131 time ?	nil	125
 132 phone ?	nil	125
-134 往 哪里 去 ？
-135 地方代号：22499 。
+134 您 的 身份证 是 多少 啊 ？
+135 号码 应该 是 7371312474382941 。
 136 count ?	nil	135
 137 name ?	nil	135
-138 destination ?	地方代号：22499	135
+138 destination ?	nil	135
 139 departure ?	nil	135
-140 idnumber ?	nil	135
+140 idnumber ?	7371312474382941	135
 141 time ?	nil	135
 142 phone ?	nil	135
-144 您 需要 预定 哪个 时间 的 机票 ？
-145 2016年01月06日11点17分
+144 麻烦 说 下 您 的 名字 ？ 谢谢 。
+145 韩月 。
 146 count ?	nil	145
-147 name ?	nil	145
+147 name ?	韩月	145
 148 destination ?	nil	145
 149 departure ?	nil	145
 150 idnumber ?	nil	145
-151 time ?	2016年01月06日11点17分	145
+151 time ?	nil	145
 152 phone ?	nil	145
+154 要 买 几张 飞机票 ？
+155 买 20069号 票 就 可以 。
+156 count ?	20069号	155
+157 name ?	nil	155
+158 destination ?	nil	155
+159 departure ?	nil	155
+160 idnumber ?	nil	155
+161 time ?	nil	155
+162 phone ?	nil	155
+164 说 下 您 的 出发地 ？
+165 地方代号：49742
+166 count ?	nil	165
+167 name ?	nil	165
+168 destination ?	nil	165
+169 departure ?	地方代号：49742	165
+170 idnumber ?	nil	165
+171 time ?	nil	165
+172 phone ?	nil	165
+174 请问 您 的 目的地 是 哪里 ？
+175 我要 到 地方代号：22950 去 。
+176 count ?	nil	175
+177 name ?	nil	175
+178 destination ?	地方代号：22950	175
+179 departure ?	nil	175
+180 idnumber ?	nil	175
+181 time ?	nil	175
+182 phone ?	nil	175
+184 您 需要 什么 时候 走 ？
+185 2015年12月05日14点47分 之前 。
+186 count ?	nil	185
+187 name ?	nil	185
+188 destination ?	nil	185
+189 departure ?	nil	185
+190 idnumber ?	nil	185
+191 time ?	2015年12月05日14点47分	185
+192 phone ?	nil	185
+194 您好 ， 我 需要 输入您 的 身份证 号码 。
+195 8195680866076837
+196 count ?	nil	195
+197 name ?	nil	195
+198 destination ?	nil	195
+199 departure ?	nil	195
+200 idnumber ?	8195680866076837	195
+201 time ?	nil	195
+202 phone ?	nil	195
+204 身份证 ？
+205 我 的 身份证 是 9419844676117040 。
+206 count ?	nil	205
+207 name ?	nil	205
+208 destination ?	nil	205
+209 departure ?	nil	205
+210 idnumber ?	9419844676117040	205
+211 time ?	nil	205
+212 phone ?	nil	205
+214 小姐 您 叫 什么 名字 ？
+215 司马浩言
+216 count ?	nil	215
+217 name ?	司马浩言	215
+218 destination ?	nil	215
+219 departure ?	nil	215
+220 idnumber ?	nil	215
+221 time ?	nil	215
+222 phone ?	nil	215
+224 ok ， 没 问题 ， 订 几张 ？
+225 可能 需要 二号 。
+226 count ?	二号	225
+227 name ?	nil	225
+228 destination ?	nil	225
+229 departure ?	nil	225
+230 idnumber ?	nil	225
+231 time ?	nil	225
+232 phone ?	nil	225
+234 请问 您 的 出行 时间 是 ？
+235 出行 地点 是 底特律 。
+236 count ?	nil	235
+237 name ?	nil	235
+238 destination ?	nil	235
+239 departure ?	底特律	235
+240 idnumber ?	nil	235
+241 time ?	nil	235
+242 phone ?	nil	235
+244 请问 您 此次 前往 哪个 城市 ？
+245 地方代号：14492
+246 count ?	nil	245
+247 name ?	nil	245
+248 destination ?	地方代号：14492	245
+249 departure ?	nil	245
+250 idnumber ?	nil	245
+251 time ?	nil	245
+252 phone ?	nil	245
+254 请问 您 需要 购买 什么 时间 的 机票 ？
+255 2015年12月28日15点47分 。
+256 count ?	nil	255
+257 name ?	nil	255
+258 destination ?	nil	255
+259 departure ?	nil	255
+260 idnumber ?	nil	255
+261 time ?	2015年12月28日15点47分	255
+262 phone ?	nil	255
+264 请问 您 的 身份证 号码 是 多少 ？
+265 身份证 号码 是 3694413996493059 。
+266 count ?	nil	265
+267 name ?	nil	265
+268 destination ?	nil	265
+269 departure ?	nil	265
+270 idnumber ?	3694413996493059	265
+271 time ?	nil	265
+272 phone ?	nil	265
+274 您好 ， 我 需要 输入您 的 身份证 号码 。
+275 7641300596846260 。
+276 count ?	nil	275
+277 name ?	nil	275
+278 destination ?	nil	275
+279 departure ?	nil	275
+280 idnumber ?	7641300596846260	275
+281 time ?	nil	275
+282 phone ?	nil	275
