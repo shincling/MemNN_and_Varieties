@@ -3,11 +3,12 @@ __author__ = 'shin'
 import jieba
 
 departurelist_question=[]
-departurelist_question.append('请问您需要购买什么时间的机票？')
-departurelist_question.append('您需要预定哪个时间的机票？')
-departurelist_question.append('请告诉我您预计的出行时间是？')
-departurelist_question.append('请问您的出行时间是？')
-departurelist_question.append('请告知您的出行时间。')
+departurelist_question.append('请问您从哪里起飞？')
+departurelist_question.append('请问您从哪里出行？')
+departurelist_question.append('请问您从哪个城市出行？')
+departurelist_question.append('请告诉我您的起飞城市。')
+departurelist_question.append('请您告诉我，您从哪个城市出行？')
+
 departurelist_question.append('您从哪里走？')
 departurelist_question.append('您从哪里出发呢？')
 departurelist_question.append('您从哪里起飞？')

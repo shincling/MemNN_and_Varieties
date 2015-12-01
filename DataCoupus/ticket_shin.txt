@@ -1,254 +1,729 @@
 1 您好 ， 机票 预订 中心 ， 需要 我 为 你 做些 什么 ？
 2 我 想 预订 机票 。
-4 麻烦 您 告诉 我 您 的 名字 ， 非常感谢 。
-5 您好 ， 我 叫 周安歌 。
-6 count ?	nil	5
-7 name ?	周安歌	5
-8 destination ?	nil	5
-9 departure ?	nil	5
-10 idnumber ?	nil	5
-11 time ?	nil	5
-12 phone ?	nil	5
-14 小姐 买 几张 票 ？
-15 机票 数量 是 二号 。
-16 count ?	二号	15
-17 name ?	nil	15
-18 destination ?	nil	15
-19 departure ?	nil	15
-20 idnumber ?	nil	15
-21 time ?	nil	15
-22 phone ?	nil	15
-24 说 下 您 的 出发地 ？
-25 帮 我 预订 地方代号：37821 的 机票 。
-26 count ?	nil	25
-27 name ?	nil	25
-28 destination ?	nil	25
-29 departure ?	地方代号：37821	25
-30 idnumber ?	nil	25
-31 time ?	nil	25
-32 phone ?	nil	25
-34 您 要 订 飞往 那里 的 票 ？
-35 目的地 是 上海 。
-36 count ?	nil	35
-37 name ?	nil	35
-38 destination ?	上海	35
-39 departure ?	nil	35
-40 idnumber ?	nil	35
-41 time ?	nil	35
-42 phone ?	nil	35
-44 何时 出发 ？
-45 在 2015年12月02日06点47分 走 。
-46 count ?	nil	45
-47 name ?	nil	45
-48 destination ?	nil	45
-49 departure ?	nil	45
-50 idnumber ?	nil	45
-51 time ?	2015年12月02日06点47分	45
-52 phone ?	nil	45
-54 先生 的 身份证 号码 是 多少 呢 ？
-55 身份证 号码 是 6886282319280978 。
-56 count ?	nil	55
-57 name ?	nil	55
-58 destination ?	nil	55
-59 departure ?	nil	55
-60 idnumber ?	6886282319280978	55
-61 time ?	nil	55
-62 phone ?	nil	55
-64 身份证件 ？
-65 9051428570571272 我 的 号码 。
+3 count ?	nil	2
+4 name ?	nil	2
+5 destination ?	nil	2
+6 departure ?	nil	2
+7 idnumber ?	nil	2
+8 time ?	nil	2
+9 phone ?	nil	2
+10 您 要 订 几张 ？ 谢谢 。
+11 六张 即可 。
+12 count ?	六张	11
+13 name ?	nil	11
+14 destination ?	nil	11
+15 departure ?	nil	11
+16 idnumber ?	nil	11
+17 time ?	nil	11
+18 phone ?	nil	11
+19 乘客 的 名字 是 什么 ？
+20 您好 ， 我 叫 黄君昊 。
+21 count ?	nil	20
+22 name ?	黄君昊	20
+23 destination ?	nil	20
+24 departure ?	nil	20
+25 idnumber ?	nil	20
+26 time ?	nil	20
+27 phone ?	nil	20
+28 您 机票 的 目的地 是 哪里 ？
+29 地方代号-57389 。
+30 count ?	nil	29
+31 name ?	nil	29
+32 destination ?	地方代号-57389	29
+33 departure ?	nil	29
+34 idnumber ?	nil	29
+35 time ?	nil	29
+36 phone ?	nil	29
+37 请 告诉 我 您 的 身份证 号码 。
+38 6553740694593077
+39 count ?	nil	38
+40 name ?	nil	38
+41 destination ?	nil	38
+42 departure ?	nil	38
+43 idnumber ?	6553740694593077	38
+44 time ?	nil	38
+45 phone ?	nil	38
+46 电话 号 ？ 谢谢 。
+47 电话 号 16879722561 。
+48 count ?	nil	47
+49 name ?	nil	47
+50 destination ?	nil	47
+51 departure ?	nil	47
+52 idnumber ?	nil	47
+53 time ?	nil	47
+54 phone ?	16879722561	47
+55 请问 您 从 哪个 城市 出行 ？
+56 西雅图
+57 count ?	nil	56
+58 name ?	nil	56
+59 destination ?	nil	56
+60 departure ?	西雅图	56
+61 idnumber ?	nil	56
+62 time ?	nil	56
+63 phone ?	nil	56
+64 您 什么 时候 出发 ？
+65 出行 时间 是 2016年03月10日02点47分 。
 66 count ?	nil	65
 67 name ?	nil	65
 68 destination ?	nil	65
 69 departure ?	nil	65
-70 idnumber ?	9051428570571272	65
+70 idnumber ?	nil	65
+71 time ?	2016年03月10日02点47分	65
+72 phone ?	nil	65
+73 已经 为 您 预订 完毕 。
+73 非常 谢谢 。
+75 count ?	nil	73
+76 name ?	nil	73
+77 destination ?	nil	73
+78 departure ?	nil	73
+79 idnumber ?	nil	73
+80 time ?	nil	73
+81 phone ?	nil	73
+1 您好 ， 机票 预订 中心 ， 需要 我 为 你 做些 什么 ？
+2 我 想 预订 机票 。
+3 count ?	nil	2
+4 name ?	nil	2
+5 destination ?	nil	2
+6 departure ?	nil	2
+7 idnumber ?	nil	2
+8 time ?	nil	2
+9 phone ?	nil	2
+10 您 旅行 的 起点 是 哪里 ？
+11 自 法兰克福 出发 。
+12 count ?	nil	11
+13 name ?	nil	11
+14 destination ?	nil	11
+15 departure ?	法兰克福	11
+16 idnumber ?	nil	11
+17 time ?	nil	11
+18 phone ?	nil	11
+19 姓名 ？
+20 我 是 太史安国 。
+21 count ?	nil	20
+22 name ?	太史安国	20
+23 destination ?	nil	20
+24 departure ?	nil	20
+25 idnumber ?	nil	20
+26 time ?	nil	20
+27 phone ?	nil	20
+28 您 要 去 什么 地方 ？
+29 去 赫尔辛基 。
+30 count ?	nil	29
+31 name ?	nil	29
+32 destination ?	赫尔辛基	29
+33 departure ?	nil	29
+34 idnumber ?	nil	29
+35 time ?	nil	29
+36 phone ?	nil	29
+37 没 问题 ， 您 身份 证件号码 ？
+38 号码 6040790826462443 。
+39 count ?	nil	38
+40 name ?	nil	38
+41 destination ?	nil	38
+42 departure ?	nil	38
+43 idnumber ?	6040790826462443	38
+44 time ?	nil	38
+45 phone ?	nil	38
+46 好 的 ， 请 告诉 我 您 的 电话号码 ， 非常感谢 。
+47 14560479648 。
+48 count ?	nil	47
+49 name ?	nil	47
+50 destination ?	nil	47
+51 departure ?	nil	47
+52 idnumber ?	nil	47
+53 time ?	nil	47
+54 phone ?	14560479648	47
+55 多少 张 ？
+56 三张 就够 了 。
+57 count ?	三张	56
+58 name ?	nil	56
+59 destination ?	nil	56
+60 departure ?	nil	56
+61 idnumber ?	nil	56
+62 time ?	nil	56
+63 phone ?	nil	56
+64 请问 您 的 出行 时间 是 ？
+65 帮 我 预订 2016年01月22日00点48分 的 机票 。
+66 count ?	nil	65
+67 name ?	nil	65
+68 destination ?	nil	65
+69 departure ?	nil	65
+70 idnumber ?	nil	65
+71 time ?	2016年01月22日00点48分	65
+72 phone ?	nil	65
+73 已经 为 您 预订 完毕 。
+73 非常 谢谢 。
+75 count ?	nil	73
+76 name ?	nil	73
+77 destination ?	nil	73
+78 departure ?	nil	73
+79 idnumber ?	nil	73
+80 time ?	nil	73
+81 phone ?	nil	73
+1 您好 ， 机票 预订 中心 ， 需要 我 为 你 做些 什么 ？
+2 我 想 预订 机票 。
+3 count ?	nil	2
+4 name ?	nil	2
+5 destination ?	nil	2
+6 departure ?	nil	2
+7 idnumber ?	nil	2
+8 time ?	nil	2
+9 phone ?	nil	2
+10 请问 您 的 身份证号 是 ？
+11 5160067728111444 。
+12 count ?	nil	11
+13 name ?	nil	11
+14 destination ?	nil	11
+15 departure ?	nil	11
+16 idnumber ?	5160067728111444	11
+17 time ?	nil	11
+18 phone ?	nil	11
+19 请问 您 从 哪里 出行 ？
+20 地方代号-13184
+21 count ?	nil	20
+22 name ?	nil	20
+23 destination ?	nil	20
+24 departure ?	地方代号-13184	20
+25 idnumber ?	nil	20
+26 time ?	nil	20
+27 phone ?	nil	20
+28 请问 您 的 电话 号 是 ？
+29 12955410779 。
+30 count ?	nil	29
+31 name ?	nil	29
+32 destination ?	nil	29
+33 departure ?	nil	29
+34 idnumber ?	nil	29
+35 time ?	nil	29
+36 phone ?	12955410779	29
+37 先生 您 怎么 称呼 ？
+38 于高畅 。
+39 count ?	nil	38
+40 name ?	于高畅	38
+41 destination ?	nil	38
+42 departure ?	nil	38
+43 idnumber ?	nil	38
+44 time ?	nil	38
+45 phone ?	nil	38
+46 好 的 ， 请 提供 出行 时间 。
+47 2016年02月05日17点48分
+48 count ?	nil	47
+49 name ?	nil	47
+50 destination ?	nil	47
+51 departure ?	nil	47
+52 idnumber ?	nil	47
+53 time ?	2016年02月05日17点48分	47
+54 phone ?	nil	47
+55 您 要 订 几张 ？ 谢谢 。
+56 七张 就够 了 。
+57 count ?	七张	56
+58 name ?	nil	56
+59 destination ?	nil	56
+60 departure ?	nil	56
+61 idnumber ?	nil	56
+62 time ?	nil	56
+63 phone ?	nil	56
+64 请问 您 要 预定 的 目的地 是 ？
+65 目的地 是 上海 。
+66 count ?	nil	65
+67 name ?	nil	65
+68 destination ?	上海	65
+69 departure ?	nil	65
+70 idnumber ?	nil	65
 71 time ?	nil	65
 72 phone ?	nil	65
-74 小姐 您 叫 什么 名字 ？
-75 我 是 司马娜 啊 。
-76 count ?	nil	75
-77 name ?	司马娜	75
-78 destination ?	nil	75
-79 departure ?	nil	75
-80 idnumber ?	nil	75
-81 time ?	nil	75
-82 phone ?	nil	75
-84 订购 数量 ？
-85 21754号 即可 。
-86 count ?	21754号	85
-87 name ?	nil	85
-88 destination ?	nil	85
-89 departure ?	nil	85
-90 idnumber ?	nil	85
-91 time ?	nil	85
-92 phone ?	nil	85
-94 说 下 您 的 出发地 ？
-95 胡志明市
-96 count ?	nil	95
-97 name ?	nil	95
-98 destination ?	nil	95
-99 departure ?	胡志明市	95
-100 idnumber ?	nil	95
-101 time ?	nil	95
-102 phone ?	nil	95
-104 去 哪儿 ？
-105 地方代号：30571 。
-106 count ?	nil	105
-107 name ?	nil	105
-108 destination ?	地方代号：30571	105
-109 departure ?	nil	105
-110 idnumber ?	nil	105
-111 time ?	nil	105
-112 phone ?	nil	105
-114 请 告诉 我 您 预计 的 出行 时间 是 ？
-115 2016年03月09日23点47分 。
-116 count ?	nil	115
-117 name ?	nil	115
-118 destination ?	nil	115
-119 departure ?	nil	115
-120 idnumber ?	nil	115
-121 time ?	2016年03月09日23点47分	115
-122 phone ?	nil	115
-124 明白 了 ， 请 告诉 我 您 的 身份证 号码 。
-125 7958952078455113
-126 count ?	nil	125
-127 name ?	nil	125
-128 destination ?	nil	125
-129 departure ?	nil	125
-130 idnumber ?	7958952078455113	125
-131 time ?	nil	125
-132 phone ?	nil	125
-134 您 的 身份证 是 多少 啊 ？
-135 号码 应该 是 7371312474382941 。
-136 count ?	nil	135
-137 name ?	nil	135
-138 destination ?	nil	135
-139 departure ?	nil	135
-140 idnumber ?	7371312474382941	135
-141 time ?	nil	135
-142 phone ?	nil	135
-144 麻烦 说 下 您 的 名字 ？ 谢谢 。
-145 韩月 。
-146 count ?	nil	145
-147 name ?	韩月	145
-148 destination ?	nil	145
-149 departure ?	nil	145
-150 idnumber ?	nil	145
-151 time ?	nil	145
-152 phone ?	nil	145
-154 要 买 几张 飞机票 ？
-155 买 20069号 票 就 可以 。
-156 count ?	20069号	155
-157 name ?	nil	155
-158 destination ?	nil	155
-159 departure ?	nil	155
-160 idnumber ?	nil	155
-161 time ?	nil	155
-162 phone ?	nil	155
-164 说 下 您 的 出发地 ？
-165 地方代号：49742
-166 count ?	nil	165
-167 name ?	nil	165
-168 destination ?	nil	165
-169 departure ?	地方代号：49742	165
-170 idnumber ?	nil	165
-171 time ?	nil	165
-172 phone ?	nil	165
-174 请问 您 的 目的地 是 哪里 ？
-175 我要 到 地方代号：22950 去 。
-176 count ?	nil	175
-177 name ?	nil	175
-178 destination ?	地方代号：22950	175
-179 departure ?	nil	175
-180 idnumber ?	nil	175
-181 time ?	nil	175
-182 phone ?	nil	175
-184 您 需要 什么 时候 走 ？
-185 2015年12月05日14点47分 之前 。
-186 count ?	nil	185
-187 name ?	nil	185
-188 destination ?	nil	185
-189 departure ?	nil	185
-190 idnumber ?	nil	185
-191 time ?	2015年12月05日14点47分	185
-192 phone ?	nil	185
-194 您好 ， 我 需要 输入您 的 身份证 号码 。
-195 8195680866076837
-196 count ?	nil	195
-197 name ?	nil	195
-198 destination ?	nil	195
-199 departure ?	nil	195
-200 idnumber ?	8195680866076837	195
-201 time ?	nil	195
-202 phone ?	nil	195
-204 身份证 ？
-205 我 的 身份证 是 9419844676117040 。
-206 count ?	nil	205
-207 name ?	nil	205
-208 destination ?	nil	205
-209 departure ?	nil	205
-210 idnumber ?	9419844676117040	205
-211 time ?	nil	205
-212 phone ?	nil	205
-214 小姐 您 叫 什么 名字 ？
-215 司马浩言
-216 count ?	nil	215
-217 name ?	司马浩言	215
-218 destination ?	nil	215
-219 departure ?	nil	215
-220 idnumber ?	nil	215
-221 time ?	nil	215
-222 phone ?	nil	215
-224 ok ， 没 问题 ， 订 几张 ？
-225 可能 需要 二号 。
-226 count ?	二号	225
-227 name ?	nil	225
-228 destination ?	nil	225
-229 departure ?	nil	225
-230 idnumber ?	nil	225
-231 time ?	nil	225
-232 phone ?	nil	225
-234 请问 您 的 出行 时间 是 ？
-235 出行 地点 是 底特律 。
-236 count ?	nil	235
-237 name ?	nil	235
-238 destination ?	nil	235
-239 departure ?	底特律	235
-240 idnumber ?	nil	235
-241 time ?	nil	235
-242 phone ?	nil	235
-244 请问 您 此次 前往 哪个 城市 ？
-245 地方代号：14492
-246 count ?	nil	245
-247 name ?	nil	245
-248 destination ?	地方代号：14492	245
-249 departure ?	nil	245
-250 idnumber ?	nil	245
-251 time ?	nil	245
-252 phone ?	nil	245
-254 请问 您 需要 购买 什么 时间 的 机票 ？
-255 2015年12月28日15点47分 。
-256 count ?	nil	255
-257 name ?	nil	255
-258 destination ?	nil	255
-259 departure ?	nil	255
-260 idnumber ?	nil	255
-261 time ?	2015年12月28日15点47分	255
-262 phone ?	nil	255
-264 请问 您 的 身份证 号码 是 多少 ？
-265 身份证 号码 是 3694413996493059 。
-266 count ?	nil	265
-267 name ?	nil	265
-268 destination ?	nil	265
-269 departure ?	nil	265
-270 idnumber ?	3694413996493059	265
-271 time ?	nil	265
-272 phone ?	nil	265
-274 您好 ， 我 需要 输入您 的 身份证 号码 。
-275 7641300596846260 。
-276 count ?	nil	275
-277 name ?	nil	275
-278 destination ?	nil	275
-279 departure ?	nil	275
-280 idnumber ?	7641300596846260	275
-281 time ?	nil	275
-282 phone ?	nil	275
+73 已经 为 您 预订 完毕 。
+73 非常 谢谢 。
+75 count ?	nil	73
+76 name ?	nil	73
+77 destination ?	nil	73
+78 departure ?	nil	73
+79 idnumber ?	nil	73
+80 time ?	nil	73
+81 phone ?	nil	73
+1 您好 ， 机票 预订 中心 ， 需要 我 为 你 做些 什么 ？
+2 我 想 预订 机票 。
+3 count ?	nil	2
+4 name ?	nil	2
+5 destination ?	nil	2
+6 departure ?	nil	2
+7 idnumber ?	nil	2
+8 time ?	nil	2
+9 phone ?	nil	2
+10 您 身份证 的 号码 ？
+11 9110950931532796
+12 count ?	nil	11
+13 name ?	nil	11
+14 destination ?	nil	11
+15 departure ?	nil	11
+16 idnumber ?	9110950931532796	11
+17 time ?	nil	11
+18 phone ?	nil	11
+19 请问 先生 怎么 称呼 ？
+20 尉迟才
+21 count ?	nil	20
+22 name ?	尉迟才	20
+23 destination ?	nil	20
+24 departure ?	nil	20
+25 idnumber ?	nil	20
+26 time ?	nil	20
+27 phone ?	nil	20
+28 请 告诉 我 您 旅行 的 目的地 。
+29 飞往 爱丁堡 的 飞机 。
+30 count ?	nil	29
+31 name ?	nil	29
+32 destination ?	爱丁堡	29
+33 departure ?	nil	29
+34 idnumber ?	nil	29
+35 time ?	nil	29
+36 phone ?	nil	29
+37 您 要订 哪天 的 机票 ？
+38 2016年01月29日07点48分 走 。
+39 count ?	nil	38
+40 name ?	nil	38
+41 destination ?	nil	38
+42 departure ?	nil	38
+43 idnumber ?	nil	38
+44 time ?	2016年01月29日07点48分	38
+45 phone ?	nil	38
+46 您 要 买 从 哪里 出发 的 机票 ？
+47 机票 的 出发地 是 地方代号-22999 。
+48 count ?	nil	47
+49 name ?	nil	47
+50 destination ?	nil	47
+51 departure ?	地方代号-22999	47
+52 idnumber ?	nil	47
+53 time ?	nil	47
+54 phone ?	nil	47
+55 请 告诉 我 您 的 联系电话 。
+56 10232745196 。
+57 count ?	nil	56
+58 name ?	nil	56
+59 destination ?	nil	56
+60 departure ?	nil	56
+61 idnumber ?	nil	56
+62 time ?	nil	56
+63 phone ?	10232745196	56
+64 您 需要 订购 多少 张票 ？
+65 六张 就 可以 了 。
+66 count ?	六张	65
+67 name ?	nil	65
+68 destination ?	nil	65
+69 departure ?	nil	65
+70 idnumber ?	nil	65
+71 time ?	nil	65
+72 phone ?	nil	65
+73 已经 为 您 预订 完毕 。
+73 非常 谢谢 。
+75 count ?	nil	73
+76 name ?	nil	73
+77 destination ?	nil	73
+78 departure ?	nil	73
+79 idnumber ?	nil	73
+80 time ?	nil	73
+81 phone ?	nil	73
+1 您好 ， 机票 预订 中心 ， 需要 我 为 你 做些 什么 ？
+2 我 想 预订 机票 。
+3 count ?	nil	2
+4 name ?	nil	2
+5 destination ?	nil	2
+6 departure ?	nil	2
+7 idnumber ?	nil	2
+8 time ?	nil	2
+9 phone ?	nil	2
+10 您 想 买 几张 ？
+11 可能 需要 八张 。
+12 count ?	八张	11
+13 name ?	nil	11
+14 destination ?	nil	11
+15 departure ?	nil	11
+16 idnumber ?	nil	11
+17 time ?	nil	11
+18 phone ?	nil	11
+19 请问 您 从 哪里 出行 ？
+20 地方代号-30640
+21 count ?	nil	20
+22 name ?	nil	20
+23 destination ?	nil	20
+24 departure ?	地方代号-30640	20
+25 idnumber ?	nil	20
+26 time ?	nil	20
+27 phone ?	nil	20
+28 您 什么 时候 走 ？
+29 2016年02月19日17点48分 走 。
+30 count ?	nil	29
+31 name ?	nil	29
+32 destination ?	nil	29
+33 departure ?	nil	29
+34 idnumber ?	nil	29
+35 time ?	2016年02月19日17点48分	29
+36 phone ?	nil	29
+37 请问 您 的 目的地 是 哪里 ？
+38 地方代号-39827
+39 count ?	nil	38
+40 name ?	nil	38
+41 destination ?	地方代号-39827	38
+42 departure ?	nil	38
+43 idnumber ?	nil	38
+44 time ?	nil	38
+45 phone ?	nil	38
+46 您 身份证 多少 ？
+47 是 9089126154430762 。
+48 count ?	nil	47
+49 name ?	nil	47
+50 destination ?	nil	47
+51 departure ?	nil	47
+52 idnumber ?	9089126154430762	47
+53 time ?	nil	47
+54 phone ?	nil	47
+55 我们 需要 知道 您 的 姓名 。
+56 我大 名唤 作 曹和畅 。
+57 count ?	nil	56
+58 name ?	曹和畅	56
+59 destination ?	nil	56
+60 departure ?	nil	56
+61 idnumber ?	nil	56
+62 time ?	nil	56
+63 phone ?	nil	56
+64 电话号码 ？
+65 号码 应该 是 19037806724 。
+66 count ?	nil	65
+67 name ?	nil	65
+68 destination ?	nil	65
+69 departure ?	nil	65
+70 idnumber ?	nil	65
+71 time ?	nil	65
+72 phone ?	19037806724	65
+73 已经 为 您 预订 完毕 。
+73 非常 谢谢 。
+75 count ?	nil	73
+76 name ?	nil	73
+77 destination ?	nil	73
+78 departure ?	nil	73
+79 idnumber ?	nil	73
+80 time ?	nil	73
+81 phone ?	nil	73
+1 您好 ， 机票 预订 中心 ， 需要 我 为 你 做些 什么 ？
+2 我 想 预订 机票 。
+3 count ?	nil	2
+4 name ?	nil	2
+5 destination ?	nil	2
+6 departure ?	nil	2
+7 idnumber ?	nil	2
+8 time ?	nil	2
+9 phone ?	nil	2
+10 请 输入您 的 全名 。
+11 我 是 号岚翠 啊 。
+12 count ?	nil	11
+13 name ?	号岚翠	11
+14 destination ?	nil	11
+15 departure ?	nil	11
+16 idnumber ?	nil	11
+17 time ?	nil	11
+18 phone ?	nil	11
+19 麻烦 您 说 下 身份证号 。
+20 身份证号 7207069131187457 。
+21 count ?	nil	20
+22 name ?	nil	20
+23 destination ?	nil	20
+24 departure ?	nil	20
+25 idnumber ?	7207069131187457	20
+26 time ?	nil	20
+27 phone ?	nil	20
+28 您 从 哪里 出发 呢 ？
+29 马德里
+30 count ?	nil	29
+31 name ?	nil	29
+32 destination ?	nil	29
+33 departure ?	马德里	29
+34 idnumber ?	nil	29
+35 time ?	nil	29
+36 phone ?	nil	29
+37 请问 您 此次 前往 哪个 城市 ？
+38 我要 订 去 加尔各答 的 飞机 。
+39 count ?	nil	38
+40 name ?	nil	38
+41 destination ?	加尔各答	38
+42 departure ?	nil	38
+43 idnumber ?	nil	38
+44 time ?	nil	38
+45 phone ?	nil	38
+46 什么 时候 的 ？
+47 2015年12月10日18点48分 。
+48 count ?	nil	47
+49 name ?	nil	47
+50 destination ?	nil	47
+51 departure ?	nil	47
+52 idnumber ?	nil	47
+53 time ?	2015年12月10日18点48分	47
+54 phone ?	nil	47
+55 多少 张票 ？
+56 28990张 就够 了 。
+57 count ?	28990张	56
+58 name ?	nil	56
+59 destination ?	nil	56
+60 departure ?	nil	56
+61 idnumber ?	nil	56
+62 time ?	nil	56
+63 phone ?	nil	56
+64 电话 ？
+65 电话 号 14074719661 。
+66 count ?	nil	65
+67 name ?	nil	65
+68 destination ?	nil	65
+69 departure ?	nil	65
+70 idnumber ?	nil	65
+71 time ?	nil	65
+72 phone ?	14074719661	65
+73 已经 为 您 预订 完毕 。
+73 非常 谢谢 。
+75 count ?	nil	73
+76 name ?	nil	73
+77 destination ?	nil	73
+78 departure ?	nil	73
+79 idnumber ?	nil	73
+80 time ?	nil	73
+81 phone ?	nil	73
+1 您好 ， 机票 预订 中心 ， 需要 我 为 你 做些 什么 ？
+2 我 想 预订 机票 。
+3 count ?	nil	2
+4 name ?	nil	2
+5 destination ?	nil	2
+6 departure ?	nil	2
+7 idnumber ?	nil	2
+8 time ?	nil	2
+9 phone ?	nil	2
+10 请 告诉 我 您 旅行 的 目的地 。
+11 曼谷 。
+12 count ?	nil	11
+13 name ?	nil	11
+14 destination ?	曼谷	11
+15 departure ?	nil	11
+16 idnumber ?	nil	11
+17 time ?	nil	11
+18 phone ?	nil	11
+19 知道 了 ， 买 几张 呀 ？
+20 43501张 就 可以 了 。
+21 count ?	43501张	20
+22 name ?	nil	20
+23 destination ?	nil	20
+24 departure ?	nil	20
+25 idnumber ?	nil	20
+26 time ?	nil	20
+27 phone ?	nil	20
+28 您 的 名字 是 什么 ？
+29 名叫 韩安福 。
+30 count ?	nil	29
+31 name ?	韩安福	29
+32 destination ?	nil	29
+33 departure ?	nil	29
+34 idnumber ?	nil	29
+35 time ?	nil	29
+36 phone ?	nil	29
+37 您 身份证 号码 多少 ？
+38 身份证 号码 是 8737809599816589 。
+39 count ?	nil	38
+40 name ?	nil	38
+41 destination ?	nil	38
+42 departure ?	nil	38
+43 idnumber ?	8737809599816589	38
+44 time ?	nil	38
+45 phone ?	nil	38
+46 您 要订 哪天 的 机票 ？
+47 2016年01月28日09点48分 。
+48 count ?	nil	47
+49 name ?	nil	47
+50 destination ?	nil	47
+51 departure ?	nil	47
+52 idnumber ?	nil	47
+53 time ?	2016年01月28日09点48分	47
+54 phone ?	nil	47
+55 电话号码 ？
+56 17070541946
+57 count ?	nil	56
+58 name ?	nil	56
+59 destination ?	nil	56
+60 departure ?	nil	56
+61 idnumber ?	nil	56
+62 time ?	nil	56
+63 phone ?	17070541946	56
+64 请 您 告诉 我 ， 您 从 哪个 城市 出行 ？
+65 地方代号-44929
+66 count ?	nil	65
+67 name ?	nil	65
+68 destination ?	nil	65
+69 departure ?	地方代号-44929	65
+70 idnumber ?	nil	65
+71 time ?	nil	65
+72 phone ?	nil	65
+73 已经 为 您 预订 完毕 。
+73 非常 谢谢 。
+75 count ?	nil	73
+76 name ?	nil	73
+77 destination ?	nil	73
+78 departure ?	nil	73
+79 idnumber ?	nil	73
+80 time ?	nil	73
+81 phone ?	nil	73
+1 您好 ， 机票 预订 中心 ， 需要 我 为 你 做些 什么 ？
+2 我 想 预订 机票 。
+3 count ?	nil	2
+4 name ?	nil	2
+5 destination ?	nil	2
+6 departure ?	nil	2
+7 idnumber ?	nil	2
+8 time ?	nil	2
+9 phone ?	nil	2
+10 您 什么 时候 出发 ？
+11 我要 订 2015年12月25日03点48分 的 飞机 。
+12 count ?	nil	11
+13 name ?	nil	11
+14 destination ?	nil	11
+15 departure ?	nil	11
+16 idnumber ?	nil	11
+17 time ?	2015年12月25日03点48分	11
+18 phone ?	nil	11
+19 您 要 去 什么 地方 ？
+20 新加坡
+21 count ?	nil	20
+22 name ?	nil	20
+23 destination ?	新加坡	20
+24 departure ?	nil	20
+25 idnumber ?	nil	20
+26 time ?	nil	20
+27 phone ?	nil	20
+28 请问 小姐 怎么 称呼 ？
+29 哦 ， 我 的 名字 就是 独孤岚翠 啊 。
+30 count ?	nil	29
+31 name ?	独孤岚翠	29
+32 destination ?	nil	29
+33 departure ?	nil	29
+34 idnumber ?	nil	29
+35 time ?	nil	29
+36 phone ?	nil	29
+37 您 想要 买 多少 张 ？
+38 我想订 六张 。
+39 count ?	六张	38
+40 name ?	nil	38
+41 destination ?	nil	38
+42 departure ?	nil	38
+43 idnumber ?	nil	38
+44 time ?	nil	38
+45 phone ?	nil	38
+46 请 您 告诉 我 ， 您 从 哪个 城市 出行 ？
+47 从 胡志明市 起飞 。
+48 count ?	nil	47
+49 name ?	nil	47
+50 destination ?	nil	47
+51 departure ?	胡志明市	47
+52 idnumber ?	nil	47
+53 time ?	nil	47
+54 phone ?	nil	47
+55 好 的 ， 小姐 的 电话号码 是 多少 呢 ？
+56 我 的 电话号码 是 18246856848 。
+57 count ?	nil	56
+58 name ?	nil	56
+59 destination ?	nil	56
+60 departure ?	nil	56
+61 idnumber ?	nil	56
+62 time ?	nil	56
+63 phone ?	18246856848	56
+64 请 告诉 我 您 的 身份证 号码 。
+65 是 2379836704067177 。
+66 count ?	nil	65
+67 name ?	nil	65
+68 destination ?	nil	65
+69 departure ?	nil	65
+70 idnumber ?	2379836704067177	65
+71 time ?	nil	65
+72 phone ?	nil	65
+73 已经 为 您 预订 完毕 。
+73 非常 谢谢 。
+75 count ?	nil	73
+76 name ?	nil	73
+77 destination ?	nil	73
+78 departure ?	nil	73
+79 idnumber ?	nil	73
+80 time ?	nil	73
+81 phone ?	nil	73
+1 您好 ， 机票 预订 中心 ， 需要 我 为 你 做些 什么 ？
+2 我 想 预订 机票 。
+3 count ?	nil	2
+4 name ?	nil	2
+5 destination ?	nil	2
+6 departure ?	nil	2
+7 idnumber ?	nil	2
+8 time ?	nil	2
+9 phone ?	nil	2
+10 您 要 买 从 哪里 出发 的 机票 ？
+11 地方代号-60407
+12 count ?	nil	11
+13 name ?	nil	11
+14 destination ?	nil	11
+15 departure ?	地方代号-60407	11
+16 idnumber ?	nil	11
+17 time ?	nil	11
+18 phone ?	nil	11
+19 您 身份证 的 号码 ？
+20 身份证 4020264512039534 。
+21 count ?	nil	20
+22 name ?	nil	20
+23 destination ?	nil	20
+24 departure ?	nil	20
+25 idnumber ?	4020264512039534	20
+26 time ?	nil	20
+27 phone ?	nil	20
+28 您 电话 多少 ？
+29 电话号码 码是 10233919040 。
+30 count ?	nil	29
+31 name ?	nil	29
+32 destination ?	nil	29
+33 departure ?	nil	29
+34 idnumber ?	nil	29
+35 time ?	nil	29
+36 phone ?	10233919040	29
+37 您 要 去 什么 地方 ？
+38 我要 订 去 地方代号-3885 的 飞机 。
+39 count ?	nil	38
+40 name ?	nil	38
+41 destination ?	地方代号-3885	38
+42 departure ?	nil	38
+43 idnumber ?	nil	38
+44 time ?	nil	38
+45 phone ?	nil	38
+46 请问 老人家 怎么 称呼 ？
+47 好 的 ， 名字 是 赵和璧 。
+48 count ?	nil	47
+49 name ?	赵和璧	47
+50 destination ?	nil	47
+51 departure ?	nil	47
+52 idnumber ?	nil	47
+53 time ?	nil	47
+54 phone ?	nil	47
+55 您 要 订 几张 ？ 谢谢 。
+56 二张 。
+57 count ?	二张	56
+58 name ?	nil	56
+59 destination ?	nil	56
+60 departure ?	nil	56
+61 idnumber ?	nil	56
+62 time ?	nil	56
+63 phone ?	nil	56
+64 好 的 ， 请 提供 出行 时间 。
+65 需要 2015年12月30日17点48分 出发 。
+66 count ?	nil	65
+67 name ?	nil	65
+68 destination ?	nil	65
+69 departure ?	nil	65
+70 idnumber ?	nil	65
+71 time ?	2015年12月30日17点48分	65
+72 phone ?	nil	65
+73 已经 为 您 预订 完毕 。
+73 非常 谢谢 。
+75 count ?	nil	73
+76 name ?	nil	73
+77 destination ?	nil	73
+78 departure ?	nil	73
+79 idnumber ?	nil	73
+80 time ?	nil	73
+81 phone ?	nil	73
