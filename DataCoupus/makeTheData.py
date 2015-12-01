@@ -7,6 +7,9 @@ from namelist_question import namelist_question_cut
 from namelist_answer import namelist_answer_cut
 from countlist_question import countlist_question_cut
 from countlist_answer import countlist_answer_cut
+from departurelist_question import departurelist_question_cut
+from departurelist_answer import departurelist_answer_cut
+
 
 print 'name question:%d'%len(namelist_question_cut)
 print 'name answer:%d\n'%len(namelist_answer_cut)
@@ -70,12 +73,14 @@ def countPart(f,ind):
     return f,ind
 
 
-
-
-
-    return
-
 def departurePart(f,ind):
+    
+    
+    
+    
+    
+    
+    
     return
 
 def destinationPart(ind):
@@ -104,13 +109,9 @@ for story_ind in range(storyNumber):
 
     fw,line_ind=namePart(fw,line_ind)
     fw,line_ind=countPart(fw,line_ind)
-    fw,line_ind=countPart(fw,line_ind)
-    fw,line_ind=countPart(fw,line_ind)
-    fw,line_ind=countPart(fw,line_ind)
-
-
-
     fw,line_ind=departurePart(fw,line_ind)
+    
+    
     fw,line_ind=destinationPart(fw,line_ind)
     fw,line_ind=timePart(fw,line_ind)
     fw,line_ind=idnumberPart(fw,line_ind)
