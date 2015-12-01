@@ -1,47 +1,110 @@
 1 您好 ， 机票 预订 中心 ， 需要 我 为 你 做些 什么 ？
 2 我 想 预订 机票 。
-4 请问 您 的 姓名 是 ？
-5 何俊拔 。
+4 名字 ？
+5 我大 名唤 作 孙安邦 。
 6 count ?	nil	5
-7 name ?	何俊拔	5
+7 name ?	孙安邦	5
 8 destination ?	nil	5
 9 departure ?	nil	5
 10 idnumber ?	nil	5
 11 time ?	nil	5
 12 phone ?	nil	5
-14 订 几张 ？
-15 54917张 。
-16 count ?	54917张	15
+14 您 要 买 多少 张 呢 ， 谢谢 。
+15 七张 。
+16 count ?	七张	15
 17 name ?	nil	15
 18 destination ?	nil	15
 19 departure ?	nil	15
 20 idnumber ?	nil	15
 21 time ?	nil	15
 22 phone ?	nil	15
-24 知道 了 ， 买 几张 呀 ？
-25 帮 我 预定 十张 。
-26 count ?	十张	25
+24 说 下 您 的 出发地 ？
+25 地方代号：62371
+26 departure ?	nil	25
 27 name ?	nil	25
 28 destination ?	nil	25
-29 departure ?	nil	25
+29 departure ?	地方代号：62371	25
 30 idnumber ?	nil	25
 31 time ?	nil	25
 32 phone ?	nil	25
-34 您 需要 订购 多少 张票 ？
-35 机票 数量 是 63518张 。
-36 count ?	63518张	35
-37 name ?	nil	35
+34 请 告知 姓名 ， 谢谢 。
+35 好 的 ， 名字 是 宋兰 。
+36 count ?	nil	35
+37 name ?	宋兰	35
 38 destination ?	nil	35
 39 departure ?	nil	35
 40 idnumber ?	nil	35
 41 time ?	nil	35
 42 phone ?	nil	35
-44 您 买 几张 ？
-45 六张
-46 count ?	六张	45
+44 好 的 ， 没 问题 ， 想要 多少 张 呀 ？
+45 机票 数量 是 十张 。
+46 count ?	十张	45
 47 name ?	nil	45
 48 destination ?	nil	45
 49 departure ?	nil	45
 50 idnumber ?	nil	45
 51 time ?	nil	45
 52 phone ?	nil	45
+54 您 从 哪里 出发 呢 ？
+55 机票 的 出发地 是 地方代号：49287 。
+56 departure ?	nil	55
+57 name ?	nil	55
+58 destination ?	nil	55
+59 departure ?	地方代号：49287	55
+60 idnumber ?	nil	55
+61 time ?	nil	55
+62 phone ?	nil	55
+64 请 您 告诉 我 您 的 名字 。
+65 好 的 ， 名字 是 万俟同 。
+66 count ?	nil	65
+67 name ?	万俟同	65
+68 destination ?	nil	65
+69 departure ?	nil	65
+70 idnumber ?	nil	65
+71 time ?	nil	65
+72 phone ?	nil	65
+74 明白 了 ， 麻烦 说 下 买 几张 ？
+75 七张 即可 。
+76 count ?	七张	75
+77 name ?	nil	75
+78 destination ?	nil	75
+79 departure ?	nil	75
+80 idnumber ?	nil	75
+81 time ?	nil	75
+82 phone ?	nil	75
+84 好 的 ， 麻烦 说 一下 起点 是 哪里 ？
+85 从 地方代号：54999 出发 的 机票
+86 departure ?	nil	85
+87 name ?	nil	85
+88 destination ?	nil	85
+89 departure ?	地方代号：54999	85
+90 idnumber ?	nil	85
+91 time ?	nil	85
+92 phone ?	nil	85
+94 请问 老人家 怎么 称呼 ？
+95 我 是 司马岚翠 啊 。
+96 count ?	nil	95
+97 name ?	司马岚翠	95
+98 destination ?	nil	95
+99 departure ?	nil	95
+100 idnumber ?	nil	95
+101 time ?	nil	95
+102 phone ?	nil	95
+104 您 需要 几张 飞机票 ？
+105 买 三张 票 就 可以 。
+106 count ?	三张	105
+107 name ?	nil	105
+108 destination ?	nil	105
+109 departure ?	nil	105
+110 idnumber ?	nil	105
+111 time ?	nil	105
+112 phone ?	nil	105
+114 在 哪里 起飞 ？
+115 机票 的 出发地 是 爱丁堡 。
+116 departure ?	nil	115
+117 name ?	nil	115
+118 destination ?	nil	115
+119 departure ?	爱丁堡	115
+120 idnumber ?	nil	115
+121 time ?	nil	115
+122 phone ?	nil	115
