@@ -6,7 +6,7 @@ import random
 from namelist_question import namelist_question_cut
 from namelist_answer import namelist_answer_cut
 from countlist_question import countlist_question_cut
-from countlist_answer import countlist_question_cut
+from countlist_answer import countlist_answer_cut
 
 print 'name question:%d'%len(namelist_question_cut)
 print 'name answer:%d\n'%len(namelist_answer_cut)
@@ -23,7 +23,7 @@ lastName=['舒敏','安邦','安福', '安歌', '安国','刚捷', '刚毅', '�
           '佳','可嘉','可','心','琨瑶','琨瑜','兰','芳','兰蕙','梦','娜','若','英','月','兰泽','芝','岚翠','风','岚岚','蓝','尹']
 
 
-
+countDict=['一张','二张','两张','三张','四张','五张','六张','七张','八张','九张','十张']
 
 
 
@@ -34,6 +34,7 @@ def namePart(f,ind):
     f.write('%d%s'%(ind+1,random.choice(namelist_question_cut).encode('utf8')))
     ans_sent=random.choice(namelist_answer_cut).replace('[slot_name]',fullname.decode('utf8'))
     f.write('%d%s'%(ind+2,ans_sent.encode('utf8')))
+
     f.write('%d count ?\tnil\t%d\n'%(ind+3,ind+2))
     f.write('%d name ?\t%s\t%d\n'%(ind+4,fullname,ind+2))
     f.write('%d destination ?\tnil\t%d\n'%(ind+5,ind+2))
@@ -48,6 +49,27 @@ def namePart(f,ind):
 def countPart(f,ind):
 
     f.write('%d%s'%(ind+1,random.choice(countlist_question_cut).encode('utf8')))
+
+    rand_or_rule=random.randint(0,1)#0的时候规则，1的时候随机
+    if rand_or_rule:
+        fullcount=str(random.randint(0,66666))+'张'
+    else :
+        fullcount=random.choice(countDict)
+    ans_sent=random.choice(countlist_answer_cut).replace('[slot_count]',fullcount.decode('utf8'))
+    f.write('%d%s'%(ind+2,ans_sent.encode('utf8')))
+
+    f.write('%d count ?\t%s\t%d\n'%(ind+3,fullcount,ind+2))
+    f.write('%d name ?\tnil\t%d\n'%(ind+4,ind+2))
+    f.write('%d destination ?\tnil\t%d\n'%(ind+5,ind+2))
+    f.write('%d departure ?\tnil\t%d\n'%(ind+6,ind+2))
+    f.write('%d idnumber ?\tnil\t%d\n'%(ind+7,ind+2))
+    f.write('%d time ?\tnil\t%d\n'%(ind+8,ind+2))
+    f.write('%d phone ?\tnil\t%d\n'%(ind+9,ind+2))
+
+    ind=ind+10
+    return f,ind
+
+
 
 
 
@@ -82,6 +104,12 @@ for story_ind in range(storyNumber):
 
     fw,line_ind=namePart(fw,line_ind)
     fw,line_ind=countPart(fw,line_ind)
+    fw,line_ind=countPart(fw,line_ind)
+    fw,line_ind=countPart(fw,line_ind)
+    fw,line_ind=countPart(fw,line_ind)
+
+
+
     fw,line_ind=departurePart(fw,line_ind)
     fw,line_ind=destinationPart(fw,line_ind)
     fw,line_ind=timePart(fw,line_ind)
