@@ -3,6 +3,7 @@ __author__ = 'shin'
 import re
 import jieba
 import random
+import datetime
 from namelist_question import namelist_question_cut
 from namelist_answer import namelist_answer_cut
 from countlist_question import countlist_question_cut
@@ -11,6 +12,10 @@ from departurelist_question import departurelist_question_cut
 from departurelist_answer import departurelist_answer_cut
 from destinationlist_question import destinationlist_question_cut
 from destinationlist_answer import destinationlist_answer_cut
+from timelist_question import timelist_question_cut
+from timelist_answer import timelist_answer_cut
+
+
 
 print 'name question:%d'%len(namelist_question_cut)
 print 'name answer:%d\n'%len(namelist_answer_cut)
@@ -18,7 +23,7 @@ print 'name answer:%d\n'%len(namelist_answer_cut)
 storyNumber=1000
 fw=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/ticket_shin.txt','w')
 
-familyName=['张','王','李','赵','周','吴','顾','郑','何','万','黄','周','吴','徐','孙','胡','朱','高',
+familyName=['号','王','李','赵','周','吴','顾','郑','何','万','黄','周','吴','徐','孙','胡','朱','高',
             '林','何','郭','马','罗','梁','宋','谢','韩','唐','冯','于','董','萧','程','曹','袁','邓',
             '许','欧阳','太史','端木','上官','司马','东方','独孤','南宫','万俟','闻人','夏侯','诸葛','尉迟','公羊']
 
@@ -27,7 +32,7 @@ lastName=['舒敏','安邦','安福', '安歌', '安国','刚捷', '刚毅', '�
           '佳','可嘉','可','心','琨瑶','琨瑜','兰','芳','兰蕙','梦','娜','若','英','月','兰泽','芝','岚翠','风','岚岚','蓝','尹']
 
 
-countDict=['一张','二张','两张','三张','四张','五张','六张','七张','八张','九张','十张']
+countDict=['一号','二号','两号','三号','四号','五号','六号','七号','八号','九号','十号']
 
 locationDict=['纽约','伦敦','东京','巴黎','香港','新加坡','悉尼','米兰','上海','北京','马德里','莫斯科','首尔','曼谷','多伦多','布鲁塞尔','芝加哥','吉隆坡','孟买',
                '华沙','圣保罗','苏黎世','阿姆斯特丹','墨西哥城','雅加达','都柏林','曼谷','台北','伊斯坦布尔','里斯本','罗马','法兰克福','斯德哥尔摩布拉格','维也纳',
@@ -37,6 +42,8 @@ locationDict=['纽约','伦敦','东京','巴黎','香港','新加坡','悉尼',
                '蒙特利尔','内罗毕','巴拿马城','金奈','布里斯班','卡萨布兰卡','丹佛','基多','斯图加特','温哥华','麦纳麦','危地马拉市','开普敦',
                '圣何塞','西雅图','深圳','珀斯','加尔各答','安特卫普','费城','鹿特丹','拉各斯','波特兰','底特律','曼彻斯特','惠灵顿','里加',
                '爱丁堡','圣彼得堡.','圣迭戈','伊斯兰堡','伯明翰','多哈','阿拉木图','卡尔加里']
+
+#dayDict=['一号','二号','两号','三号','四号','五号','六号','七号','八号','九号','十号','十一''''''''''''''''''''''''''''''''''''''''''''''''']
 
 def namePart(f,ind):
 
@@ -63,7 +70,7 @@ def countPart(f,ind):
 
     rand_or_rule=random.randint(0,1)#0的时候规则，1的时候随机
     if rand_or_rule:
-        fullcount=str(random.randint(0,66666))+'张'
+        fullcount=str(random.randint(0,66666))+'号'
     else :
         fullcount=random.choice(countDict)
     ans_sent=random.choice(countlist_answer_cut).replace('[slot_count]',fullcount.decode('utf8'))
@@ -131,22 +138,20 @@ def destinationPart(f,ind):
 
 def timePart(f,ind):
 
-    f.write('%d%s'%(ind+1,random.choice(countlist_question_cut).encode('utf8')))
+    f.write('%d%s'%(ind+1,random.choice(timelist_question_cut).encode('utf8')))
+    delta=datetime.timedelta(days=random.randint(0,100), seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=random.randint(0,24), weeks=0)
+    timetime=datetime.datetime.now()+delta
+    fulltime=timetime.strftime('%Y年%m月%d日%H点%M分')
 
-    rand_or_rule=random.randint(0,1)#0的时候规则，1的时候随机
-    if rand_or_rule:
-        fullcount=str(random.randint(0,66666))+'张'
-    else :
-        fullcount=random.choice(countDict)
-    ans_sent=random.choice(countlist_answer_cut).replace('[slot_count]',fullcount.decode('utf8'))
+    ans_sent=random.choice(timelist_answer_cut).replace('[slot_time]',fulltime.decode('utf8'))
     f.write('%d%s'%(ind+2,ans_sent.encode('utf8')))
 
-    f.write('%d count ?\t%s\t%d\n'%(ind+3,fullcount,ind+2))
+    f.write('%d count ?\tnil\t%d\n'%(ind+3,ind+2))
     f.write('%d name ?\tnil\t%d\n'%(ind+4,ind+2))
     f.write('%d destination ?\tnil\t%d\n'%(ind+5,ind+2))
     f.write('%d departure ?\tnil\t%d\n'%(ind+6,ind+2))
     f.write('%d idnumber ?\tnil\t%d\n'%(ind+7,ind+2))
-    f.write('%d time ?\tnil\t%d\n'%(ind+8,ind+2))
+    f.write('%d time ?\t%s\t%d\n'%(ind+8,fulltime,ind+2))
     f.write('%d phone ?\tnil\t%d\n'%(ind+9,ind+2))
 
     ind=ind+10
@@ -170,6 +175,16 @@ for story_ind in range(storyNumber):
 
     '''---------------greeting--------------'''
 
+    fw,line_ind=namePart(fw,line_ind)
+    fw,line_ind=countPart(fw,line_ind)
+    fw,line_ind=departurePart(fw,line_ind)
+    fw,line_ind=destinationPart(fw,line_ind)
+    fw,line_ind=timePart(fw,line_ind)
+    fw,line_ind=namePart(fw,line_ind)
+    fw,line_ind=countPart(fw,line_ind)
+    fw,line_ind=departurePart(fw,line_ind)
+    fw,line_ind=destinationPart(fw,line_ind)
+    fw,line_ind=timePart(fw,line_ind)
     fw,line_ind=namePart(fw,line_ind)
     fw,line_ind=countPart(fw,line_ind)
     fw,line_ind=departurePart(fw,line_ind)
