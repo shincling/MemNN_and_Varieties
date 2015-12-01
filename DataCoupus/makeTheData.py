@@ -130,7 +130,27 @@ def destinationPart(f,ind):
 
 
 def timePart(f,ind):
-    return
+
+    f.write('%d%s'%(ind+1,random.choice(countlist_question_cut).encode('utf8')))
+
+    rand_or_rule=random.randint(0,1)#0的时候规则，1的时候随机
+    if rand_or_rule:
+        fullcount=str(random.randint(0,66666))+'张'
+    else :
+        fullcount=random.choice(countDict)
+    ans_sent=random.choice(countlist_answer_cut).replace('[slot_count]',fullcount.decode('utf8'))
+    f.write('%d%s'%(ind+2,ans_sent.encode('utf8')))
+
+    f.write('%d count ?\t%s\t%d\n'%(ind+3,fullcount,ind+2))
+    f.write('%d name ?\tnil\t%d\n'%(ind+4,ind+2))
+    f.write('%d destination ?\tnil\t%d\n'%(ind+5,ind+2))
+    f.write('%d departure ?\tnil\t%d\n'%(ind+6,ind+2))
+    f.write('%d idnumber ?\tnil\t%d\n'%(ind+7,ind+2))
+    f.write('%d time ?\tnil\t%d\n'%(ind+8,ind+2))
+    f.write('%d phone ?\tnil\t%d\n'%(ind+9,ind+2))
+
+    ind=ind+10
+    return f,ind
 
 def idnumberPart(f,ind):
     return
@@ -154,22 +174,9 @@ for story_ind in range(storyNumber):
     fw,line_ind=countPart(fw,line_ind)
     fw,line_ind=departurePart(fw,line_ind)
     fw,line_ind=destinationPart(fw,line_ind)
-    fw,line_ind=namePart(fw,line_ind)
-    fw,line_ind=countPart(fw,line_ind)
-    fw,line_ind=departurePart(fw,line_ind)
-    fw,line_ind=destinationPart(fw,line_ind)
-    fw,line_ind=namePart(fw,line_ind)
-    fw,line_ind=countPart(fw,line_ind)
-    fw,line_ind=departurePart(fw,line_ind)
-    fw,line_ind=destinationPart(fw,line_ind)
+    fw,line_ind=timePart(fw,line_ind)
 
     fw.close()
-
-
-
-    
-
-    fw,line_ind=timePart(fw,line_ind)
     fw,line_ind=idnumberPart(fw,line_ind)
     fw,line_ind=phonePart(fw,line_ind)
 
