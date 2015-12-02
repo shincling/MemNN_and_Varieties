@@ -260,11 +260,11 @@
 17 time ?	nil	11
 18 phone ?	nil	11
 19 在 哪里 起飞 ？
-20 　慕尼黑
+20 慕尼黑
 21 count ?	nil	20
 22 name ?	nil	20
 23 destination ?	nil	20
-24 departure ?	　慕尼黑	20
+24 departure ?	慕尼黑	20
 25 idnumber ?	nil	20
 26 time ?	nil	20
 27 phone ?	nil	20
@@ -5318,11 +5318,11 @@
 53 time ?	nil	47
 54 phone ?	19673969912	47
 55 您 从 哪里 走 ？
-56 由 　慕尼黑 起飞 的 飞机 。
+56 由 慕尼黑 起飞 的 飞机 。
 57 count ?	nil	56
 58 name ?	nil	56
 59 destination ?	nil	56
-60 departure ?	　慕尼黑	56
+60 departure ?	慕尼黑	56
 61 idnumber ?	nil	56
 62 time ?	nil	56
 63 phone ?	nil	56
@@ -14912,10 +14912,10 @@
 8 time ?	nil	2
 9 phone ?	nil	2
 10 您 想订 去 哪里 的 飞机票 ？
-11 　慕尼黑 是 我 的 目的地 。
+11 慕尼黑 是 我 的 目的地 。
 12 count ?	nil	11
 13 name ?	nil	11
-14 destination ?	　慕尼黑	11
+14 destination ?	慕尼黑	11
 15 departure ?	nil	11
 16 idnumber ?	nil	11
 17 time ?	nil	11
@@ -16712,11 +16712,11 @@
 26 time ?	nil	20
 27 phone ?	nil	20
 28 请问 您 从 哪里 起飞 ？
-29 出发地 是 　慕尼黑 。
+29 出发地 是 慕尼黑 。
 30 count ?	nil	29
 31 name ?	nil	29
 32 destination ?	nil	29
-33 departure ?	　慕尼黑	29
+33 departure ?	慕尼黑	29
 34 idnumber ?	nil	29
 35 time ?	nil	29
 36 phone ?	nil	29
@@ -18314,11 +18314,11 @@
 8 time ?	nil	2
 9 phone ?	nil	2
 10 说 下 您 的 出发地 ？
-11 出发地 是 　慕尼黑 。
+11 出发地 是 慕尼黑 。
 12 count ?	nil	11
 13 name ?	nil	11
 14 destination ?	nil	11
-15 departure ?	　慕尼黑	11
+15 departure ?	慕尼黑	11
 16 idnumber ?	nil	11
 17 time ?	nil	11
 18 phone ?	nil	11
@@ -27350,11 +27350,11 @@
 53 time ?	nil	47
 54 phone ?	nil	47
 55 好 的 ， 麻烦 说 一下 起点 是 哪里 ？
-56 自 　慕尼黑 出发 。
+56 自 慕尼黑 出发 。
 57 count ?	nil	56
 58 name ?	nil	56
 59 destination ?	nil	56
-60 departure ?	　慕尼黑	56
+60 departure ?	慕尼黑	56
 61 idnumber ?	nil	56
 62 time ?	nil	56
 63 phone ?	nil	56
@@ -33668,11 +33668,11 @@
 53 time ?	nil	47
 54 phone ?	nil	47
 55 请 告诉 我 您 的 起飞 城市 。
-56 　慕尼黑
+56 慕尼黑
 57 count ?	nil	56
 58 name ?	nil	56
 59 destination ?	nil	56
-60 departure ?	　慕尼黑	56
+60 departure ?	慕尼黑	56
 61 idnumber ?	nil	56
 62 time ?	nil	56
 63 phone ?	nil	56
@@ -34235,10 +34235,10 @@
 53 time ?	2015年12月29日17点50分	47
 54 phone ?	nil	47
 55 您 要 飞往 什么 地方 ？
-56 　慕尼黑
+56 慕尼黑
 57 count ?	nil	56
 58 name ?	nil	56
-59 destination ?	　慕尼黑	56
+59 destination ?	慕尼黑	56
 60 departure ?	nil	56
 61 idnumber ?	nil	56
 62 time ?	nil	56
@@ -41273,10 +41273,10 @@
 44 time ?	nil	38
 45 phone ?	nil	38
 46 请问 您 要 预定 飞往 哪个 城市 的 机票 ？
-47 到 　慕尼黑 去 。
+47 到 慕尼黑 去 。
 48 count ?	nil	47
 49 name ?	nil	47
-50 destination ?	　慕尼黑	47
+50 destination ?	慕尼黑	47
 51 departure ?	nil	47
 52 idnumber ?	nil	47
 53 time ?	nil	47
@@ -79991,11 +79991,11 @@
 44 time ?	nil	38
 45 phone ?	nil	38
 46 您 旅行 的 起点 是 哪里 ？
-47 由 　慕尼黑 起飞 的 飞机 。
+47 由 慕尼黑 起飞 的 飞机 。
 48 count ?	nil	47
 49 name ?	nil	47
 50 destination ?	nil	47
-51 departure ?	　慕尼黑	47
+51 departure ?	慕尼黑	47
 52 idnumber ?	nil	47
 53 time ?	nil	47
 54 phone ?	nil	47
@@ -80657,10 +80657,10 @@
 62 time ?	nil	56
 63 phone ?	nil	56
 64 您 的 目的地 ？
-65 目的地 是 　慕尼黑 。
+65 目的地 是 慕尼黑 。
 66 count ?	nil	65
 67 name ?	nil	65
-68 destination ?	　慕尼黑	65
+68 destination ?	慕尼黑	65
 69 departure ?	nil	65
 70 idnumber ?	nil	65
 71 time ?	nil	65

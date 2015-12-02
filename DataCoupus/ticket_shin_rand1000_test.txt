@@ -4832,11 +4832,11 @@
 53 time ?	nil	47
 54 phone ?	nil	47
 55 从 哪 走 ？
-56 　慕尼黑
+56 慕尼黑
 57 count ?	nil	56
 58 name ?	nil	56
 59 destination ?	nil	56
-60 departure ?	　慕尼黑	56
+60 departure ?	慕尼黑	56
 61 idnumber ?	nil	56
 62 time ?	nil	56
 63 phone ?	nil	56
@@ -7703,11 +7703,11 @@
 8 time ?	nil	2
 9 phone ?	nil	2
 10 您 旅行 的 起点 是 哪里 ？
-11 机票 的 出发地 是 　慕尼黑 。
+11 机票 的 出发地 是 慕尼黑 。
 12 count ?	nil	11
 13 name ?	nil	11
 14 destination ?	nil	11
-15 departure ?	　慕尼黑	11
+15 departure ?	慕尼黑	11
 16 idnumber ?	nil	11
 17 time ?	nil	11
 18 phone ?	nil	11
@@ -23516,10 +23516,10 @@
 26 time ?	nil	20
 27 phone ?	nil	20
 28 您 想订 去 哪里 的 飞机票 ？
-29 　慕尼黑 是 我 的 目的地 。
+29 慕尼黑 是 我 的 目的地 。
 30 count ?	nil	29
 31 name ?	nil	29
-32 destination ?	　慕尼黑	29
+32 destination ?	慕尼黑	29
 33 departure ?	nil	29
 34 idnumber ?	nil	29
 35 time ?	nil	29
@@ -34190,11 +34190,11 @@
 8 time ?	nil	2
 9 phone ?	nil	2
 10 好 的 ， 麻烦 说 一下 起点 是 哪里 ？
-11 订 从 　慕尼黑 走 的 机票 。
+11 订 从 慕尼黑 走 的 机票 。
 12 count ?	nil	11
 13 name ?	nil	11
 14 destination ?	nil	11
-15 departure ?	　慕尼黑	11
+15 departure ?	慕尼黑	11
 16 idnumber ?	nil	11
 17 time ?	nil	11
 18 phone ?	nil	11
@@ -45908,10 +45908,10 @@
 62 time ?	nil	56
 63 phone ?	17693698843	56
 64 请问 您 此次 前往 哪个 城市 ？
-65 　慕尼黑 。
+65 慕尼黑 。
 66 count ?	nil	65
 67 name ?	nil	65
-68 destination ?	　慕尼黑	65
+68 destination ?    慕尼黑	65
 69 departure ?	nil	65
 70 idnumber ?	nil	65
 71 time ?	nil	65
@@ -47447,10 +47447,10 @@
 62 time ?	nil	56
 63 phone ?	11377137356	56
 64 请问 您 要 预定 飞往 哪个 城市 的 机票 ？
-65 飞往 　慕尼黑 。
+65 飞往 慕尼黑 。
 66 count ?	nil	65
 67 name ?	nil	65
-68 destination ?	　慕尼黑	65
+68 destination ?	慕尼黑	65
 69 departure ?	nil	65
 70 idnumber ?	nil	65
 71 time ?	nil	65
@@ -52982,10 +52982,10 @@
 8 time ?	nil	2
 9 phone ?	nil	2
 10 终点 是 ？
-11 我要 到 　慕尼黑 去 。
+11 我要 到 慕尼黑 去 。
 12 count ?	nil	11
 13 name ?	nil	11
-14 destination ?	　慕尼黑	11
+14 destination ?	慕尼黑	11
 15 departure ?	nil	11
 16 idnumber ?	nil	11
 17 time ?	nil	11
@@ -60866,11 +60866,11 @@
 35 time ?	nil	29
 36 phone ?	nil	29
 37 请 告诉 我 您 的 起飞 城市 。
-38 从 　慕尼黑 出发 。
+38 从 慕尼黑 出发 。
 39 count ?	nil	38
 40 name ?	nil	38
 41 destination ?	nil	38
-42 departure ?	　慕尼黑	38
+42 departure ?	慕尼黑	38
 43 idnumber ?	nil	38
 44 time ?	nil	38
 45 phone ?	nil	38
@@ -62783,10 +62783,10 @@
 8 time ?	nil	2
 9 phone ?	nil	2
 10 没 问题 ， 麻烦 说 下 目的地 。
-11 是 　慕尼黑 。
+11 是 慕尼黑 。
 12 count ?	nil	11
 13 name ?	nil	11
-14 destination ?	　慕尼黑	11
+14 destination ?	慕尼黑	11
 15 departure ?	nil	11
 16 idnumber ?	nil	11
 17 time ?	nil	11
