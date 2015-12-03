@@ -31,6 +31,19 @@ idnumberlist_answer.append('是秘密。')
 idnumberlist_answer.append('身份证号码是秘密。')
 idnumberlist_answer.append('我的身份证是秘密。')
 
+idnumberlist_answer.append('我的身份证号码是秘密')
+idnumberlist_answer.append('秘密')
+idnumberlist_answer.append('号码是秘密')
+idnumberlist_answer.append('你记一下，秘密')
+idnumberlist_answer.append('我的身份证号是秘密')
+idnumberlist_answer.append('我的身份证秘密')
+idnumberlist_answer.append('身份证号秘密')
+idnumberlist_answer.append('你记一下我的号码秘密')
+idnumberlist_answer.append('请记一下我的身份证号码秘密')
+idnumberlist_answer.append('秘密，这是我的号码')
+idnumberlist_answer.append('秘密，我的号码')
+
+
 idnumberlist_answer_cut=[]
 for ans in idnumberlist_answer:
     w_sent=''
