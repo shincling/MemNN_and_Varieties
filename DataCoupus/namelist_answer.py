@@ -42,6 +42,24 @@ namelist_answer.append('周杰伦是我的名字。')
 namelist_answer.append('我名叫周杰伦。')
 namelist_answer.append('我是周杰伦啊。')
 
+namelist_answer.append('我叫周杰伦')
+namelist_answer.append('周杰伦')
+namelist_answer.append('我的名字是周杰伦')
+namelist_answer.append('我的姓名是周杰伦')
+namelist_answer.append('姓名周杰伦')
+namelist_answer.append('名字叫周杰伦。')
+namelist_answer.append('您好，我叫周杰伦。')
+namelist_answer.append('好的。您记一下。周杰伦。')
+namelist_answer.append('名是周杰伦。')
+namelist_answer.append('名叫周杰伦。')
+namelist_answer.append('我叫周杰伦。')
+namelist_answer.append('我是周杰伦。')
+namelist_answer.append('名字是周杰伦。')
+namelist_answer.append('我的名字是周杰伦。')
+
+
+
+
 namelist_answer_cut=[]
 for ans in namelist_answer:
     w_sent=''
