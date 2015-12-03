@@ -33,6 +33,16 @@ countlist_answer.append('可能需要一张。')
 countlist_answer.append('一张就可以了。')
 countlist_answer.append('帮我预定一张。')
 countlist_answer.append('一张机票。')
+
+countlist_answer.append('一张')
+countlist_answer.append('一张票')
+countlist_answer.append('一张机票')
+countlist_answer.append('我要买一张票')
+countlist_answer.append('我要买一张机票')
+countlist_answer.append('帮我订一张')
+countlist_answer.append('预订一张')
+countlist_answer.append('请帮我预订一张')
+
 countlist_answer_cut=[]
 for ans in countlist_answer:
     w_sent=''
