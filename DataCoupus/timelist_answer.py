@@ -30,6 +30,22 @@ timelist_answer.append('订购明天的机票。')
 timelist_answer.append('出行时间应该是明天。')
 timelist_answer.append('于明天出行。')
 timelist_answer.append('在明天走。')
+
+timelist_answer.append('明天出发')
+timelist_answer.append('明天走')
+timelist_answer.append('出发时间明天')
+timelist_answer.append('时间明天')
+timelist_answer.append('我打算明天出发')
+timelist_answer.append('我想明天出发')
+timelist_answer.append('明天出发的票')
+timelist_answer.append('明天出发的机票')
+timelist_answer.append('明天走的票')
+timelist_answer.append('明天走的机票')
+timelist_answer.append('明天的机票')
+timelist_answer.append('明天的票')
+
+
+
 timelist_answer_cut=[]
 for ans in timelist_answer:
     w_sent=''
