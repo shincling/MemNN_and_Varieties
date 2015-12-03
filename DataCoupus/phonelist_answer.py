@@ -30,6 +30,18 @@ phonelist_answer.append('是秘密。')
 phonelist_answer.append('电话号码是秘密。')
 phonelist_answer.append('我的电话号是秘密。')
 
+phonelist_answer.append('我的电话号码是秘密')
+phonelist_answer.append('秘密')
+phonelist_answer.append('号码是秘密')
+phonelist_answer.append('你记一下，秘密')
+phonelist_answer.append('我的电话是秘密')
+phonelist_answer.append('我的电话秘密')
+phonelist_answer.append('电话秘密')
+phonelist_answer.append('你记一下我的号码秘密')
+phonelist_answer.append('请记一下我的电话号码秘密')
+phonelist_answer.append('秘密，这是我的号码')
+phonelist_answer.append('秘密，我的号码')
+
 phonelist_answer_cut=[]
 for ans in phonelist_answer:
     w_sent=''
