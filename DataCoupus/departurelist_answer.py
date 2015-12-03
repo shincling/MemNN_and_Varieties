@@ -37,6 +37,22 @@ departurelist_answer.append('出发地是北京。')
 departurelist_answer.append('帮我预订北京的机票。')
 departurelist_answer.append('出行地点是北京。')
 departurelist_answer.append('订从北京走的机票。')
+
+departurelist_answer.append('北京')
+departurelist_answer.append('我从北京出发')
+departurelist_answer.append('出发地是北京')
+departurelist_answer.append('我的出发地是北京')
+departurelist_answer.append('我准备从北京出发')
+departurelist_answer.append('我打算从北京出发')
+departurelist_answer.append('我计划从北京出发')
+departurelist_answer.append('我可能从北京出发')
+departurelist_answer.append('从北京出发')
+departurelist_answer.append('从北京走')
+departurelist_answer.append('打算从北京走')
+departurelist_answer.append('打算从北京出发')
+departurelist_answer.append('准备从北京走')
+departurelist_answer.append('准备从北京出发')
+
 departurelist_answer_cut=[]
 
 for ans in departurelist_answer:
