@@ -61,24 +61,26 @@ locationDict=['纽约','伦敦','东京','巴黎','香港','新加坡','悉尼',
 
 #dayDict=['一号','二号','两号','三号','四号','五号','六号','七号','八号','九号','十号','十一''''''''''''''''''''''''''''''''''''''''''''''''']
 
-def namePart(f,ind):
+def namePart(f,ind,random_sentence,random_name):
 
-    fullname=random.choice(familyName)+random.choice(lastName)
+    if random_name:
+        fullname=random.choice(familyName)+random.choice(lastName)
+    else:
+        fullname='周涛'
 
-    #f.write('%d%s'%(ind+1,random.choice(namelist_question_cut).encode('utf8')))
-    f.write('%d%s'%(ind+1,namelist_question_cut[0].encode('utf8')))
+    if random_sentence:
+        sentence=random.choice(namelist_question_cut)
+    else:
+        sentence=namelist_question_cut[0]
+    f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence.encode('utf8'),ind))
+
+    f.write('%d%s'%(ind+2,sentence.encode('utf8')))
+    #f.write('%d%s'%(ind+1,namelist_question_cut[0].encode('utf8')))
     ans_sent=random.choice(namelist_answer_cut).replace('[slot_name]',fullname.decode('utf8'))
-    f.write('%d%s'%(ind+2,ans_sent.encode('utf8')))
+    f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
 
-    f.write('%d count ?\tnil\t%d\n'%(ind+3,ind+2))
-    f.write('%d name ?\t%s\t%d\n'%(ind+4,fullname,ind+2))
-    f.write('%d destination ?\tnil\t%d\n'%(ind+5,ind+2))
-    f.write('%d departure ?\tnil\t%d\n'%(ind+6,ind+2))
-    f.write('%d idnumber ?\tnil\t%d\n'%(ind+7,ind+2))
-    f.write('%d time ?\tnil\t%d\n'%(ind+8,ind+2))
-    f.write('%d phone ?\tnil\t%d\n'%(ind+9,ind+2))
 
-    ind=ind+9
+    ind=ind+3
     return f,ind
 
 def countPart(f,ind):
@@ -223,12 +225,13 @@ orderlist=[0,1,2,3,4,5,6]
 
 
 for story_ind in range(storyNumber):
-    random.shuffle(orderlist)
+    #random.shuffle(orderlist)
     line_ind=1
     '''---------------greeting--------------'''
 
     fw.write('%d 您好 ， 机票 预订 中心 ， 需要 我 为 你 做些 什么 ？\n'%(line_ind))
     line_ind+=1
+    '''
     fw.write('%d 我 想 预订 机票 。\n'%line_ind)
     fw.write('%d count ?	nil	%d\n'%(line_ind+1,line_ind))
     fw.write('%d name ?	nil	%d\n'%(line_ind+2,line_ind))
@@ -237,8 +240,9 @@ for story_ind in range(storyNumber):
     fw.write('%d idnumber ?	nil	%d\n'%(line_ind+5,line_ind))
     fw.write('%d time ?	nil	%d\n'%(line_ind+6,line_ind))
     fw.write('%d phone ?	nil	%d\n'%(line_ind+7,line_ind))
-
-    line_ind=9
+    '''
+    fw.write('%d next ?\n'%line_ind)
+    line_ind=3
 
 
 
@@ -271,6 +275,7 @@ for story_ind in range(storyNumber):
     fw.write('%d 已经 为 您 预订 完毕 。\n'%(line_ind+1))
     line_ind+=1
     fw.write('%d 非常 谢谢 。\n'%line_ind)
+    '''
     fw.write('%d count ?	nil	%d\n'%(line_ind+2,line_ind))
     fw.write('%d name ?	nil	%d\n'%(line_ind+3,line_ind))
     fw.write('%d destination ?	nil	%d\n'%(line_ind+4,line_ind))
@@ -278,7 +283,7 @@ for story_ind in range(storyNumber):
     fw.write('%d idnumber ?	nil	%d\n'%(line_ind+6,line_ind))
     fw.write('%d time ?	nil	%d\n'%(line_ind+7,line_ind))
     fw.write('%d phone ?	nil	%d\n'%(line_ind+8,line_ind))
-
+    '''
 
 
 
