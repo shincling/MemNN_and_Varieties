@@ -309,9 +309,10 @@ for story_ind in range(storyNumber):
             fw,line_ind=phonePart(fw,line_ind,1,0,0)
             continue
 
-
-    fw.write('%d 已经 为 您 预订 完毕 。\n'%(line_ind+1))
+    fw.write('%d next ?\t%s\t%d\n'%(line_ind+1,'已经 为 您 预订 完毕 。',line_ind))
     line_ind+=1
+    fw.write('%d 已经 为 您 预订 完毕 。\n'%(line_ind+1))
+    line_ind+=2
     fw.write('%d 非常 谢谢 。\n'%line_ind)
     '''
     fw.write('%d count ?	nil	%d\n'%(line_ind+2,line_ind))
