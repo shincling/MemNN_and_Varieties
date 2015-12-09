@@ -76,35 +76,34 @@ def namePart(f,ind,random_sentence,random_name):
 
     f.write('%d%s'%(ind+2,sentence.encode('utf8')))
     #f.write('%d%s'%(ind+1,namelist_question_cut[0].encode('utf8')))
-    ans_sent=random.choice(namelist_answer_cut).replace('[slot_name]',fullname.decode('utf8'))
+    ans_sent=sentence.replace('[slot_name]',fullname.decode('utf8'))
     f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
 
 
     ind=ind+3
     return f,ind
 
-def countPart(f,ind):
+def countPart(f,ind,random_sentence,random_count):
+    if random_count:
+        rand_or_rule=random.randint(0,1)#0的时候规则，1的时候随机
+        if rand_or_rule:
+            fullcount=str(random.randint(0,66666))+'张'
+        else :
+            fullcount=random.choice(countDict)
+    else:
+        fullcount='一张'
 
-    #f.write('%d%s'%(ind+1,random.choice(countlist_question_cut).encode('utf8')))
-    f.write('%d%s'%(ind+1,countlist_question_cut[0].encode('utf8')))
+    if random_sentence:
+        sentence=random.choice(countlist_question_cut)
+    else:
+        sentence=countlist_question_cut[0]
+    f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence.encode('utf8'),ind))
+    f.write('%d%s'%(ind+2,sentence.encode('utf8')))
 
-    rand_or_rule=random.randint(0,1)#0的时候规则，1的时候随机
-    if rand_or_rule:
-        fullcount=str(random.randint(0,66666))+'张'
-    else :
-        fullcount=random.choice(countDict)
-    ans_sent=random.choice(countlist_answer_cut).replace('[slot_count]',fullcount.decode('utf8'))
-    f.write('%d%s'%(ind+2,ans_sent.encode('utf8')))
+    ans_sent=sentence.replace('[slot_count]',fullcount.decode('utf8'))
+    f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
 
-    f.write('%d count ?\t%s\t%d\n'%(ind+3,fullcount,ind+2))
-    f.write('%d name ?\tnil\t%d\n'%(ind+4,ind+2))
-    f.write('%d destination ?\tnil\t%d\n'%(ind+5,ind+2))
-    f.write('%d departure ?\tnil\t%d\n'%(ind+6,ind+2))
-    f.write('%d idnumber ?\tnil\t%d\n'%(ind+7,ind+2))
-    f.write('%d time ?\tnil\t%d\n'%(ind+8,ind+2))
-    f.write('%d phone ?\tnil\t%d\n'%(ind+9,ind+2))
-
-    ind=ind+9
+    ind=ind+3
     return f,ind
 
 
@@ -231,8 +230,9 @@ for story_ind in range(storyNumber):
 
     fw.write('%d 您好 ， 机票 预订 中心 ， 需要 我 为 你 做些 什么 ？\n'%(line_ind))
     line_ind+=1
-    '''
+
     fw.write('%d 我 想 预订 机票 。\n'%line_ind)
+    '''
     fw.write('%d count ?	nil	%d\n'%(line_ind+1,line_ind))
     fw.write('%d name ?	nil	%d\n'%(line_ind+2,line_ind))
     fw.write('%d destination ?	nil	%d\n'%(line_ind+3,line_ind))
@@ -241,8 +241,8 @@ for story_ind in range(storyNumber):
     fw.write('%d time ?	nil	%d\n'%(line_ind+6,line_ind))
     fw.write('%d phone ?	nil	%d\n'%(line_ind+7,line_ind))
     '''
-    fw.write('%d next ?\n'%line_ind)
-    line_ind=3
+
+    line_ind=2
 
 
 
@@ -250,7 +250,7 @@ for story_ind in range(storyNumber):
 
     for i in orderlist:
         if i==0:
-            fw,line_ind=namePart(fw,line_ind)
+            fw,line_ind=namePart(fw,line_ind,1,0)
             continue
         if i==1:
             fw,line_ind=countPart(fw,line_ind)
