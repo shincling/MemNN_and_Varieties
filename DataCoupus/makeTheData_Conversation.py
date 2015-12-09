@@ -61,7 +61,7 @@ locationDict=['纽约','伦敦','东京','巴黎','香港','新加坡','悉尼',
 
 #dayDict=['一号','二号','两号','三号','四号','五号','六号','七号','八号','九号','十号','十一''''''''''''''''''''''''''''''''''''''''''''''''']
 
-def namePart(f,ind,random_sentence,random_name):
+def namePart(f,ind,random_sentence,random_name,random_answer):
 
     if random_name:
         fullname=random.choice(familyName)+random.choice(lastName)
@@ -72,18 +72,23 @@ def namePart(f,ind,random_sentence,random_name):
         sentence=random.choice(namelist_question_cut)
     else:
         sentence=namelist_question_cut[0]
-    f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence.encode('utf8'),ind))
 
-    f.write('%d%s'%(ind+2,sentence.encode('utf8')))
-    #f.write('%d%s'%(ind+1,namelist_question_cut[0].encode('utf8')))
-    ans_sent=sentence.replace('[slot_name]',fullname.decode('utf8'))
+    if random_answer:
+        answer=random.choice(namelist_answer_cut)
+    else:
+        answer=namelist_answer_cut[6]
+
+    f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8'),ind))
+    f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
+    ans_sent=answer.replace('[slot_name]',fullname.decode('utf8'))
     f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
 
 
     ind=ind+3
     return f,ind
 
-def countPart(f,ind,random_sentence,random_count):
+def countPart(f,ind,random_sentence,random_count,random_answer):
+
     if random_count:
         rand_or_rule=random.randint(0,1)#0的时候规则，1的时候随机
         if rand_or_rule:
@@ -97,39 +102,52 @@ def countPart(f,ind,random_sentence,random_count):
         sentence=random.choice(countlist_question_cut)
     else:
         sentence=countlist_question_cut[0]
-    f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence.encode('utf8'),ind))
-    f.write('%d%s'%(ind+2,sentence.encode('utf8')))
 
-    ans_sent=sentence.replace('[slot_count]',fullcount.decode('utf8'))
+    if random_answer:
+        answer=random.choice(countlist_answer_cut)
+    else:
+        answer=countlist_answer_cut[6]
+
+    f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8'),ind))
+    f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
+    ans_sent=answer.replace('[slot_count]',fullcount.decode('utf8'))
     f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
+
 
     ind=ind+3
     return f,ind
 
 
-def departurePart(f,ind):
+def departurePart(f,ind,random_sentence,random_departure,random_answer):
 
-    #f.write('%d%s'%(ind+1,random.choice(departurelist_question_cut).encode('utf8')))
-    f.write('%d%s'%(ind+1,departurelist_question_cut[0].encode('utf8')))
+    if random_departure:
+        rand_or_rule=random.randint(0,1)#0的时候规则，1的时候随机
+        if rand_or_rule:
+            fulldeparture='地方代号-'+str(random.randint(0,66666))
+        else :
+            fulldeparture=random.choice(locationDict)
+    else:
+        fulldeparture='北京'
 
-    rand_or_rule=random.randint(0,1)#0的时候规则，1的时候随机
-    if rand_or_rule:
-        fulldeparture='地方代号-'+str(random.randint(0,66666))
-    else :
-        fulldeparture=random.choice(locationDict)
-    ans_sent=random.choice(departurelist_answer_cut).replace('[slot_departure]',fulldeparture.decode('utf8'))
-    f.write('%d%s'%(ind+2,ans_sent.encode('utf8')))
+    if random_sentence:
+        sentence=random.choice(departurelist_question_cut)
+    else:
+        sentence=departurelist_question_cut[0]
 
-    f.write('%d count ?\tnil\t%d\n'%(ind+3,ind+2))
-    f.write('%d name ?\tnil\t%d\n'%(ind+4,ind+2))
-    f.write('%d destination ?\tnil\t%d\n'%(ind+5,ind+2))
-    f.write('%d departure ?\t%s\t%d\n'%(ind+6,fulldeparture,ind+2))
-    f.write('%d idnumber ?\tnil\t%d\n'%(ind+7,ind+2))
-    f.write('%d time ?\tnil\t%d\n'%(ind+8,ind+2))
-    f.write('%d phone ?\tnil\t%d\n'%(ind+9,ind+2))
+    if random_answer:
+        answer=random.choice(departurelist_answer_cut)
+    else:
+        answer=departurelist_answer_cut[6]
 
-    ind=ind+9
-    return f,ind    
+    f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8'),ind))
+    f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
+    ans_sent=answer.replace('[slot_departure]',fulldeparture.decode('utf8'))
+    f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
+
+
+    ind=ind+3
+    return f,ind
+
 
 
 def destinationPart(f,ind):
@@ -250,10 +268,10 @@ for story_ind in range(storyNumber):
 
     for i in orderlist:
         if i==0:
-            fw,line_ind=namePart(fw,line_ind,1,0)
+            fw,line_ind=namePart(fw,line_ind,1,0,0)
             continue
         if i==1:
-            fw,line_ind=countPart(fw,line_ind)
+            fw,line_ind=countPart(fw,line_ind,1,0,0)
             continue
         if i==2:
             fw,line_ind=departurePart(fw,line_ind)
