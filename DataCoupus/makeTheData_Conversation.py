@@ -150,92 +150,112 @@ def departurePart(f,ind,random_sentence,random_departure,random_answer):
 
 
 
-def destinationPart(f,ind):
+def destinationPart(f,ind,random_sentence,random_destination,random_answer):
 
-    #f.write('%d%s'%(ind+1,random.choice(destinationlist_question_cut).encode('utf8')))
-    f.write('%d%s'%(ind+1,destinationlist_question_cut[0].encode('utf8')))
+    if random_destination:
+        rand_or_rule=random.randint(0,1)#0的时候规则，1的时候随机
+        if rand_or_rule:
+            fulldestination='地方代号-'+str(random.randint(0,66666))
+        else :
+            fulldestination=random.choice(locationDict)
+    else:
+        fulldestination='上海'
 
-    rand_or_rule=random.randint(0,1)#0的时候规则，1的时候随机
-    if rand_or_rule:
-        fulldestination='地方代号-'+str(random.randint(0,66666))
-    else :
-        fulldestination=random.choice(locationDict)
-    ans_sent=random.choice(destinationlist_answer_cut).replace('[slot_destination]',fulldestination.decode('utf8'))
-    f.write('%d%s'%(ind+2,ans_sent.encode('utf8')))
+    if random_sentence:
+        sentence=random.choice(destinationlist_question_cut)
+    else:
+        sentence=destinationlist_question_cut[0]
 
-    f.write('%d count ?\tnil\t%d\n'%(ind+3,ind+2))
-    f.write('%d name ?\tnil\t%d\n'%(ind+4,ind+2))
-    f.write('%d destination ?\t%s\t%d\n'%(ind+5,fulldestination,ind+2))
-    f.write('%d departure ?\tnil\t%d\n'%(ind+6,ind+2))
-    f.write('%d idnumber ?\tnil\t%d\n'%(ind+7,ind+2))
-    f.write('%d time ?\tnil\t%d\n'%(ind+8,ind+2))
-    f.write('%d phone ?\tnil\t%d\n'%(ind+9,ind+2))
+    if random_answer:
+        answer=random.choice(destinationlist_answer_cut)
+    else:
+        answer=destinationlist_answer_cut[10]
 
-    ind=ind+9
+    f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8'),ind))
+    f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
+    ans_sent=answer.replace('[slot_destination]',fulldestination.decode('utf8'))
+    f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
+
+
+    ind=ind+3
     return f,ind
 
 
-def timePart(f,ind):
+def timePart(f,ind,random_sentence,random_time,random_answer):
 
-    #f.write('%d%s'%(ind+1,random.choice(timelist_question_cut).encode('utf8')))
-    f.write('%d%s'%(ind+1,timelist_question_cut[0].encode('utf8')))
+    if random_time:
+        delta=datetime.timedelta(days=random.randint(0,100), seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=random.randint(0,24), weeks=0)
+        timetime=datetime.datetime.now()+delta
+        fulltime=timetime.strftime('%Y年%m月%d日%H点%M分')
+    else:
+        fulltime='明天下午三点半'
 
-    delta=datetime.timedelta(days=random.randint(0,100), seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=random.randint(0,24), weeks=0)
-    timetime=datetime.datetime.now()+delta
-    fulltime=timetime.strftime('%Y年%m月%d日%H点%M分')
+    if random_sentence:
+        sentence=random.choice(timelist_question_cut)
+    else:
+        sentence=timelist_question_cut[0]
 
-    ans_sent=random.choice(timelist_answer_cut).replace('[slot_time]',fulltime.decode('utf8'))
-    f.write('%d%s'%(ind+2,ans_sent.encode('utf8')))
+    if random_answer:
+        answer=random.choice(timelist_answer_cut)
+    else:
+        answer=timelist_answer_cut[0]
 
-    f.write('%d count ?\tnil\t%d\n'%(ind+3,ind+2))
-    f.write('%d name ?\tnil\t%d\n'%(ind+4,ind+2))
-    f.write('%d destination ?\tnil\t%d\n'%(ind+5,ind+2))
-    f.write('%d departure ?\tnil\t%d\n'%(ind+6,ind+2))
-    f.write('%d idnumber ?\tnil\t%d\n'%(ind+7,ind+2))
-    f.write('%d time ?\t%s\t%d\n'%(ind+8,fulltime,ind+2))
-    f.write('%d phone ?\tnil\t%d\n'%(ind+9,ind+2))
+    f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8'),ind))
+    f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
+    ans_sent=answer.replace('[slot_time]',fulltime.decode('utf8'))
+    f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
 
-    ind=ind+9
+    ind=ind+3
     return f,ind
 
-def idnumberPart(f,ind):
+def idnumberPart(f,ind,random_sentence,random_idnumber,random_answer):
 
-    #f.write('%d%s'%(ind+1,random.choice(idnumberlist_question_cut).encode('utf8')))
-    f.write('%d%s'%(ind+1,idnumberlist_question_cut[0].encode('utf8')))
-    
-    fullidnumber=str(random.randint(1000000000000000,9999999999999999))
-    ans_sent=random.choice(idnumberlist_answer_cut).replace('[slot_idnumber]',fullidnumber.decode('utf8'))
-    f.write('%d%s'%(ind+2,ans_sent.encode('utf8')))
+    if random_idnumber:
+        fullidnumber=str(random.randint(1000000000000000,9999999999999999))
+    else:
+        fullidnumber='100110010011001111'
 
-    f.write('%d count ?\tnil\t%d\n'%(ind+3,ind+2))
-    f.write('%d name ?\tnil\t%d\n'%(ind+4,ind+2))
-    f.write('%d destination ?\tnil\t%d\n'%(ind+5,ind+2))
-    f.write('%d departure ?\tnil\t%d\n'%(ind+6,ind+2))
-    f.write('%d idnumber ?\t%s\t%d\n'%(ind+7,fullidnumber,ind+2))
-    f.write('%d time ?\tnil\t%d\n'%(ind+8,ind+2))
-    f.write('%d phone ?\tnil\t%d\n'%(ind+9,ind+2))
+    if random_sentence:
+        sentence=random.choice(idnumberlist_question_cut)
+    else:
+        sentence=idnumberlist_question_cut[0]
 
-    ind=ind+9
+    if random_answer:
+        answer=random.choice(idnumberlist_answer_cut)
+    else:
+        answer=idnumberlist_answer_cut[15]
+
+    f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8'),ind))
+    f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
+    ans_sent=answer.replace('[slot_idnumber]',fullidnumber.decode('utf8'))
+    f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
+
+    ind=ind+3
     return f,ind
 
-def phonePart(f,ind):
+def phonePart(f,ind,random_sentence,random_phone,random_answer):
 
-    #f.write('%d%s'%(ind+1,random.choice(phonelist_question_cut).encode('utf8')))
-    f.write('%d%s'%(ind+1,phonelist_question_cut[0].encode('utf8')))
-    
-    fullphone=str(random.randint(10000000000,19999999999))
-    ans_sent=random.choice(phonelist_answer_cut).replace('[slot_phone]',fullphone.decode('utf8'))
-    f.write('%d%s'%(ind+2,ans_sent.encode('utf8')))
+    if random_phone:
+        fullphone=str(random.randint(10000000000,99999999999))
+    else:
+        fullphone='13955556666'
 
-    f.write('%d count ?\tnil\t%d\n'%(ind+3,ind+2))
-    f.write('%d name ?\tnil\t%d\n'%(ind+4,ind+2))
-    f.write('%d destination ?\tnil\t%d\n'%(ind+5,ind+2))
-    f.write('%d departure ?\tnil\t%d\n'%(ind+6,ind+2))
-    f.write('%d idnumber ?\tnil\t%d\n'%(ind+7,ind+2))
-    f.write('%d time ?\tnil\t%d\n'%(ind+8,ind+2))
-    f.write('%d phone ?\t%s\t%d\n'%(ind+9,fullphone,ind+2))
+    if random_sentence:
+        sentence=random.choice(phonelist_question_cut)
+    else:
+        sentence=phonelist_question_cut[0]
 
-    ind=ind+9
+    if random_answer:
+        answer=random.choice(phonelist_answer_cut)
+    else:
+        answer=phonelist_answer_cut[15]
+
+    f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8'),ind))
+    f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
+    ans_sent=answer.replace('[slot_phone]',fullphone.decode('utf8'))
+    f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
+
+    ind=ind+3
     return f,ind
 
 orderlist=[0,1,2,3,4,5,6]
@@ -274,19 +294,19 @@ for story_ind in range(storyNumber):
             fw,line_ind=countPart(fw,line_ind,1,0,0)
             continue
         if i==2:
-            fw,line_ind=departurePart(fw,line_ind)
+            fw,line_ind=departurePart(fw,line_ind,1,0,0)
             continue
         if i==3:
-            fw,line_ind=destinationPart(fw,line_ind)
+            fw,line_ind=destinationPart(fw,line_ind,1,0,0)
             continue
         if i==4:
-            fw,line_ind=timePart(fw,line_ind)
+            fw,line_ind=timePart(fw,line_ind,1,0,0)
             continue
         if i==5:
-            fw,line_ind=idnumberPart(fw,line_ind)
+            fw,line_ind=idnumberPart(fw,line_ind,1,0,0)
             continue
         if i==6:
-            fw,line_ind=phonePart(fw,line_ind)
+            fw,line_ind=phonePart(fw,line_ind,1,0,0)
             continue
 
 
