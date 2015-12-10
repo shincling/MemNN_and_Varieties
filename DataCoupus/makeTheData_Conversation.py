@@ -78,7 +78,7 @@ def namePart(f,ind,random_sentence,random_name,random_answer):
     else:
         answer=namelist_answer_cut[6]
 
-    f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8'),ind))
+    f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
     f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
     ans_sent=answer.replace('[slot_name]',fullname.decode('utf8'))
     f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
@@ -108,7 +108,7 @@ def countPart(f,ind,random_sentence,random_count,random_answer):
     else:
         answer=countlist_answer_cut[6]
 
-    f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8'),ind))
+    f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
     f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
     ans_sent=answer.replace('[slot_count]',fullcount.decode('utf8'))
     f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
@@ -139,7 +139,7 @@ def departurePart(f,ind,random_sentence,random_departure,random_answer):
     else:
         answer=departurelist_answer_cut[6]
 
-    f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8'),ind))
+    f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
     f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
     ans_sent=answer.replace('[slot_departure]',fulldeparture.decode('utf8'))
     f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
@@ -171,7 +171,7 @@ def destinationPart(f,ind,random_sentence,random_destination,random_answer):
     else:
         answer=destinationlist_answer_cut[10]
 
-    f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8'),ind))
+    f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
     f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
     ans_sent=answer.replace('[slot_destination]',fulldestination.decode('utf8'))
     f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
@@ -200,7 +200,7 @@ def timePart(f,ind,random_sentence,random_time,random_answer):
     else:
         answer=timelist_answer_cut[0]
 
-    f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8'),ind))
+    f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
     f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
     ans_sent=answer.replace('[slot_time]',fulltime.decode('utf8'))
     f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
@@ -225,7 +225,7 @@ def idnumberPart(f,ind,random_sentence,random_idnumber,random_answer):
     else:
         answer=idnumberlist_answer_cut[15]
 
-    f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8'),ind))
+    f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
     f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
     ans_sent=answer.replace('[slot_idnumber]',fullidnumber.decode('utf8'))
     f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
@@ -250,7 +250,7 @@ def phonePart(f,ind,random_sentence,random_phone,random_answer):
     else:
         answer=phonelist_answer_cut[15]
 
-    f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8'),ind))
+    f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
     f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
     ans_sent=answer.replace('[slot_phone]',fullphone.decode('utf8'))
     f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
@@ -309,7 +309,7 @@ for story_ind in range(storyNumber):
             fw,line_ind=phonePart(fw,line_ind,1,0,0)
             continue
 
-    fw.write('%d next ?\t%s\t%d\n'%(line_ind+1,'已经 为 您 预订 完毕 。',line_ind))
+    fw.write('%d next ?\t%s\t%d\n'%(line_ind+1,'已经为您预订完毕。',line_ind))
     line_ind+=1
     fw.write('%d 已经 为 您 预订 完毕 。\n'%(line_ind+1))
     line_ind+=2
