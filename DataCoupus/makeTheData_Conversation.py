@@ -149,7 +149,6 @@ def departurePart(f,ind,random_sentence,random_departure,random_answer):
     return f,ind
 
 
-
 def destinationPart(f,ind,random_sentence,random_destination,random_answer):
 
     if random_destination:
