@@ -287,25 +287,25 @@ for story_ind in range(storyNumber):
 
     for i in orderlist:
         if i==0:
-            fw,line_ind=namePart(fw,line_ind,1,0,0)
+            fw,line_ind=namePart(fw,line_ind,1,1,0)
             continue
         if i==1:
-            fw,line_ind=countPart(fw,line_ind,1,0,0)
+            fw,line_ind=countPart(fw,line_ind,1,1,0)
             continue
         if i==2:
-            fw,line_ind=departurePart(fw,line_ind,1,0,0)
+            fw,line_ind=departurePart(fw,line_ind,1,1,0)
             continue
         if i==3:
-            fw,line_ind=destinationPart(fw,line_ind,1,0,0)
+            fw,line_ind=destinationPart(fw,line_ind,1,1,0)
             continue
         if i==4:
-            fw,line_ind=timePart(fw,line_ind,1,0,0)
+            fw,line_ind=timePart(fw,line_ind,1,1,0)
             continue
         if i==5:
-            fw,line_ind=idnumberPart(fw,line_ind,1,0,0)
+            fw,line_ind=idnumberPart(fw,line_ind,1,1,0)
             continue
         if i==6:
-            fw,line_ind=phonePart(fw,line_ind,1,0,0)
+            fw,line_ind=phonePart(fw,line_ind,1,1,0)
             continue
 
     fw.write('%d next ?\t%s\t%d\n'%(line_ind+1,'已经为您预订完毕。',line_ind))
