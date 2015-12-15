@@ -38,7 +38,7 @@ print 'phone question:%d'%len(phonelist_question_cut)
 print 'phone answer:%d\n'%len(phonelist_answer_cut)
 
 storyNumber=1000
-fw=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/ticket_shin_generation_randOrderVocAns_test.txt','w')
+fw=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/ticket_shin_test.txt','w')
 
 familyName=['号','王','李','赵','周','吴','顾','郑','何','万','黄','周','吴','徐','孙','胡','朱','高',
            '林','何','郭','马','罗','梁','宋','谢','韩','唐','冯','于','董','萧','程','曹','袁','邓',
@@ -92,7 +92,7 @@ def namePart(f,ind,random_sentence,random_name,random_answer,chatTag):
         f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
         f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
         ind=ind+2
-        f,ind=chatting(f,ind,0)
+        f,ind=chatting(f,ind)
 
         f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
         f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
@@ -125,13 +125,26 @@ def countPart(f,ind,random_sentence,random_count,random_answer,chatTag):
     else:
         answer=countlist_answer_cut[6]
 
-    f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
-    f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
-    ans_sent=answer.replace('[slot_count]',fullcount.decode('utf8'))
-    f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
+    if chatTag==0:
+        f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
+        f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
+        ans_sent=answer.replace('[slot_count]',fullcount.decode('utf8'))
+        f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
+        ind=ind+3
+    else:
+        f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
+        f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
+        ind=ind+2
+        f,ind=chatting(f,ind)
+
+        f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
+        f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
+        ans_sent=answer.replace('[slot_count]',fullcount.decode('utf8'))
+        f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
+        ind=ind+3
 
 
-    ind=ind+3
+
     return f,ind
 
 
@@ -156,13 +169,26 @@ def departurePart(f,ind,random_sentence,random_departure,random_answer,chatTag):
     else:
         answer=departurelist_answer_cut[6]
 
-    f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
-    f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
-    ans_sent=answer.replace('[slot_departure]',fulldeparture.decode('utf8'))
-    f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
+    if chatTag==0:
+        f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
+        f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
+        ans_sent=answer.replace('[slot_departure]',fulldeparture.decode('utf8'))
+        f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
+        ind=ind+3
+    else:
+        f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
+        f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
+        ind=ind+2
+        f,ind=chatting(f,ind)
+
+        f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
+        f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
+        ans_sent=answer.replace('[slot_departure]',fulldeparture.decode('utf8'))
+        f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
+        ind=ind+3
 
 
-    ind=ind+3
+
     return f,ind
 
 
@@ -276,11 +302,11 @@ def phonePart(f,ind,random_sentence,random_phone,random_answer,chatTag):
 
 
 
-def chatting(f,ind,random_sentence):
+def chatting(f,ind,random_sentence=0):
     if random_sentence:
         sentence=random.choice(chatlist_answer_cut)
     else:
-        sentnce=chatlist_answer_cut[0]
+        sentence=chatlist_answer_cut[0]
     f.write('%d%s'%(ind+1,sentence.encode('utf8').replace('?','？')))
     ind=ind+1
     return f,ind
@@ -295,6 +321,7 @@ orderlist=[0,1,2,3,4,5,6]
 
 for story_ind in range(storyNumber):
     chatPos=random.choice(orderlist)
+    #chatPos=0
     chatTag=[]
     for i in range(7):
         if i==chatPos:
@@ -328,25 +355,25 @@ for story_ind in range(storyNumber):
 
     for i in orderlist:
         if i==0:
-            fw,line_ind=namePart(fw,line_ind,1,1,1)
+            fw,line_ind=namePart(fw,line_ind,1,1,1,chatTag[0])
             continue
         if i==1:
-            fw,line_ind=countPart(fw,line_ind,1,1,1)
+            fw,line_ind=countPart(fw,line_ind,1,1,1,chatTag[1])
             continue
         if i==2:
-            fw,line_ind=departurePart(fw,line_ind,1,1,1)
+            fw,line_ind=departurePart(fw,line_ind,1,1,1,chatTag[2])
             continue
         if i==3:
-            fw,line_ind=destinationPart(fw,line_ind,1,1,1)
+            fw,line_ind=destinationPart(fw,line_ind,1,1,1,chatTag[3])
             continue
         if i==4:
-            fw,line_ind=timePart(fw,line_ind,1,1,1)
+            fw,line_ind=timePart(fw,line_ind,1,1,1,chatTag[4])
             continue
         if i==5:
-            fw,line_ind=idnumberPart(fw,line_ind,1,1,1)
+            fw,line_ind=idnumberPart(fw,line_ind,1,1,1,chatTag[5])
             continue
         if i==6:
-            fw,line_ind=phonePart(fw,line_ind,1,1,1)
+            fw,line_ind=phonePart(fw,line_ind,1,1,1,chatTag[6])
             continue
 
     fw.write('%d next ?\t%s\t%d\n'%(line_ind+1,'已经为您预订完毕。',line_ind))
