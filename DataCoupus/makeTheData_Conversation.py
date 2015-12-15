@@ -18,6 +18,7 @@ from list_document.idnumberlist_question import idnumberlist_question_cut
 from list_document.idnumberlist_answer import idnumberlist_answer_cut
 from list_document.phonelist_question import phonelist_question_cut
 from list_document.phonelist_answer import phonelist_answer_cut
+from list_document.chatlist_answer import chatlist_answer_cut
 
 
 
@@ -60,11 +61,11 @@ locationDict=['纽约','伦敦','东京','巴黎','香港','新加坡','悉尼',
               '爱丁堡','圣彼得堡.','圣迭戈','伊斯兰堡','伯明翰','多哈','阿拉木图','卡尔加里']
 
 #dayDict=['一号','二号','两号','三号','四号','五号','六号','七号','八号','九号','十号','十一''''''''''''''''''''''''''''''''''''''''''''''''']
-chatDict=['稍等，让我想想。']
 
 
 
-def namePart(f,ind,random_sentence,random_name,random_answer):
+
+def namePart(f,ind,random_sentence,random_name,random_answer,chatTag):
 
     if random_name:
         fullname=random.choice(familyName)+random.choice(lastName)
@@ -81,16 +82,29 @@ def namePart(f,ind,random_sentence,random_name,random_answer):
     else:
         answer=namelist_answer_cut[6]
 
-    f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
-    f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
-    ans_sent=answer.replace('[slot_name]',fullname.decode('utf8'))
-    f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
+    if chatTag==0:
+        f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
+        f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
+        ans_sent=answer.replace('[slot_name]',fullname.decode('utf8'))
+        f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
+        ind=ind+3
+    else:
+        f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
+        f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
+        ind=ind+2
+        f,ind=chatting(f,ind,0)
+
+        f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
+        f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
+        ans_sent=answer.replace('[slot_name]',fullname.decode('utf8'))
+        f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
+        ind=ind+3
 
 
-    ind=ind+3
+
     return f,ind
 
-def countPart(f,ind,random_sentence,random_count,random_answer):
+def countPart(f,ind,random_sentence,random_count,random_answer,chatTag):
 
     if random_count:
         rand_or_rule=random.randint(0,1)#0的时候规则，1的时候随机
@@ -121,7 +135,7 @@ def countPart(f,ind,random_sentence,random_count,random_answer):
     return f,ind
 
 
-def departurePart(f,ind,random_sentence,random_departure,random_answer):
+def departurePart(f,ind,random_sentence,random_departure,random_answer,chatTag):
 
     if random_departure:
         rand_or_rule=random.randint(0,1)#0的时候规则，1的时候随机
@@ -152,7 +166,7 @@ def departurePart(f,ind,random_sentence,random_departure,random_answer):
     return f,ind
 
 
-def destinationPart(f,ind,random_sentence,random_destination,random_answer):
+def destinationPart(f,ind,random_sentence,random_destination,random_answer,chatTag):
 
     if random_destination:
         rand_or_rule=random.randint(0,1)#0的时候规则，1的时候随机
@@ -183,7 +197,7 @@ def destinationPart(f,ind,random_sentence,random_destination,random_answer):
     return f,ind
 
 
-def timePart(f,ind,random_sentence,random_time,random_answer):
+def timePart(f,ind,random_sentence,random_time,random_answer,chatTag):
 
     if random_time:
         delta=datetime.timedelta(days=random.randint(0,100), seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=random.randint(0,24), weeks=0)
@@ -210,7 +224,7 @@ def timePart(f,ind,random_sentence,random_time,random_answer):
     ind=ind+3
     return f,ind
 
-def idnumberPart(f,ind,random_sentence,random_idnumber,random_answer):
+def idnumberPart(f,ind,random_sentence,random_idnumber,random_answer,chatTag):
 
     if random_idnumber:
         fullidnumber=str(random.randint(1000000000000000,9999999999999999))
@@ -235,7 +249,7 @@ def idnumberPart(f,ind,random_sentence,random_idnumber,random_answer):
     ind=ind+3
     return f,ind
 
-def phonePart(f,ind,random_sentence,random_phone,random_answer):
+def phonePart(f,ind,random_sentence,random_phone,random_answer,chatTag):
 
     if random_phone:
         fullphone=str(random.randint(10000000000,99999999999))
@@ -260,11 +274,17 @@ def phonePart(f,ind,random_sentence,random_phone,random_answer):
     ind=ind+3
     return f,ind
 
+
+
 def chatting(f,ind,random_sentence):
     if random_sentence:
-        sentence=random.choice(chatDict)
+        sentence=random.choice(chatlist_answer_cut)
     else:
-        sentnce=chatDict[0]
+        sentnce=chatlist_answer_cut[0]
+    f.write('%d%s'%(ind+1,sentence.encode('utf8').replace('?','？')))
+    ind=ind+1
+    return f,ind
+
 
 
 
@@ -272,7 +292,16 @@ def chatting(f,ind,random_sentence):
 orderlist=[0,1,2,3,4,5,6]
 
 
+
 for story_ind in range(storyNumber):
+    chatPos=random.choice(orderlist)
+    chatTag=[]
+    for i in range(7):
+        if i==chatPos:
+            chatTag.append(1)
+        else:
+            chatTag.append(0)
+
     random.shuffle(orderlist)
     line_ind=1
     '''---------------greeting--------------'''
