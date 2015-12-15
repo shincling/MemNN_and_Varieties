@@ -38,7 +38,7 @@ print 'phone question:%d'%len(phonelist_question_cut)
 print 'phone answer:%d\n'%len(phonelist_answer_cut)
 
 storyNumber=1000
-fw=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/ticket_randOrder_slot_train.txt','w')
+fw=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/ticket_randOrder_slot_test.txt','w')
 
 familyName=['号','王','李','赵','周','吴','顾','郑','何','万','黄','周','吴','徐','孙','胡','朱','高',
            '林','何','郭','马','罗','梁','宋','谢','韩','唐','冯','于','董','萧','程','曹','袁','邓',
@@ -65,7 +65,7 @@ locationDict=['纽约','伦敦','东京','巴黎','香港','新加坡','悉尼',
 
 
 
-def namePart(f,ind,random_sentence,random_name,random_answer,chatTag):
+def namePart(f,ind,random_sentence,random_name,random_answer,chatTag=0):
 
     if random_name:
         fullname=random.choice(familyName)+random.choice(lastName)
@@ -104,7 +104,7 @@ def namePart(f,ind,random_sentence,random_name,random_answer,chatTag):
 
     return f,ind
 
-def countPart(f,ind,random_sentence,random_count,random_answer,chatTag):
+def countPart(f,ind,random_sentence,random_count,random_answer,chatTag=0):
 
     if random_count:
         rand_or_rule=random.randint(0,1)#0的时候规则，1的时候随机
@@ -148,7 +148,7 @@ def countPart(f,ind,random_sentence,random_count,random_answer,chatTag):
     return f,ind
 
 
-def departurePart(f,ind,random_sentence,random_departure,random_answer,chatTag):
+def departurePart(f,ind,random_sentence,random_departure,random_answer,chatTag=0):
 
     if random_departure:
         rand_or_rule=random.randint(0,1)#0的时候规则，1的时候随机
@@ -193,7 +193,7 @@ def departurePart(f,ind,random_sentence,random_departure,random_answer,chatTag):
     return f,ind
 
 
-def destinationPart(f,ind,random_sentence,random_destination,random_answer,chatTag):
+def destinationPart(f,ind,random_sentence,random_destination,random_answer,chatTag=0):
 
     if random_destination:
         rand_or_rule=random.randint(0,1)#0的时候规则，1的时候随机
@@ -237,7 +237,7 @@ def destinationPart(f,ind,random_sentence,random_destination,random_answer,chatT
     return f,ind
 
 
-def timePart(f,ind,random_sentence,random_time,random_answer,chatTag):
+def timePart(f,ind,random_sentence,random_time,random_answer,chatTag=0):
 
     if random_time:
         delta=datetime.timedelta(days=random.randint(0,100), seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=random.randint(0,24), weeks=0)
@@ -278,7 +278,7 @@ def timePart(f,ind,random_sentence,random_time,random_answer,chatTag):
 
     return f,ind
 
-def idnumberPart(f,ind,random_sentence,random_idnumber,random_answer,chatTag):
+def idnumberPart(f,ind,random_sentence,random_idnumber,random_answer,chatTag=0):
 
     if random_idnumber:
         fullidnumber=str(random.randint(1000000000000000,9999999999999999))
@@ -315,7 +315,7 @@ def idnumberPart(f,ind,random_sentence,random_idnumber,random_answer,chatTag):
 
     return f,ind
 
-def phonePart(f,ind,random_sentence,random_phone,random_answer,chatTag):
+def phonePart(f,ind,random_sentence,random_phone,random_answer,chatTag=0):
 
     if random_phone:
         fullphone=str(random.randint(10000000000,99999999999))
@@ -413,37 +413,37 @@ for story_ind in range(storyNumber):
 
 
         if i==0:
-            fw,line_ind=namePart(fw,line_ind,1,0,0,chatTag[0])
+            fw,line_ind=namePart(fw,line_ind,1,0,0)
             fw.write('%d %s\n'%((line_ind+1),slotStatus))
             line_ind+=1
             continue
         if i==1:
-            fw,line_ind=countPart(fw,line_ind,1,0,0,chatTag[1])
+            fw,line_ind=countPart(fw,line_ind,1,0,0)
             fw.write('%d %s\n'%((line_ind+1),slotStatus))
             line_ind+=1
             continue
         if i==2:
-            fw,line_ind=departurePart(fw,line_ind,1,0,0,chatTag[2])
+            fw,line_ind=departurePart(fw,line_ind,1,0,0)
             fw.write('%d %s\n'%((line_ind+1),slotStatus))
             line_ind+=1
             continue
         if i==3:
-            fw,line_ind=destinationPart(fw,line_ind,1,0,0,chatTag[3])
+            fw,line_ind=destinationPart(fw,line_ind,1,0,0)
             fw.write('%d %s\n'%((line_ind+1),slotStatus))
             line_ind+=1
             continue
         if i==4:
-            fw,line_ind=timePart(fw,line_ind,1,0,0,chatTag[4])
+            fw,line_ind=timePart(fw,line_ind,1,0,0)
             fw.write('%d %s\n'%((line_ind+1),slotStatus))
             line_ind+=1
             continue
         if i==5:
-            fw,line_ind=idnumberPart(fw,line_ind,1,0,0,chatTag[5])
+            fw,line_ind=idnumberPart(fw,line_ind,1,0,0)
             fw.write('%d %s\n'%((line_ind+1),slotStatus))
             line_ind+=1
             continue
         if i==6:
-            fw,line_ind=phonePart(fw,line_ind,1,0,0,chatTag[6])
+            fw,line_ind=phonePart(fw,line_ind,1,0,0)
             fw.write('%d %s\n'%((line_ind+1),slotStatus))
             line_ind+=1
             continue
