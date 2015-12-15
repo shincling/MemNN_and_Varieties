@@ -38,7 +38,7 @@ print 'phone question:%d'%len(phonelist_question_cut)
 print 'phone answer:%d\n'%len(phonelist_answer_cut)
 
 storyNumber=1000
-fw=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/ticket_shin_test.txt','w')
+fw=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/ticket_randOrderVoc_chat_test.txt','w')
 
 familyName=['号','王','李','赵','周','吴','顾','郑','何','万','黄','周','吴','徐','孙','胡','朱','高',
            '林','何','郭','马','罗','梁','宋','谢','韩','唐','冯','于','董','萧','程','曹','袁','邓',
@@ -379,7 +379,7 @@ for story_ind in range(storyNumber):
         else:
             chatTag.append(0)
 
-    #random.shuffle(orderlist)
+    random.shuffle(orderlist)
     line_ind=1
     '''---------------greeting--------------'''
 
@@ -405,25 +405,25 @@ for story_ind in range(storyNumber):
 
     for i in orderlist:
         if i==0:
-            fw,line_ind=namePart(fw,line_ind,1,1,1,chatTag[0])
+            fw,line_ind=namePart(fw,line_ind,1,1,0,chatTag[0])
             continue
         if i==1:
-            fw,line_ind=countPart(fw,line_ind,1,1,1,chatTag[1])
+            fw,line_ind=countPart(fw,line_ind,1,1,0,chatTag[1])
             continue
         if i==2:
-            fw,line_ind=departurePart(fw,line_ind,1,1,1,chatTag[2])
+            fw,line_ind=departurePart(fw,line_ind,1,1,0,chatTag[2])
             continue
         if i==3:
-            fw,line_ind=destinationPart(fw,line_ind,1,1,1,chatTag[3])
+            fw,line_ind=destinationPart(fw,line_ind,1,1,0,chatTag[3])
             continue
         if i==4:
-            fw,line_ind=timePart(fw,line_ind,1,1,1,chatTag[4])
+            fw,line_ind=timePart(fw,line_ind,1,1,0,chatTag[4])
             continue
         if i==5:
-            fw,line_ind=idnumberPart(fw,line_ind,1,1,1,chatTag[5])
+            fw,line_ind=idnumberPart(fw,line_ind,1,1,0,chatTag[5])
             continue
         if i==6:
-            fw,line_ind=phonePart(fw,line_ind,1,1,1,chatTag[6])
+            fw,line_ind=phonePart(fw,line_ind,1,1,0,chatTag[6])
             continue
 
     fw.write('%d next ?\t%s\t%d\n'%(line_ind+1,'已经为您预订完毕。',line_ind))
