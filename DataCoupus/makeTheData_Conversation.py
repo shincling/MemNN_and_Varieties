@@ -60,6 +60,9 @@ locationDict=['纽约','伦敦','东京','巴黎','香港','新加坡','悉尼',
               '爱丁堡','圣彼得堡.','圣迭戈','伊斯兰堡','伯明翰','多哈','阿拉木图','卡尔加里']
 
 #dayDict=['一号','二号','两号','三号','四号','五号','六号','七号','八号','九号','十号','十一''''''''''''''''''''''''''''''''''''''''''''''''']
+chatDict=['稍等，让我想想。']
+
+
 
 def namePart(f,ind,random_sentence,random_name,random_answer):
 
@@ -256,6 +259,15 @@ def phonePart(f,ind,random_sentence,random_phone,random_answer):
 
     ind=ind+3
     return f,ind
+
+def chatting(f,ind,random_sentence):
+    if random_sentence:
+        sentence=random.choice(chatDict)
+    else:
+        sentnce=chatDict[0]
+
+
+
 
 orderlist=[0,1,2,3,4,5,6]
 
