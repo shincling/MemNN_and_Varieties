@@ -213,13 +213,26 @@ def destinationPart(f,ind,random_sentence,random_destination,random_answer,chatT
     else:
         answer=destinationlist_answer_cut[10]
 
-    f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
-    f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
-    ans_sent=answer.replace('[slot_destination]',fulldestination.decode('utf8'))
-    f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
+    if chatTag==0:
+        f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
+        f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
+        ans_sent=answer.replace('[slot_destination]',fulldestination.decode('utf8'))
+        f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
+        ind=ind+3
+    else:
+        f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
+        f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
+        ind=ind+2
+        f,ind=chatting(f,ind)
+
+        f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
+        f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
+        ans_sent=answer.replace('[slot_destination]',fulldestination.decode('utf8'))
+        f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
+        ind=ind+3
 
 
-    ind=ind+3
+
     return f,ind
 
 
@@ -242,12 +255,26 @@ def timePart(f,ind,random_sentence,random_time,random_answer,chatTag):
     else:
         answer=timelist_answer_cut[0]
 
-    f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
-    f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
-    ans_sent=answer.replace('[slot_time]',fulltime.decode('utf8'))
-    f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
+    if chatTag==0:
+        f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
+        f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
+        ans_sent=answer.replace('[slot_time]',fulltime.decode('utf8'))
+        f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
+        ind=ind+3
+    else:
+        f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
+        f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
+        ind=ind+2
+        f,ind=chatting(f,ind)
 
-    ind=ind+3
+
+        f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
+        f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
+        ans_sent=answer.replace('[slot_time]',fulltime.decode('utf8'))
+        f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
+        ind=ind+3
+
+
     return f,ind
 
 def idnumberPart(f,ind,random_sentence,random_idnumber,random_answer,chatTag):
@@ -267,12 +294,24 @@ def idnumberPart(f,ind,random_sentence,random_idnumber,random_answer,chatTag):
     else:
         answer=idnumberlist_answer_cut[15]
 
-    f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
-    f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
-    ans_sent=answer.replace('[slot_idnumber]',fullidnumber.decode('utf8'))
-    f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
+    if chatTag==0:
+        f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
+        f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
+        ans_sent=answer.replace('[slot_idnumber]',fullidnumber.decode('utf8'))
+        f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
+        ind=ind+3
+    else:
+        f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
+        f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
+        ind=ind+2
+        f,ind=chatting(f,ind)
+        f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
+        f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
+        ans_sent=answer.replace('[slot_idnumber]',fullidnumber.decode('utf8'))
+        f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
+        ind=ind+3
 
-    ind=ind+3
+
     return f,ind
 
 def phonePart(f,ind,random_sentence,random_phone,random_answer,chatTag):
@@ -292,12 +331,23 @@ def phonePart(f,ind,random_sentence,random_phone,random_answer,chatTag):
     else:
         answer=phonelist_answer_cut[15]
 
-    f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
-    f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
-    ans_sent=answer.replace('[slot_phone]',fullphone.decode('utf8'))
-    f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
+    if chatTag==0:
+        f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
+        f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
+        ans_sent=answer.replace('[slot_phone]',fullphone.decode('utf8'))
+        f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
+        ind=ind+3
+    else:
+        f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
+        f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
+        ind=ind+2
+        f,ind=chatting(f,ind)
+        f.write('%d next ?\t%s\t%d\n'%(ind+1,sentence[:-1].encode('utf8').replace(' ',''),ind))
+        f.write('%d%s'%(ind+2,sentence.encode('utf8').replace('?','？')))
+        ans_sent=answer.replace('[slot_phone]',fullphone.decode('utf8'))
+        f.write('%d%s'%(ind+3,ans_sent.encode('utf8')))
+        ind=ind+3
 
-    ind=ind+3
     return f,ind
 
 
@@ -329,7 +379,7 @@ for story_ind in range(storyNumber):
         else:
             chatTag.append(0)
 
-    random.shuffle(orderlist)
+    #random.shuffle(orderlist)
     line_ind=1
     '''---------------greeting--------------'''
 
