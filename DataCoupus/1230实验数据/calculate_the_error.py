@@ -240,10 +240,11 @@ totallist.extend(destinationlist)
 totallist.extend(timelist)
 totallist.extend(idnumberlist)
 totallist.extend(phonelist)
+totallist.append('已经为您预订完毕。')
 
 f=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/ccc1','r')
 out=f.read()
-out=out.split('\n')[:-1]
+out=out.split('\r\n')[:-1]
 ff=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa28_ticket_randOrder_ANS_slot_test.txt','r')
 storys=ff.read().split('谢谢 。\n1 ')
 one_story_list=[]
@@ -261,8 +262,9 @@ for i,one_story in enumerate(one_story_list):
     next_target=re.findall(r'next \?\t(.+?)\t',one_story)
     assert len(status_target)==8
     assert len(next_target)==8
-    rest_list=[]
+
     for j in range(8):
+        rest_list=['已经为您预订完毕。']
         if this_out[2*j]==status_target[j]:
             total_status+=1
 
@@ -282,8 +284,13 @@ for i,one_story in enumerate(one_story_list):
             rest_list.extend(phonelist)
 
 
-
+        # print this_out[2*j+1]
         if this_out[2*j+1] in rest_list:
+            if j==6:
+                print 'answer:'+this_out[2*j+1]
+                print 'target:'+rest_list[1]
+                print '\n'
+
             total_next+=1
         elif this_out[2*j+1] not in totallist:
             print 'The story%d the question %d exists error.'%(i,j)
