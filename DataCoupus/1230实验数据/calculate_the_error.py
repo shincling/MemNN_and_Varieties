@@ -23,13 +23,24 @@ totallist.extend(phonelist)
 
 f=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/一起的数据.txt','r')
 out=f.read()
-out.split('\t')
+out=out.split('\t')
 ff=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa28_ticket_randOrder_ANS_slot_test.txt','r')
 storys=ff.read().split('谢谢 。\n1 ')
 one_story_list=[]
 one_story_list.append(storys[0])
 for i in range(1,len(storys)):
     one_story_list.append('1 '+storys[i])
-assert one_story_list==1000
+assert len(one_story_list)==1000
+
+total_status=0
+for i,one_story in enumerate(one_story_list):
+    this_out=out[16*i:16*i+16]
+    status_target=re.findall('status \?\t(\d+?)\n',one_story)
+    next_target=re.findall(r'next \?\t(.+?)\t',one_story)
+    assert len(status_target)==8
+    assert len(next_target)==8
+    for j in range(8):
+        if this_out[2*j]==status_target[j]:
+            total_status+=1
 
 pass
