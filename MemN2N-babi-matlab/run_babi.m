@@ -9,7 +9,7 @@ rng('shuffle')
 addpath nn;
 addpath memory;
 base_dir = '/home/shin/DeepLearning/数据集/Facebook QA/tasks_1-20_v1-2/en'; % path to data
-t = 25; % task ID
+t = 28; % task ID
 num_of_unknown=10;
 
 
