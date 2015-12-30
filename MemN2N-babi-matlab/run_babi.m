@@ -57,4 +57,4 @@ if linear_start
 else
     train;
 end
-test;
+test;wnage
