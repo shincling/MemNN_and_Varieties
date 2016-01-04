@@ -242,10 +242,12 @@ totallist.extend(idnumberlist)
 totallist.extend(phonelist)
 totallist.append('已经为您预订完毕。')
 
-f=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/ccc1','r')
+# f=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/ccc1','r')
+f=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa29_0104/qa29','r')
 out=f.read()
-out=out.split('\r\n')[:-1]
-ff=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa28_ticket_randOrder_ANS_slot_test.txt','r')
+out=out.split('\r\n')#[:-1]
+# ff=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa28_ticket_randOrder_ANS_slot_test.txt','r')
+ff=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa29_ticket_randOrder_withSlot_test.txt','r')
 storys=ff.read().split('谢谢 。\n1 ')
 one_story_list=[]
 one_story_list.append(storys[0])
@@ -257,6 +259,7 @@ assert len(one_story_list)==1000
 total_status=0
 total_next=0
 for i,one_story in enumerate(one_story_list):
+    print i
     this_out=out[i].split('\t')
     status_target=re.findall('status \?\t(\d+?)\n',one_story)
     next_target=re.findall(r'next \?\t(.+?)\t',one_story)
@@ -292,8 +295,10 @@ for i,one_story in enumerate(one_story_list):
                 print '\n'
 
             total_next+=1
+
         elif this_out[2*j+1] not in totallist:
             print 'The story%d the question %d exists error.'%(i,j)
+
 print 'The error of status:%f'%(1-total_status/8000.0)
 print 'The error of next sentence:%f'%(1-total_next/8000.0)
 pass
