@@ -243,11 +243,14 @@ totallist.extend(phonelist)
 totallist.append('已经为您预订完毕。')
 
 # f=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/ccc1','r')
-f=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa29_0104/qa29','r')
+# f=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa29_0104/qa29','r')
+f=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa31_0105/qa31','r')
 out=f.read()
 out=out.split('\r\n')#[:-1]
 # ff=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa28_ticket_randOrder_ANS_slot_test.txt','r')
-ff=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa29_ticket_randOrder_withSlot_test.txt','r')
+# ff=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa29_ticket_randOrder_withSlot_test.txt','r')
+ff=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa31_ticket_randOrderAnsSent_withSlot_test.txt','r')
+
 storys=ff.read().split('谢谢 。\n1 ')
 one_story_list=[]
 one_story_list.append(storys[0])
