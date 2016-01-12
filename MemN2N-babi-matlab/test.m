@@ -7,10 +7,14 @@
 
 
 global wrong_index;
+global out_presentation;
 total_test_err = 0;
 total_test_num = 0;
 ddd=cell(1,batch_size);
 
+
+outtt=[];
+out_presentation=0;
 for k = 1:floor(size(test_questions,2)/batch_size)
     batch = (1:batch_size) + (k-1) * batch_size;
     input = zeros(size(story,1),batch_size,'single');
@@ -20,6 +24,22 @@ for k = 1:floor(size(test_questions,2)/batch_size)
     for b = 1:batch_size
         d = test_story(:,1:test_questions(2,batch(b)),test_questions(1,batch(b)));
         d = d(:,max(1,end-config.sz+1):end);
+        %---------------------shin-----------------------°ÑÆþÃðµÄslot×´Ì¬È¥µô
+        dellist=[];
+        if size(d,2)>3
+            for j =2:3:(size(d,2)-4)
+                dellist=[dellist j];
+            end
+            d(:,dellist)=[];
+        end
+        %--------------------shin----------------------
+        
+        
+        
+        
+        
+        
+        
         memory{1}.data(1:size(d,1),1:size(d,2),b) = d;
         ddd(1,b)={d};
         if enable_time
@@ -32,6 +52,8 @@ for k = 1:floor(size(test_questions,2)/batch_size)
     end
     
     out = model.fprop(input);
+    [~,yyy] = max(out,[],1);
+    outtt=[outtt,yyy];
     cost = loss.fprop(out, target);
     total_test_err = total_test_err + loss.get_error(out, target);
     
@@ -95,4 +117,6 @@ for k = 1:floor(size(test_questions,2)/batch_size)
 end
 
 test_error = total_test_err/total_test_num;
+%target_list;
+
 disp(['test error: ', num2str(test_error)]);

@@ -39,6 +39,13 @@ classdef CrossEntropyLoss < Loss
         function error = get_error(obj, input, target)
             [~,y] = max(input,[],1);
             error = sum(y ~= target);
+            %for iii = 1:length(target)
+            %   if ismemeber(target(iii),target_count)
+                    
+                    
+                    
+                    
+                
             incorrect=find((y ~= target)==1);
             global wrong_index;
             wrong_index=[];
