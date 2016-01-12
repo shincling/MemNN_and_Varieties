@@ -4,9 +4,13 @@
 % This source code is licensed under the BSD-style license found in the
 % LICENSE file in the root directory of this source tree. An additional grant 
 % of patent rights can be found in the PATENTS file in the same directory.
+%<<<<<<< HEAD
 %感觉这个很微妙%
 
 %测试一下哦
+%=======
+%%����һ��gti%
+5>>>>>>> 4aba890bbfb6b3ce2cea4720170c83de39a61f3b
 
 global wrong_index;
 global out_presentation;
@@ -36,7 +40,7 @@ for k = 1:floor(size(test_questions,2)/batch_size)
         end
         %--------------------shin----------------------
         
-        
+         
         
         
         
