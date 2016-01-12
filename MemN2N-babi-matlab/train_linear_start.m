@@ -14,13 +14,14 @@ nepochs2 = nepochs;
 lrate_decay_step2 = lrate_decay_step;
 init_lrate2 = config.init_lrate;
 nepochs = ls_nepochs;
-nepochs = 3;%%%%%%%
+nepochs = 5;%%%%%%%
 lrate_decay_step = ls_lrate_decay_step;
 config.init_lrate = ls_init_lrate;
 
 train;
-test;%%%%之前并没有
-
+%target_list;
+save confi5;
+test;%%%%之前并没�?
 % add softmax back
 %for i = 1:nhops
 %    memory{i}.mod_query.add(Softmax());
@@ -29,6 +30,8 @@ nepochs = nepochs2;
 lrate_decay_step = lrate_decay_step2;
 config.init_lrate = init_lrate2;
 train;
+save confi20;
 test;
 train;
+save confi35;
 test;

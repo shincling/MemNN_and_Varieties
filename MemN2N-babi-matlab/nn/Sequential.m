@@ -13,8 +13,14 @@ classdef Sequential < Contrainer
             obj = obj@Contrainer();
         end
         function output = fprop(obj, input)
-            for i = 1:length(obj.modules)
+           for i = 1:length(obj.modules)
                 output = obj.modules{i}.fprop(input);
+%                 global out_presentation;
+%                 if i==12
+%                     out_presentation=out_presentation+1
+%                     tmp_output=output'
+%                     save(strcat('C:\Users\Administrator\Desktop\MemNN\out_presentation\',num2str(out_presentation)),'tmp_output');
+%                 end
                 input = output;
             end
             obj.output = output;

@@ -17,19 +17,33 @@ for ep = 1:nepochs
     total_num = 0;
     for k = 1:floor(length(train_range)/batch_size)
         batch = train_range(randi(length(train_range), batch_size,1));
-        input = zeros(size(story,1),batch_size,'single');%æ˜¯é—®å¥ï¼Œä¹Ÿå¯ä»¥è¯´æ˜¯last sentence
+        input = zeros(size(story,1),batch_size,'single');%ÊÇÎÊ¾ä Ò²¿ÉÒÔËµÊÇlast sentence
         target = questions(3,batch);
         memory{1}.data(:) = dict('nil');
         offset = zeros(1,batch_size,'single');
-        for b = 1:batch_size %å¯¹äºŽbatchå†…çš„æ¯ä¸ªsampleï¼ˆå³é—®å¥ï¼‰
-            d = story(:,1:questions(2,batch(b)),questions(1,batch(b))); %æ‰¾åˆ°è¯¥é—®å¥å¯¹åº”çš„storyæ®µè½ï¼ˆä»Žå¤´åˆ°ç­”æ¡ˆå¥å­ï¼‰
+        for b = 1:batch_size %¶ÔÓÚbatchÄÚµÄÃ¿¸ösample(¼´ÎÊ¾ä£©          
+            d = story(:,1:questions(2,batch(b)),questions(1,batch(b))); %ÕÒµ½¸ÃÎÊ¾ä¶ÔÓ¦µÄstory¶ÎÂä£¨´ÓÍ·µ½´ð°¸µÄ¾ä×Ó£©        
             offset(b) = max(0,size(d,2)-config.sz);
-            d = d(:,1+offset(b):end); %å°†storyæ®µè½åˆ’çš„æ›´å°ä¸€ç‚¹ï¼Œæœ€å¤šæ˜¯config.szè¿™ä¹ˆå¤šå¥
-            memory{1}.data(1:size(d,1),1:size(d,2),b) = d; %è¿™é‡Œæ˜¯å…³é”®ï¼ŒæŠŠdçš„å†…å®¹ä¼ ç»™äº†memory
+            d = d(:,1+offset(b):end); %½«story¶ÎÂä»®µÄ¸üÐ¡Ò»µã£¬×î¶àÊÇconfig.szÕâÃ´¶à¸ö¾ä×Ó
+            %---------------------shin-----------------------°ÑÆþÃðµÄslot×´Ì¬È¥µô
+            dellist=[];
+            if size(d,2)>3
+                for j =2:3:(size(d,2)-4)
+                    dellist=[dellist j];
+                end
+                d(:,dellist)=[];
+            end
+            %--------------------shin----------------------
+            
+            
+            
+            
+            
+            memory{1}.data(1:size(d,1),1:size(d,2),b) = d; %ÕâÀïÊÇ¹Ø¼ü£¬°ÑdµÄÄÚÈÝ¸øÁËmemory
             if enable_time
                 if randomize_time > 0
-                    nblank = randi([0,ceil(size(d,2) * randomize_time)]); %ceilæ˜¯å¾€å¤§å–æ•´
-                    rt = randperm(size(d,2) + nblank); %æ‰“ä¹±
+                    nblank = randi([0,ceil(size(d,2) * randomize_time)]); %ceilÊÇÍù´óÈ¡Õû                  
+                    rt = randperm(size(d,2) + nblank); %´òÂÒ
                     rt(rt > config.sz) = config.sz; % vocabulary limit
                     memory{1}.data(end,1:size(d,2),b) = sort(rt(1:size(d,2)),'descend') + length(dict);
                 else
@@ -66,6 +80,19 @@ for ep = 1:nepochs
         for b = 1:batch_size
             d = story(:,1:questions(2,batch(b)),questions(1,batch(b)));
             d = d(:,max(1,size(d,2)-config.sz+1):end);
+            %---------------------shin-----------------------°ÑÆþÃðµÄslot×´Ì¬È¥µô
+            dellist=[];
+            if size(d,2)>3
+                for j =2:3:(size(d,2)-4)
+                    dellist=[dellist j];
+                end
+                d(:,dellist)=[];
+            end
+            %--------------------shin----------------------
+            
+            
+            
+            
             memory{1}.data(1:size(d,1),1:size(d,2),b) = d;
             if enable_time
                 memory{1}.data(end,1:size(d,2),b) = (size(d,2):-1:1) + length(dict);

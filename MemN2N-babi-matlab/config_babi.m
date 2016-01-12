@@ -7,7 +7,7 @@
 
 batch_size = 32;
 nhops = 3;
-nepochs = 30;
+nepochs = 25;
 lrate_decay_step = 25; % reduce learning rate by half every 25 epochs
 
 % use 10% of training data for validation

@@ -19,7 +19,7 @@ if train_or_test==1
         qstory = zeros(25,1000, 'single');
 
         fi = 1;
-        fd = fopen(data_path{fi});
+        fd = fopen(data_path{fi},'r+','n','utf-8');
         line_ind = 0;
 
         while true
@@ -28,7 +28,7 @@ if train_or_test==1
                 fclose(fd);
                 if fi < length(data_path)
                     fi = fi + 1;
-                    fd = fopen(data_path{fi});
+                    fd = fopen(data_path{fi},'r+','n','utf-8');
                     line_ind = 0;
                     line = fgets(fd);
                 else
@@ -37,7 +37,7 @@ if train_or_test==1
             end
             line_ind = line_ind + 1;
             words = textscan(line, '%s');
-            words = words{1}; %��line��仰 ת����Ϊ length*1��cell
+            words = words{1}; %��line���?ת����Ϊ length*1��cell
 
             if strcmp(words{1}, '1')
                 story_ind = story_ind + 1;%story index
@@ -69,7 +69,7 @@ if train_or_test==1
                 if isKey(dict, w) == false
                     dict(w) = length(dict) + 1;
                 end        
-                max_words = max(max_words, k-1);%һ�仰����󳤶� 
+                max_words = max(max_words, k-1);%һ�仰����󳤶�?
 
                 if is_question == false
                     story(k-1, sentence_ind, story_ind) = dict(w);
@@ -90,6 +90,7 @@ if train_or_test==1
                             questions(2+h-k,question_ind) = map(str2num(words{h}));
                         end
                         %questions(10,question_ind) = line_ind; %shin
+                        
                         questions(10,question_ind) = 0;
                         break
                     end
@@ -118,7 +119,7 @@ if train_or_test==0
         qstory = zeros(25,1000, 'single');
 
         fi = 1;
-        fd = fopen(data_path{fi});
+        fd = fopen(data_path{fi},'r+','n','utf-8');
         line_ind = 0;
 
         while true
@@ -127,7 +128,7 @@ if train_or_test==0
                 fclose(fd);
                 if fi < length(data_path)
                     fi = fi + 1;
-                    fd = fopen(data_path{fi});
+                    fd = fopen(data_path{fi},'r+','n','utf-8');
                     line_ind = 0;
                     line = fgets(fd);
                 else
@@ -136,7 +137,7 @@ if train_or_test==0
             end
             line_ind = line_ind + 1;
             words = textscan(line, '%s');
-            words = words{1}; %��line��仰 ת����Ϊ length*1��cell
+            words = words{1}; %��line���?ת����Ϊ length*1��cell
 
             if strcmp(words{1}, '1')
                 story_ind = story_ind + 1;%story index
@@ -180,7 +181,7 @@ if train_or_test==0
                         un_index=un_index+1;
                     end
                 end        
-                max_words = max(max_words, k-1);%һ�仰����󳤶� 
+                max_words = max(max_words, k-1);%һ�仰����󳤶�?
 
                 if is_question == false
                     story(k-1, sentence_ind, story_ind) = dict(w);  
@@ -215,6 +216,7 @@ if train_or_test==0
                             questions(2+h-k,question_ind) = map(str2num(words{h}));
                         end
                         %questions(10,question_ind) = line_ind; %shin
+                        
                         questions(10,question_ind) = 0;
                         break
                     end
