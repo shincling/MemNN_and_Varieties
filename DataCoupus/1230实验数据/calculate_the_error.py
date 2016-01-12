@@ -242,6 +242,10 @@ totallist.extend(idnumberlist)
 totallist.extend(phonelist)
 totallist.append('已经为您预订完毕。')
 
+'''
+test of the git
+'''
+
 # f=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa28','r')
 # f=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa29_0104/qa29','r')
 f=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa31_0105/qa31_oneSlot','r')
