@@ -26,13 +26,13 @@ for ep = 1:nepochs
             offset(b) = max(0,size(d,2)-config.sz);
             d = d(:,1+offset(b):end); %将story段落划的更小一点，最多是config.sz这么多个句子
             %---------------------shin-----------------------把掐灭的slot状态去掉
-            dellist=[];
-            if size(d,2)>3
-                for j =2:3:(size(d,2)-4)
-                    dellist=[dellist j];
-                end
-                d(:,dellist)=[];
-            end
+%             dellist=[];
+%             if size(d,2)>3
+%                 for j =2:3:(size(d,2)-4)
+%                     dellist=[dellist j];
+%                 end
+%                 d(:,dellist)=[];
+%             end
             %--------------------shin----------------------
             
             
@@ -81,13 +81,13 @@ for ep = 1:nepochs
             d = story(:,1:questions(2,batch(b)),questions(1,batch(b)));
             d = d(:,max(1,size(d,2)-config.sz+1):end);
             %---------------------shin-----------------------把掐灭的slot状态去掉
-            dellist=[];
-            if size(d,2)>3
-                for j =2:3:(size(d,2)-4)
-                    dellist=[dellist j];
-                end
-                d(:,dellist)=[];
-            end
+%             dellist=[];
+%             if size(d,2)>3
+%                 for j =2:3:(size(d,2)-4)
+%                     dellist=[dellist j];
+%                 end
+%                 d(:,dellist)=[];
+%             end
             %--------------------shin----------------------
             
             
