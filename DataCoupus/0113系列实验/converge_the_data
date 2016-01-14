@@ -1,0 +1,17 @@
+# -*- coding: utf8 -*-
+__author__ = 'shin'
+import re
+import jieba
+import random
+
+f_machine=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/0113系列实验/machine.txt','r')
+text_machine=f_machine.read().decode('gbk').encode('utf8')
+f_machine.close()
+f_user=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/0113系列实验/user.txt','r')
+text_user=f_user.read().decode('gbk').encode('utf8')
+f_user.close()
+
+
+
+pass
+
