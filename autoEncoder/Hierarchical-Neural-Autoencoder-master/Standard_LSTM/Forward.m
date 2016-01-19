@@ -1,8 +1,8 @@
 function[lstms,all_h_t,all_c_t]=Forward(batch,parameter,isTraining)%Forward
     N=size(batch.Word,1);
-    zeroState=zeroMatrix([parameter.hidden,N]);
+    zeroState=zeroMatrix([parameter.hidden,N]); %1000*32的零矩阵
     if isTraining==1
-        T=batch.MaxLen;
+        T=batch.MaxLen;%257这里
     else
         T=batch.MaxLenSource;
     end
@@ -16,9 +16,10 @@ function[lstms,all_h_t,all_c_t]=Forward(batch,parameter,isTraining)%Forward
             all_c_t{ll,tt}=zeroMatrix([parameter.hidden,N]);
         end
     end
-    for t=1:T
-        for ll=1:parameter.layer_num
-            if t<batch.MaxLenSource+1;
+    for t=1:T %在每一个时刻（对于句子里的每一个词）
+        t=t
+        for ll=1:parameter.layer_num %对于每一层，总共四层
+            if t<batch.MaxLenSource+1;%先对每一层进行初始化，target和source用不同的参数
                 W=parameter.W_S{ll};
             else
                 W=parameter.W_T{ll};
@@ -31,9 +32,9 @@ function[lstms,all_h_t,all_c_t]=Forward(batch,parameter,isTraining)%Forward
                 h_t_1 = all_h_t{ll, t-1};
             end
             if ll==1
-                x_t=parameter.vect(:,batch.Word(:,t));
+                x_t=parameter.vect(:,batch.Word(:,t));%第一层查表给参数赋值embding
             else
-                x_t=all_h_t{ll-1,t};
+                x_t=all_h_t{ll-1,t};%之后层是上一层的输出
             end
             x_t(:,batch.Delete{t})=0;
             h_t_1(:,batch.Delete{t})=0;

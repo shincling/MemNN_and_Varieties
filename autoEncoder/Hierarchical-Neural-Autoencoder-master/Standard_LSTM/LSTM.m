@@ -8,7 +8,7 @@ if n>0 % GPU exists
     parameter.isGPU = 1;
     gpuDevice(1);
 else
-    print('no gpu ! ! ! ! !');
+    %print('no gpu ! ! ! ! !');
 end
 
 parameter.dimension=1000;
@@ -96,9 +96,9 @@ while 1
         
         if End~=1 || (End==1&& length(batch.Word)~=0)   
             %not the end of document
-            [lstm,all_h_t,c]=Forward(batch,parameter,1);    
+            [lstm,all_h_t,c]=Forward(batch,parameter,1);   %存储了一个batch里所有的门，h，c等全部信息 
             %LSTM Forward
-            [batch_cost,grad]=softmax(all_h_t(parameter.layer_num,:),batch,parameter);      
+            [batch_cost,grad]=softmax(all_h_t(parameter.layer_num,:),batch,parameter);%只取最上面一层来做softmax     
             %softmax
             clear all_h_t;
             if (isnan(batch_cost)||isinf(batch_cost)) &&End~=1  
@@ -216,23 +216,23 @@ function[parameter]=Initial(parameter)
 end
 
 function[current_batch,End]=ReadTrainData(fd_s,fd_t,parameter)
-    tline_s = fgets(fd_s);
+    tline_s = fgets(fd_s); %应该是一次读一行
     tline_t = fgets(fd_t);
     i=0;
     Source={};Target={};
     End=0;
-    while ischar(tline_s)
+    while ischar(tline_s)%每一次循环是针对一行来的
         i=i+1;
-        text_s=deblank(tline_s);
-        text_t=deblank(tline_t);
+        text_s=deblank(tline_s);  %移除字符串尾部的空白字符等
+        text_t=deblank(tline_t); %移除字符串尾部的空白字符等
         if parameter.Source_Target_Same_Language~=1
             Source{i}=wrev(str2num(text_s))+parameter.TargetVocab;  
             %reverse inputs
         else
-            Source{i}=wrev(str2num(text_s));    
+            Source{i}=wrev(str2num(text_s));    %为什么只剩下１２８个了？？？
             %reverse inputs
         end
-        Target{i}=[str2num(text_t),parameter.stop];     
+        Target{i}=[str2num(text_t),parameter.stop];%只颠倒了训练样本
         %add document_end_token
         if i==parameter.batch_size
             break;
@@ -245,7 +245,7 @@ function[current_batch,End]=ReadTrainData(fd_s,fd_t,parameter)
     end
     current_batch=Batch();
     N=length(Source);
-    for j=1:N
+    for j=1:N  %这个循环是得到最大的maxlen_t+maxlen_s作为maxlen
         source_length=length(Source{j});
         current_batch.SourceLength=[current_batch.SourceLength,source_length];
         if source_length>current_batch.MaxLenSource
@@ -259,9 +259,9 @@ function[current_batch,End]=ReadTrainData(fd_s,fd_t,parameter)
     total_length=current_batch.MaxLenSource+current_batch.MaxLenTarget;
     current_batch.MaxLen=total_length;
     current_batch.Word=ones(N,total_length);
-    Mask=ones(N,total_length);
+    Mask=ones(N,total_length);%初始化蒙版mask　32*maxlen这么长
     % Mask: labeling positions where no words exisit. The purpose is to work on sentences in bulk making program faster
-    for j=1:N
+    for j=1:N %这个循环是把一个batch的mask中没有词的地方置换成０，并且统计了一下target_len在这个batch里的和
         source_length=length(Source{j});
         target_length=length(Target{j});
         current_batch.Word(j,current_batch.MaxLenSource-source_length+1:current_batch.MaxLenSource)=Source{j};      
@@ -273,8 +273,8 @@ function[current_batch,End]=ReadTrainData(fd_s,fd_t,parameter)
         current_batch.N_word=current_batch.N_word+target_length;
     end
     for j=1:total_length
-        current_batch.Delete{j}=find(Mask(:,j)==0);
-        current_batch.Left{j}=find(Mask(:,j)==1);
+        current_batch.Delete{j}=find(Mask(:,j)==0);%把batch的每一个条目是０的index记录下来在delete中
+        current_batch.Left{j}=find(Mask(:,j)==1);%剩下的正好与上面的相反
     end
     current_batch.Mask=Mask;
 end
