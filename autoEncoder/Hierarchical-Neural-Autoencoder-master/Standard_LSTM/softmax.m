@@ -9,15 +9,15 @@ function[total_cost,grad]=softmax(topHidVecs,batch,parameter)
     total_cost=0;
     grad.soft_W=zeroMatrix(size(parameter.soft_W));
     step_size=1;
-    for Begin=MaxLenSource+1:step_size:MaxLen
+    for Begin=MaxLenSource+1:step_size:MaxLen %注意这里，是从decode这里开始解析
         End=Begin+step_size-1;
         if End>MaxLen
             End=MaxLen;
         end
         N_examples=size(Word,1)*(End-Begin+1);
-        predict_Words=reshape(Word(:,Begin:End),1,N_examples);
+        predict_Words=reshape(Word(:,Begin:End),1,N_examples);%一个batch32个词的排列:１＊３２
         mask=reshape(Mask(:,Begin:End),1,N_examples);%remove positions with no words
-        h_t=[topHidVecs{:,Begin-1:End-1}];
+        h_t=[topHidVecs{:,Begin-1:End-1}];%1000*32　是那个词的前一个h，也就是encode的最后一个
         [cost,grad_softmax_h]=batchSoftmax(h_t,mask,predict_Words,parameter);
         total_cost=total_cost+cost;
         grad.soft_W=grad.soft_W+grad_softmax_h.soft_W;
@@ -43,7 +43,7 @@ function[cost,softmax_grad]=batchSoftmax(h_t,mask,predict_Words,parameter)
     else
         scores=bsxfun(@times,scores, mask./norms); 
     end
-    scoreIndices = sub2ind(size(scores),predict_Words(unmaskedIds),unmaskedIds);
+    scoreIndices = sub2ind(size(scores),predict_Words(unmaskedIds),unmaskedIds); %把scores里的数字按照score的size建立索引，最后得到１＊32的向量
     cost=sum(-log(scores(scoreIndices)));
     scores(scoreIndices) =scores(scoreIndices) - 1;
     softmax_grad.soft_W=scores*h_t';  %(N_word*examples)*(examples*diemsnion)=N_word*diemsnion;
