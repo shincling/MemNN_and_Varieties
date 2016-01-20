@@ -12,8 +12,8 @@ dict_order1={};
     end
 out_list={};
 for ii = 1:1000
-    for i =1:16
-        out_list{ii,i}=dict_order1{outtt(i+16*(ii-1))};
+    for i =1:8%16
+        out_list{ii,i}=dict_order1{outtt(2*i+16*(ii-1))};%(i+16*(ii-1))
         i+16*(ii-1)
     end
 end
