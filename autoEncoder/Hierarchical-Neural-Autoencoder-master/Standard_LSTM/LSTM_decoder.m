@@ -93,6 +93,7 @@ while 1
     sum_cost=0;
     sum_num=0;
     batch_n=0;
+    load('/home/shin/DeepLearning/MemoryNetwork/MemNN/MemN2N-babi-matlab/qa29/
     while 1
         batch_n=batch_n+1;
         [batch,End]=ReadTrainData(fd_train_source,fd_train_target,parameter);   %transform data to batches
