@@ -1,4 +1,4 @@
-function[]=LSTM()
+function[]=LSTM_decode()
 clear;
 addpath('../misc');
 n= gpuDeviceCount;
@@ -93,9 +93,10 @@ while 1
     sum_cost=0;
     sum_num=0;
     batch_n=0;
+    load('/home/shin/DeepLearning/MemoryNetwork/MemNN/MemN2N-babi-matlab/qa29/result_sent.mat');
     while 1
         batch_n=batch_n+1;
-        [batch,End]=ReadTrainData(fd_train_source,fd_train_target,parameter);   %transform data to batches
+        [batch,End]=ReadTrainData_decode(batch_n,parameter,result_sent);   %transform data to batches
         
         if End~=1 || (End==1&& length(batch.Word)~=0)   
             %not the end of document
@@ -218,7 +219,7 @@ function[parameter]=Initial(parameter)
     end
 end
 
-function[current_batch,End]=ReadTrainData(fd_s,fd_t,parameter)
+function[current_batch,End]=ReadTrainData(fd_s,fd_t,parameter,result_sent)
     tline_s = fgets(fd_s); %应该是一次读一行
     tline_t = fgets(fd_t);
     i=0;
@@ -281,6 +282,60 @@ function[current_batch,End]=ReadTrainData(fd_s,fd_t,parameter)
     end
     current_batch.Mask=Mask;
 end
+
+function[current_batch,End]=ReadTrainData_decode(batch_n,parameter,result_sent)
+    %应该是一次读一行
+    tline_t =result_sent((batch_n-1)*32+1,:);
+    i=0;
+    Source={};Target={};
+    End=0;
+    while tline_t(1)~=0%每一次循环是针对一行来的
+        i=i+1;
+       
+        Target{i}=[tline_t,parameter.stop];%只颠倒了训练样本
+        %add document_end_token
+        if i==parameter.batch_size
+            break;
+        end
+        
+        tline_t = result_sent((batch_n-1)*32+1+i,:);
+    end
+    
+    if tline_t(1)==0
+        End=1;
+    end
+    current_batch=Batch();
+    N=length(Target);
+    for j=1:N  %这个循环是得到最大的maxlen_t+maxlen_s作为maxlen
+
+        target_length=length(Target{j});
+        if target_length>current_batch.MaxLenTarget
+            current_batch.MaxLenTarget=target_length;
+        end
+    end
+    total_length=current_batch.MaxLenTarget;
+    current_batch.MaxLen=total_length;
+    current_batch.Word=ones(N,total_length);
+    Mask=ones(N,total_length);%初始化蒙版mask　32*maxlen这么长
+    % Mask: labeling positions where no words exisit. The purpose is to work on sentences in bulk making program faster
+  for j=1:N %这个循环是把一个batch的mask中没有词的地方置换成０，并且统计了一下target_len在这个batch里的和
+        
+        target_length=length(Target{j});
+        %words within sentences 
+        current_batch.Word(j,1:target_length)=Target{j};
+        % label positions without tokens 0
+        current_batch.N_word=current_batch.N_word+target_length;
+    end
+    Mask=result_sent((batch_n-1)*32+1:batch_n*32,:)~=0;
+    Mask(:,14)=1;
+    for j=1:total_length
+        current_batch.Delete{j}=find(Mask(:,j)==0);%把batch的每一个条目是０的index记录下来在delete中
+        current_batch.Left{j}=find(Mask(:,j)==1);%剩下的正好与上面的相反
+    end
+    current_batch.Mask=Mask;
+end
+
+
 
 %gradient check
 function check_soft_W(value1,i,j,batch,parameter)
