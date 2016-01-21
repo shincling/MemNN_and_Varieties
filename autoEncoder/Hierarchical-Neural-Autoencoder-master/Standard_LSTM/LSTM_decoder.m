@@ -84,7 +84,12 @@ end
 iter=0;
 
 disp('begin')
-
+vec=load('/home/shin/DeepLearning/MemoryNetwork/MemNN/MemN2N-babi-matlab/qa29/embedding.mat');
+vec=vec.ans;
+if size(vec,1)==size(parameter.vect,1)
+    parameter.vect(:,1:size(vec,2))=vec;
+end
+    
 while 1
     iter=iter+1;
     End=0;
