@@ -9,7 +9,10 @@ function[lstms,all_h_t,all_c_t]=Forward(batch,parameter,isTraining,h_from_MemNN)
     all_h_t=cell(parameter.layer_num,T);
     all_c_t=cell(parameter.layer_num,T);
     lstms = cell(parameter.layer_num,T);
-
+    
+    zero_idx=find(batch.Word==0);
+    batch.Word(zero_idx)=10001;
+    
     for ll=1:parameter.layer_num
         for tt=1:T
             all_h_t{ll,tt}=zeroMatrix([parameter.hidden,N]);
@@ -40,7 +43,7 @@ function[lstms,all_h_t,all_c_t]=Forward(batch,parameter,isTraining,h_from_MemNN)
             x_t(:,batch.Delete{t})=0;
             h_t_1(:,batch.Delete{t})=0;
             c_t_1(:,batch.Delete{t})=0;
-            [lstms{ll, t},all_h_t{ll, t},all_c_t{ll, t}]=lstmUnit(W,parameter,x_t,h_t_1,c_t_1,ll,t,isTraining);%LSTM unit calculation
+            [lstms{ll, t},all_h_t{ll, t},all_c_t{ll, t}]=lstmUnit_decode(W,parameter,x_t,h_t_1,c_t_1,ll,t,isTraining);%LSTM unit calculation
         end
     end
 end
