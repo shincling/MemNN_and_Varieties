@@ -244,13 +244,14 @@ totallist.append('已经为您预订完毕。')
 
 # f=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa28','r')
 # f=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa29_0104/qa29','r')
-f=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa31_0105/qa31_oneSlot','r')
+# f=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa31_0105/qa31_oneSlot','r')
+f=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa31_0105/qa31_noSlot','r')
 out=f.read()
 out=out.split('\r\n')#[:-1]
 # ff=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa28_ticket_randOrder_ANS_slot_test.txt','r')
 # ff=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa29_ticket_randOrder_withSlot_test.txt','r')
-# ff=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa31_noSlot_ticket_rand_withSlot_test.txt','r')
-ff=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa31_ticket_randOrderAnsSent_withSlot_test.txt','r')
+ff=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa31_noSlot_ticket_rand_withSlot_test.txt','r')
+# ff=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa31_ticket_randOrderAnsSent_withSlot_test.txt','r')
 
 storys=ff.read().split('谢谢 。\n1 ')
 one_story_list=[]
@@ -262,6 +263,7 @@ assert len(one_story_list)==1000
 
 total_status=0
 total_next=0
+all_correct=0
 for i,one_story in enumerate(one_story_list):
     print i
     this_out=out[i].split('\t')
@@ -269,7 +271,7 @@ for i,one_story in enumerate(one_story_list):
     next_target=re.findall(r'next \?\t(.+?)\t',one_story)
     assert len(status_target)==8
     assert len(next_target)==8
-
+    correct=0
     for j in range(8):
         rest_list=['已经为您预订完毕。']
         if this_out[2*j]==status_target[j]:
@@ -292,7 +294,9 @@ for i,one_story in enumerate(one_story_list):
 
 
         # print this_out[2*j+1]
+
         if this_out[2*j+1] in rest_list:
+            correct+=1
             if j==6:
                 print 'answer:'+this_out[2*j+1]
                 print 'target:'+rest_list[1]
@@ -300,9 +304,13 @@ for i,one_story in enumerate(one_story_list):
 
             total_next+=1
 
+
         elif this_out[2*j+1] not in totallist:
             print 'The story%d the question %d exists error.'%(i,j)
+    if correct==8:
+        all_correct+=1
 
 print 'The error of status:%f'%(1-total_status/8000.0)
 print 'The error of next sentence:%f'%(1-total_next/8000.0)
+print all_correct
 pass
