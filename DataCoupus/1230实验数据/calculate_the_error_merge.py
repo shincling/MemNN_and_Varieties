@@ -254,7 +254,7 @@ out=out.split('\r\n')#[:-1]
 # ff=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa31_ticket_randOrderAnsSent_withSlot_test.txt','r')
 ff=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa33_ticket_randAll_merge_test.txt','r')
 
-storys=ff.read().split('谢谢 。\n1 ')
+storys=ff.read().split('\n1 ')
 one_story_list=[]
 one_story_list.append(storys[0])
 for i in range(1,len(storys)):
@@ -265,13 +265,22 @@ assert len(one_story_list)==1000
 total_status=0
 total_next=0
 all_correct=0
-for i,one_story in enumerate(one_story_list[:-1]):
+for i,one_story in enumerate(one_story_list):
     print i
     this_out=out[i].split('\t')
     status_target=re.findall('status \?\t(\d+?)\n',one_story)
     next_target=re.findall(r'next \?\t(.+?)\t',one_story)
     assert len(status_target)==8
     assert len(next_target)==8
+    count_target=re.findall('count \?\t(.+?)',one_story)[0]
+    name_target=re.findall('name \?\t(.+?)',one_story)[0]
+    destinaion_target=re.findall('destinaion \?\t(.+?)',one_story)[0]
+    departure_target=re.findall('departure \?\t(.+?)',one_story)[0]
+    idnumber_target=re.findall('idnumber \?\t(.+?)',one_story)[0]
+    time_target=re.findall('time \?\t(.+?)',one_story)[0]
+    phone_target=re.findall('phone \?\t(.+?)',one_story)[0]
+
+
     correct=0
     for j in range(8):
         rest_list=['已经为您预订完毕。']
