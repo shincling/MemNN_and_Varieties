@@ -265,7 +265,7 @@ assert len(one_story_list)==1000
 total_status=0
 total_next=0
 all_correct=0
-for i,one_story in enumerate(one_story_list[:-1]):
+for i,one_story in enumerate(one_story_list):
     print i
     this_out=out[i].split('\t')
     status_target=re.findall('status \?\t(\d+?)\n',one_story)
