@@ -39,3 +39,5 @@ train;
 save confi35;
 datestr(now,'yyyy-mm-dd HH:MM:SS')
 test;
+train;
+save confi50
