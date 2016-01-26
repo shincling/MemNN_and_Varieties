@@ -12,11 +12,11 @@ base_dir = '/home/shin/DeepLearning/MemoryNetwork/QA/copus/'; % path to data
 %workSpaceSavePath = [base_dir,'\Model.mat'];
 %load(workSpaceSavePath); 
 
-load confidence
+load('./qa33_merge_22q/confi20')
+max_words=size(story,1);
 %batch_size=slot_number
 base_dir = '/home/shin/DeepLearning/MemoryNetwork/QA/Interface/OnlineTest';
 f = dir(fullfile(base_dir,['Story.txt']));
-fp = fopen(ResultFilePath, 'wt','n', 'utf-8');
 StoryFilePath = {fullfile(base_dir,f(1).name)};
     
     include_question=false
@@ -64,13 +64,13 @@ StoryFilePath = {fullfile(base_dir,f(1).name)};
     end
     
     out = model.fprop(input);
-    out = out(soft_area,:);
-    [ppp,m_index]=max(out(:,1:6));
-    m_index=soft_area(m_index);  %shin 
+    %out = out(soft_area,:);
+    [ppp,m_index]=max(out(:,1:slot_number));
+    %m_index=soft_area(m_index);  %shin 
    % cost = loss.fprop(out, target);
-   out_word=cell(1,6);
+   out_word=cell(1,slot_number);
    
-   for qqqq=1:6
+   for qqqq=1:slot_number
     for iiii=dict.keys()
            try
                 if isequal(dict(cell2mat(iiii)),m_index(qqqq))
@@ -85,14 +85,20 @@ StoryFilePath = {fullfile(base_dir,f(1).name)};
     end
    end
    
- for qqqq=1:6
+ for qqqq=1:slot_number
     if (m_index(qqqq)>=dict('Unknown1'))&(m_index(qqqq)<(dict('Unknown10')+1))
         out_word(qqqq)=online_dict_un(m_index(qqqq)-dict('Unknown1')+1,1);
     end
     
     
     
-    
+    out_word{1}
     response = out_word
+    fp = fopen(ResultFilePath, 'wt','n', 'utf-8');
+%     for m = 1 : length(out_word)
+%         fprintf(fp, '%s\n', out_word{m});
+%     end
+    fprintf(fp, '%s\n', out_word{1});
+    fclose(fp)
 end
 
