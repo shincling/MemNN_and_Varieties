@@ -18,9 +18,11 @@ nepochs = 5;%%%%%%%
 lrate_decay_step = ls_lrate_decay_step;
 config.init_lrate = ls_init_lrate;
 
+datestr(now,'yyyy-mm-dd HH:MM:SS')
 train;
 %target_list;
 save confi5;
+datestr(now,'yyyy-mm-dd HH:MM:SS')
 test;%%%%之前并没�?
 % add softmax back
 %for i = 1:nhops
@@ -31,7 +33,9 @@ lrate_decay_step = lrate_decay_step2;
 config.init_lrate = init_lrate2;
 train;
 save confi20;
+datestr(now,'yyyy-mm-dd HH:MM:SS')
 test;
 train;
 save confi35;
+datestr(now,'yyyy-mm-dd HH:MM:SS')
 test;

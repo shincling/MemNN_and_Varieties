@@ -23,8 +23,8 @@ add_nonlin = false; % add non-linearity to internal states
 config = {};
 config.init_lrate = 0.01;
 config.max_grad_norm = 40;
-config.input_dim = 50;%20
-config.out_dim = 50;%20
+config.input_dim = 100;%20
+config.out_dim = 100;%20
 
 linear_start = true;
 if linear_start

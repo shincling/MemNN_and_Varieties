@@ -9,7 +9,7 @@ rng('shuffle')
 addpath nn;
 addpath memory;
 base_dir = 'C:\shin\MemNN_and_Varieties-master\DataCoupus'; % path to data
-t = 32; % task ID
+t = 35; % task ID
 num_of_unknown=10;
 
 
