@@ -84,7 +84,12 @@ end
 iter=0;
 
 disp('begin')
-
+vec=load('/home/shin/DeepLearning/MemoryNetwork/MemNN/MemN2N-babi-matlab/qa29/embedding.mat');
+vec=vec.ans;
+if size(vec,1)==size(parameter.vect,1)
+    parameter.vect(:,1:size(vec,2))=vec;
+end
+    
 while 1
     iter=iter+1;
     End=0;
@@ -95,12 +100,17 @@ while 1
     batch_n=0;
     load('/home/shin/DeepLearning/MemoryNetwork/MemNN/MemN2N-babi-matlab/qa29/result_sent.mat');
     while 1
-        batch_n=batch_n+1;
+        h_from_MemNN=[];
+        tmp_output=[];
+        batch_n=batch_n+1
         [batch,End]=ReadTrainData_decode(batch_n,parameter,result_sent);   %transform data to batches
-        
+        load(strcat('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/out_presentation/qa29/',num2str(2*batch_n-1)));
+        h_from_MemNN=[h_from_MemNN,tmp_output(:,[2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32])];
+        load(strcat('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/out_presentation/qa29/',num2str(2*batch_n)));
+        h_from_MemNN=[h_from_MemNN,tmp_output(:,[2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32])];
         if End~=1 || (End==1&& length(batch.Word)~=0)   
             %not the end of document
-            [lstm,all_h_t,c]=Forward(batch,parameter,1);   %存储了一个batch里所有的门，h，c等全部信息 
+            [lstm,all_h_t,c]=Forward_decode(batch,parameter,1,h_from_MemNN);   %存储了一个batch里所有的门，h，c等全部信息 
             %LSTM Forward
             [batch_cost,grad]=softmax(all_h_t(parameter.layer_num,:),batch,parameter);%只取最上面一层来做softmax     
             %softmax

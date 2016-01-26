@@ -252,9 +252,9 @@ out=out.split('\r\n')#[:-1]
 # ff=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa29_ticket_randOrder_withSlot_test.txt','r')
 # ff=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa31_noSlot_ticket_rand_withSlot_test.txt','r')
 # ff=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa31_ticket_randOrderAnsSent_withSlot_test.txt','r')
-ff=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa33_ticket_randAll_merge_test.txt','r')
+ff=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/1230实验数据/qa33_22q_ticket_randAll_merge_test.txt','r')
 
-storys=ff.read().split('谢谢 。\n1 ')
+storys=ff.read().split('\n1 ')
 one_story_list=[]
 one_story_list.append(storys[0])
 for i in range(1,len(storys)):
@@ -265,13 +265,52 @@ assert len(one_story_list)==1000
 total_status=0
 total_next=0
 all_correct=0
-for i,one_story in enumerate(one_story_list):
+slot_correct=0
+slot_all_correct=0
+for i,one_story in enumerate(one_story_list[:-1]):
     print i
     this_out=out[i].split('\t')
     status_target=re.findall('status \?\t(\d+?)\n',one_story)
     next_target=re.findall(r'next \?\t(.+?)\t',one_story)
     assert len(status_target)==8
-    assert len(next_target)==8
+    assert len(next_target)==7
+    count_target=re.findall('count \?\t(.+?)\t',one_story)[0]
+    name_target=re.findall('name \?\t(.+?)\t',one_story)[0]
+    destination_target=re.findall('destination \?\t(.+?)\t',one_story)[0]
+    departure_target=re.findall('departure \?\t(.+?)\t',one_story)[0]
+    idnumber_target=re.findall('idnumber \?\t(.+?)\t',one_story)[0]
+    time_target=re.findall('time \?\t(.+?)\t',one_story)[0]
+    phone_target=re.findall('phone \?\t(.+?)\t',one_story)[0]
+
+    slot_in_one=0
+    if this_out[15]==count_target:
+        slot_correct+=1
+        slot_in_one+=1
+    if this_out[16]==name_target:
+        slot_correct+=1
+        slot_in_one+=1
+    if this_out[17]==destination_target:
+        slot_correct+=1
+        slot_in_one+=1
+    if this_out[18]==departure_target:
+        slot_correct+=1
+        slot_in_one+=1
+    if this_out[19]==idnumber_target:
+        slot_correct+=1
+        slot_in_one+=1
+    if this_out[20]==time_target:
+        slot_correct+=1
+        slot_in_one+=1
+    if this_out[21]==phone_target:
+        slot_correct+=1
+        slot_in_one+=1
+
+    if slot_in_one==7:
+        slot_all_correct+=1
+
+
+
+
     correct=0
     for j in range(8):
         rest_list=['已经为您预订完毕。']
@@ -306,12 +345,17 @@ for i,one_story in enumerate(one_story_list):
             total_next+=1
 
 
-        elif this_out[2*j+1] not in totallist:
-            print 'The story%d the question %d exists error.'%(i,j)
-    if correct==8:
+        # elif this_out[2*j+1] not in totallist:
+        #     print 'The story%d the question %d exists error.'%(i,j)
+    if correct==7:
         all_correct+=1
 
-print 'The error of status:%f'%(1-total_status/8000.0)
-print 'The error of next sentence:%f'%(1-total_next/8000.0)
-print all_correct
+print 'The error of status:%f'%(1-total_status/(8000.0-8))
+print 'The error of next sentence:%f'%(1-total_next/(7000.0-7))
+print 'All correct:',all_correct/999.0
+
+print slot_correct
+print 'The error of slot:%f'%(1-slot_correct/(999.0*7))
+print 'All correct:',slot_all_correct/999.0
+
 pass
