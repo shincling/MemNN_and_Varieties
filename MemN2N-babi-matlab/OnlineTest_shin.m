@@ -12,7 +12,8 @@ base_dir = '/home/shin/DeepLearning/MemoryNetwork/QA/copus/'; % path to data
 %workSpaceSavePath = [base_dir,'\Model.mat'];
 %load(workSpaceSavePath); 
 
-load('./qa33_merge_22q/confi20')
+% load('./qa33_merge_22q/confi20')
+load('qa31/noSlot/confi35')
 max_words=size(story,1);
 %batch_size=slot_number
 base_dir = '/home/shin/DeepLearning/MemoryNetwork/QA/Interface/OnlineTest';

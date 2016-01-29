@@ -14,6 +14,7 @@ ddd=cell(1,batch_size);
 
 
 outtt=[];
+targettt=[];
 out_presentation=0;
 for k = 1:floor(size(test_questions,2)/batch_size)
     batch = (1:batch_size) + (k-1) * batch_size;
@@ -54,6 +55,7 @@ for k = 1:floor(size(test_questions,2)/batch_size)
     out = model.fprop(input);
     [~,yyy] = max(out,[],1);
     outtt=[outtt,yyy];
+    targettt=[targettt,target];
     cost = loss.fprop(out, target);
     total_test_err = total_test_err + loss.get_error(out, target);
     
@@ -120,3 +122,60 @@ test_error = total_test_err/total_test_num;
 %target_list;
 
 disp(['test error: ', num2str(test_error)]);
+
+
+count_error=0
+name_error=0
+destination_error=0
+departure_error=0
+idnumber_error=0
+time_error=0
+phone_error=0
+for cc=1:total_test_num
+    if mod(cc,7)==1
+        if targettt(cc)~=outtt(cc)
+            count_error=count_error+1;
+        end
+    end
+    
+    if mod(cc,7)==2
+        if targettt(cc)~=outtt(cc)
+            name_error=name_error+1;
+        end
+    end
+    
+     if mod(cc,7)==3
+        if targettt(cc)~=outtt(cc)
+            destination_error=destination_error+1;
+        end
+     end
+     
+     if mod(cc,7)==4
+        if targettt(cc)~=outtt(cc)
+            departure_error=departure_error+1;
+        end
+     end
+     
+      if mod(cc,7)==5
+        if targettt(cc)~=outtt(cc)
+            idnumber_error=idnumber_error+1;
+        end
+      end
+      
+      if mod(cc,7)==6
+        if targettt(cc)~=outtt(cc)
+            time_error=time_error+1;
+        end
+      end
+       
+      if mod(cc,7)==0
+        if targettt(cc)~=outtt(cc)
+            phone_error=phone_error+1;
+        end
+      end
+end
+
+    
+       
+            
+        

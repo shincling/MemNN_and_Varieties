@@ -37,7 +37,7 @@ print 'phone question:%d'%len(phonelist_question_cut)
 print 'phone answer:%d\n'%len(phonelist_answer_cut)
 
 storyNumber=1000
-fw=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/0113系列实验/ticket_randAll_finalQ_train.txt','w')
+fw=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/0113系列实验/qa35_ticket_randAll_finalQ_test.txt','w')
 
 familyName=['号','王','李','赵','周','吴','顾','郑','何','万','黄','周','吴','徐','孙','胡','朱','高',
            '林','何','郭','马','罗','梁','宋','谢','韩','唐','冯','于','董','萧','程','曹','袁','邓',
@@ -65,8 +65,8 @@ def namePart(f,ind):
 
     fullname=random.choice(familyName)+random.choice(lastName)
 
-    #f.write('%d%s'%(ind+1,random.choice(namelist_question_cut).encode('utf8')))
-    f.write('%d%s'%(ind+1,namelist_question_cut[0].encode('utf8')))
+    f.write('%d%s'%(ind+1,random.choice(namelist_question_cut).encode('utf8')))
+    # f.write('%d%s'%(ind+1,namelist_question_cut[0].encode('utf8')))
     ans_sent=random.choice(namelist_answer_cut).replace('[slot_name]',fullname.decode('utf8'))
     f.write('%d%s'%(ind+2,ans_sent.encode('utf8')))
     '''
@@ -83,8 +83,8 @@ def namePart(f,ind):
 
 def countPart(f,ind):
 
-    #f.write('%d%s'%(ind+1,random.choice(countlist_question_cut).encode('utf8')))
-    f.write('%d%s'%(ind+1,countlist_question_cut[0].encode('utf8')))
+    f.write('%d%s'%(ind+1,random.choice(countlist_question_cut).encode('utf8')))
+    # f.write('%d%s'%(ind+1,countlist_question_cut[0].encode('utf8')))
 
     rand_or_rule=random.randint(0,1)#0的时候规则，1的时候随机
     if rand_or_rule:
@@ -108,8 +108,8 @@ def countPart(f,ind):
 
 def departurePart(f,ind):
 
-    #f.write('%d%s'%(ind+1,random.choice(departurelist_question_cut).encode('utf8')))
-    f.write('%d%s'%(ind+1,departurelist_question_cut[0].encode('utf8')))
+    f.write('%d%s'%(ind+1,random.choice(departurelist_question_cut).encode('utf8')))
+    # f.write('%d%s'%(ind+1,departurelist_question_cut[0].encode('utf8')))
 
     rand_or_rule=random.randint(0,1)#0的时候规则，1的时候随机
     if rand_or_rule:
@@ -133,8 +133,8 @@ def departurePart(f,ind):
 
 def destinationPart(f,ind):
 
-    #f.write('%d%s'%(ind+1,random.choice(destinationlist_question_cut).encode('utf8')))
-    f.write('%d%s'%(ind+1,destinationlist_question_cut[0].encode('utf8')))
+    f.write('%d%s'%(ind+1,random.choice(destinationlist_question_cut).encode('utf8')))
+    # f.write('%d%s'%(ind+1,destinationlist_question_cut[0].encode('utf8')))
 
     rand_or_rule=random.randint(0,1)#0的时候规则，1的时候随机
     if rand_or_rule:
@@ -158,8 +158,8 @@ def destinationPart(f,ind):
 
 def timePart(f,ind):
 
-    #f.write('%d%s'%(ind+1,random.choice(timelist_question_cut).encode('utf8')))
-    f.write('%d%s'%(ind+1,timelist_question_cut[0].encode('utf8')))
+    f.write('%d%s'%(ind+1,random.choice(timelist_question_cut).encode('utf8')))
+    # f.write('%d%s'%(ind+1,timelist_question_cut[0].encode('utf8')))
 
     delta=datetime.timedelta(days=random.randint(0,100), seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=random.randint(0,24), weeks=0)
     timetime=datetime.datetime.now()+delta
@@ -181,8 +181,8 @@ def timePart(f,ind):
 
 def idnumberPart(f,ind):
 
-    #f.write('%d%s'%(ind+1,random.choice(idnumberlist_question_cut).encode('utf8')))
-    f.write('%d%s'%(ind+1,idnumberlist_question_cut[0].encode('utf8')))
+    f.write('%d%s'%(ind+1,random.choice(idnumberlist_question_cut).encode('utf8')))
+    # f.write('%d%s'%(ind+1,idnumberlist_question_cut[0].encode('utf8')))
     
     fullidnumber=str(random.randint(1000000000000000,9999999999999999))
     ans_sent=random.choice(idnumberlist_answer_cut).replace('[slot_idnumber]',fullidnumber.decode('utf8'))
@@ -201,8 +201,8 @@ def idnumberPart(f,ind):
 
 def phonePart(f,ind):
 
-    #f.write('%d%s'%(ind+1,random.choice(phonelist_question_cut).encode('utf8')))
-    f.write('%d%s'%(ind+1,phonelist_question_cut[0].encode('utf8')))
+    f.write('%d%s'%(ind+1,random.choice(phonelist_question_cut).encode('utf8')))
+    # f.write('%d%s'%(ind+1,phonelist_question_cut[0].encode('utf8')))
     
     fullphone=str(random.randint(10000000000,19999999999))
     ans_sent=random.choice(phonelist_answer_cut).replace('[slot_phone]',fullphone.decode('utf8'))
