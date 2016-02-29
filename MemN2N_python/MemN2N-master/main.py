@@ -65,7 +65,7 @@ class SumLayer(lasagne.layers.Layer):
 
 
 class TemporalEncodingLayer(lasagne.layers.Layer):
-
+    '''对应了论文里的Temporal Encoding部分，引入了T_A或者T_C参数来学习'''
     def __init__(self, incoming, T=lasagne.init.Normal(std=0.1), **kwargs):
         super(TemporalEncodingLayer, self).__init__(incoming, **kwargs)
         self.T = self.add_param(T, self.input_shape[-2:], name="T")
@@ -127,7 +127,7 @@ class MemoryNetworkLayer(lasagne.layers.MergeLayer):
         l_C_embedding = TemporalEncodingLayer(l_C_embedding, T=C_T)
         self.C_T = l_C_embedding.T
 
-        l_prob = InnerProductLayer((l_A_embedding, l_B_embedding), nonlinearity=nonlinearity)
+        l_prob = InnerProductLayer((l_A_embedding, l_B_embedding), nonlinearity=nonlinearity) #32*10*20 和 32*20*1结合，成32*10
         l_weighted_output = BatchedDotLayer((l_prob, l_C_embedding))
 
         l_sum = lasagne.layers.ElemwiseSumLayer((l_weighted_output, l_B_embedding))
