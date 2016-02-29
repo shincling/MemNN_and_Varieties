@@ -158,7 +158,7 @@ class MemoryNetworkLayer(lasagne.layers.MergeLayer):
 class Model:
     def __init__(self, train_file, test_file, batch_size=32, embedding_size=20, max_norm=40, lr=0.01, num_hops=3, adj_weight_tying=True, linear_start=True, **kwargs):
         train_lines, test_lines = self.get_lines(train_file), self.get_lines(test_file)
-        lines = np.concatenate([train_lines, test_lines], axis=0)
+        lines = np.concatenate([train_lines, test_lines], axis=0) #直接头尾拼接
         vocab, word_to_idx, idx_to_word, max_seqlen, max_sentlen = self.get_vocab(lines)
 
         self.data = {'train': {}, 'test': {}}
@@ -392,11 +392,12 @@ class Model:
         self.c_pe_shared.set_value(c_pe)
         self.q_pe_shared.set_value(q_pe)
 
-    def get_vocab(self, lines):
+    def get_vocab(self, lines): #这个函数相当于预处理的函数
         vocab = set()
         max_sentlen = 0
         for i, line in enumerate(lines):
-            words = nltk.word_tokenize(line['text'])
+            #words = nltk.word_tokenize(line['text'])
+            words=line['text'].split(' ')  #这里做了一个修改，替换掉了nltk的工具
             max_sentlen = max(max_sentlen, len(words))
             for w in words:
                 vocab.add(w)
