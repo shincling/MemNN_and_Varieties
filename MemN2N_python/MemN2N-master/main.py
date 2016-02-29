@@ -1,3 +1,4 @@
+# -*- coding: utf8 -*-
 from __future__ import division
 import argparse
 import glob
@@ -99,7 +100,7 @@ class TransposedDenseLayer(lasagne.layers.DenseLayer):
 class MemoryNetworkLayer(lasagne.layers.MergeLayer):
 
     def __init__(self, incomings, vocab, embedding_size, A, A_T, C, C_T, nonlinearity=lasagne.nonlinearities.softmax, **kwargs):
-        super(MemoryNetworkLayer, self).__init__(incomings, **kwargs)
+        super(MemoryNetworkLayer, self).__init__(incomings, **kwargs) #？？？不知道这个super到底做什么的，会引入input_layers和input_shapes这些属性
         if len(incomings) != 3:
             raise NotImplementedError
 
@@ -109,12 +110,12 @@ class MemoryNetworkLayer(lasagne.layers.MergeLayer):
         l_B_embedding = lasagne.layers.InputLayer(shape=(batch_size, embedding_size))
         l_context_pe_in = lasagne.layers.InputLayer(shape=(batch_size, max_seqlen, max_sentlen, embedding_size))
 
-        l_context_in = lasagne.layers.ReshapeLayer(l_context_in, shape=(batch_size * max_seqlen * max_sentlen, ))
+        l_context_in = lasagne.layers.ReshapeLayer(l_context_in, shape=(batch_size * max_seqlen * max_sentlen, )) #reshape，拼成了一行
         l_A_embedding = lasagne.layers.EmbeddingLayer(l_context_in, len(vocab)+1, embedding_size, W=A)
         self.A = l_A_embedding.W
-        l_A_embedding = lasagne.layers.ReshapeLayer(l_A_embedding, shape=(batch_size, max_seqlen, max_sentlen, embedding_size))
+        l_A_embedding = lasagne.layers.ReshapeLayer(l_A_embedding, shape=(batch_size, max_seqlen, max_sentlen, embedding_size)) #reshape把一行的东西再转回来
         l_A_embedding = lasagne.layers.ElemwiseMergeLayer((l_A_embedding, l_context_pe_in), merge_function=T.mul)
-        l_A_embedding = SumLayer(l_A_embedding, axis=2)
+        l_A_embedding = SumLayer(l_A_embedding, axis=2) #同样地，把一个句子里按所有词加起来
         l_A_embedding = TemporalEncodingLayer(l_A_embedding, T=A_T)
         self.A_T = l_A_embedding.T
 
@@ -161,7 +162,7 @@ class Model:
         lines = np.concatenate([train_lines, test_lines], axis=0) #直接头尾拼接
         vocab, word_to_idx, idx_to_word, max_seqlen, max_sentlen = self.get_vocab(lines)
 
-        self.data = {'train': {}, 'test': {}}
+        self.data = {'train': {}, 'test': {}}  #各是一个字典
         S_train, self.data['train']['C'], self.data['train']['Q'], self.data['train']['Y'] = self.process_dataset(train_lines, word_to_idx, max_sentlen, offset=0)
         S_test, self.data['test']['C'], self.data['test']['Q'], self.data['test']['Y'] = self.process_dataset(test_lines, word_to_idx, max_sentlen, offset=len(S_train))
         S = np.concatenate([np.zeros((1, max_sentlen), dtype=np.int32), S_train, S_test], axis=0)
@@ -209,6 +210,7 @@ class Model:
         q_pe = T.tensor4()
         self.c_shared = theano.shared(np.zeros((batch_size, max_seqlen), dtype=np.int32), borrow=True)
         self.q_shared = theano.shared(np.zeros((batch_size, ), dtype=np.int32), borrow=True)
+        '''最后的softmax层的参数'''
         self.a_shared = theano.shared(np.zeros((batch_size, self.num_classes), dtype=np.int32), borrow=True)
         self.c_pe_shared = theano.shared(np.zeros((batch_size, max_seqlen, max_sentlen, embedding_size), dtype=theano.config.floatX), borrow=True)
         self.q_pe_shared = theano.shared(np.zeros((batch_size, 1, max_sentlen, embedding_size), dtype=theano.config.floatX), borrow=True)
@@ -222,15 +224,15 @@ class Model:
 
         l_context_pe_in = lasagne.layers.InputLayer(shape=(batch_size, max_seqlen, max_sentlen, embedding_size))
         l_question_pe_in = lasagne.layers.InputLayer(shape=(batch_size, 1, max_sentlen, embedding_size))
-
+        '''底下这几部分是在初始化映射矩阵'''
         A, C = lasagne.init.Normal(std=0.1).sample((len(vocab)+1, embedding_size)), lasagne.init.Normal(std=0.1)
         A_T, C_T = lasagne.init.Normal(std=0.1), lasagne.init.Normal(std=0.1)
-        W = A if self.adj_weight_tying else lasagne.init.Normal(std=0.1)
+        W = A if self.adj_weight_tying else lasagne.init.Normal(std=0.1) #这里决定了原文里的 A与B两个映射矩阵相同
 
         l_question_in = lasagne.layers.ReshapeLayer(l_question_in, shape=(batch_size * max_sentlen, ))
-        l_B_embedding = lasagne.layers.EmbeddingLayer(l_question_in, len(vocab)+1, embedding_size, W=W)
-        B = l_B_embedding.W
-        l_B_embedding = lasagne.layers.ReshapeLayer(l_B_embedding, shape=(batch_size, 1, max_sentlen, embedding_size))
+        l_B_embedding = lasagne.layers.EmbeddingLayer(l_question_in, len(vocab)+1, embedding_size, W=W) #到这变成了224*20
+        B = l_B_embedding.W #B就是上一行初始化用到的W,是(len(vocab)+1, embedding_size)这种size
+        l_B_embedding = lasagne.layers.ReshapeLayer(l_B_embedding, shape=(batch_size, 1, max_sentlen, embedding_size)) #reshape变成了32*1*7*20
         l_B_embedding = lasagne.layers.ElemwiseMergeLayer((l_B_embedding, l_question_pe_in), merge_function=T.mul)
         l_B_embedding = lasagne.layers.ReshapeLayer(l_B_embedding, shape=(batch_size, max_sentlen, embedding_size))
         l_B_embedding = SumLayer(l_B_embedding, axis=1)
@@ -417,16 +419,20 @@ class Model:
             if line['type'] == 'q':
                 id = line['id']-1
                 indices = [idx for idx in range(i-id, i) if lines[idx]['type'] == 's'][::-1][:50]
+                #上面这个表达式倒是挺优美的，就是算出了一个问题对应的从句子开始到它的序号处所能得到的非问句的长度
                 max_seqlen = max(len(indices), max_seqlen)
 
         return vocab, word_to_idx, idx_to_word, max_seqlen, max_sentlen
 
     def process_dataset(self, lines, word_to_idx, max_sentlen, offset):
         S, C, Q, Y = [], [], [], []
-
+        '''S是每句序号化之后组成的列表的列表，
+        C是从后往前排列的每一问题的story，
+        Q是问题的行数组成的列表，
+        Y是答案组成的列表'''
         for i, line in enumerate(lines):
-            word_indices = [word_to_idx[w] for w in nltk.word_tokenize(line['text'])]
-            word_indices += [0] * (max_sentlen - len(word_indices))
+            word_indices = [word_to_idx[w] for w in line['text'].split(' ')]
+            word_indices += [0] * (max_sentlen - len(word_indices)) #这是补零，把句子填充到max_sentLen
             S.append(word_indices)
             if line['type'] == 'q':
                 id = line['id']-1
