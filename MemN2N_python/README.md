@@ -1,3 +1,7 @@
+Copy from the [MemN2N by npow](https://github.com/npow/MemN2N) and will get edited here
+thx for his sharing 
+
+
 ## End-To-End Memory Networks
 This is a Theano implementation of [End-To-End Memory Networks](http://arxiv.org/abs/1503.08895v4), formerly known as Weakly Supervised Memory Networks. The dataset can be found [here](http://fb.ai/babi).
 
