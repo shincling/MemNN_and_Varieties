@@ -437,17 +437,17 @@ class Model:
         return np.array(S, dtype=np.int32), np.array(C), np.array(Q, dtype=np.int32), np.array(Y)
 
     def get_lines(self, fname):
-        lines = []
+        lines = [] #每个元素是个字典看来
         for i, line in enumerate(open(fname)):
-            id = int(line[0:line.find(' ')])
+            id = int(line[0:line.find(' ')]) #找到每行的对应的故事里的序号
             line = line.strip()
-            line = line[line.find(' ')+1:]
-            if line.find('?') == -1:
+            line = line[line.find(' ')+1:] #去掉序号开始到末尾
+            if line.find('?') == -1: #如果不是问句
                 lines.append({'type': 's', 'text': line})
-            else:
+            else: #如果是问句
                 idx = line.find('?')
                 tmp = line[idx+1:].split('\t')
-                lines.append({'id': id, 'type': 'q', 'text': line[:idx], 'answer': tmp[1].strip(), 'refs': [int(x)-1 for x in tmp[2:][0].split(' ')]})
+                lines.append({'id': id, 'type': 'q', 'text': line[:idx], 'answer': tmp[1].strip(), 'refs': [int(x)-1 for x in tmp[2:][0].split(' ')]}) #这里为什么int(x)要减去1？？？
             if False and i > 1000:
                 break
         return np.array(lines)
