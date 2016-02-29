@@ -1,5 +1,6 @@
-Copy from the [MemN2N by npow](https://github.com/npow/MemN2N) and will get edited here
-thx for his sharing 
+Copy from the [MemN2N by npow](https://github.com/npow/MemN2N) and will get edited here 
+
+Thx for his sharing 
 
 
 ## End-To-End Memory Networks
