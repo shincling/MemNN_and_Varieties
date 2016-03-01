@@ -221,7 +221,7 @@ class Model:
 
         l_context_in = lasagne.layers.InputLayer(shape=(batch_size, max_seqlen, max_sentlen))
         l_question_in = lasagne.layers.InputLayer(shape=(batch_size, max_sentlen))
-
+        #大概可以判断，这个pe就是原文里面的合成一个用到的分布矩阵#
         l_context_pe_in = lasagne.layers.InputLayer(shape=(batch_size, max_seqlen, max_sentlen, embedding_size))
         l_question_pe_in = lasagne.layers.InputLayer(shape=(batch_size, 1, max_sentlen, embedding_size))
         '''底下这几部分是在初始化映射矩阵'''
