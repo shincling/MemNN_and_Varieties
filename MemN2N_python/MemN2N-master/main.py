@@ -236,7 +236,7 @@ class Model:
         l_B_embedding = lasagne.layers.ElemwiseMergeLayer((l_B_embedding, l_question_pe_in), merge_function=T.mul)
         l_B_embedding = lasagne.layers.ReshapeLayer(l_B_embedding, shape=(batch_size, max_sentlen, embedding_size))
         l_B_embedding = SumLayer(l_B_embedding, axis=1)
-
+        #这是个初始化第一层，后面的层在循环里动态连接了#
         self.mem_layers = [MemoryNetworkLayer((l_context_in, l_B_embedding, l_context_pe_in), vocab, embedding_size, A=A, A_T=A_T, C=C, C_T=C_T, nonlinearity=nonlinearity)]
         for _ in range(1, self.num_hops):
             if self.adj_weight_tying:
