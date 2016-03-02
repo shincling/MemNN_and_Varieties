@@ -126,7 +126,7 @@ class MemoryNetworkLayer(lasagne.layers.MergeLayer):
         l_C_embedding = SumLayer(l_C_embedding, axis=2)
         l_C_embedding = TemporalEncodingLayer(l_C_embedding, T=C_T)
         self.C_T = l_C_embedding.T
-
+        '''注意这底下的几个层都是暂时直接实例化，至进行了init，具体的操作需要用到各个类里面的函数来计算'''
         l_prob = InnerProductLayer((l_A_embedding, l_B_embedding), nonlinearity=nonlinearity) #32*10*20 和 32*20*1结合，成32*10
         l_weighted_output = BatchedDotLayer((l_prob, l_C_embedding))
 
@@ -136,7 +136,7 @@ class MemoryNetworkLayer(lasagne.layers.MergeLayer):
         self.l_B_embedding = l_B_embedding
         self.l_context_pe_in = l_context_pe_in
         self.network = l_sum
-
+        '''注册了一层的四个参数进去，分别是A,A_T,C,C_T ？？？有个问题是，不知道A_T C_T什么时候初始化了'''
         params = lasagne.layers.helper.get_all_params(self.network, trainable=True)
         values = lasagne.layers.helper.get_all_param_values(self.network, trainable=True)
         for p, v in zip(params, values):
