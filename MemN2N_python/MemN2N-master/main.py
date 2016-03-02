@@ -313,17 +313,17 @@ class Model:
         while (epoch < n_epochs):
             epoch += 1
 
-            if epoch % 25 == 0:
+            if epoch % 25 == 0: #每隔25个epoch，则速率减半
                 self.lr /= 2.0
 
             indices = range(n_train_batches)
             if shuffle_batch:
-                self.shuffle_sync(self.data['train'])
+                self.shuffle_sync(self.data['train'])#保持对应性地一次性shuffle了C Q Y
 
             total_cost = 0
             start_time = time.time()
-            for minibatch_index in indices:
-                self.set_shared_variables(self.data['train'], minibatch_index)
+            for minibatch_index in indices:#一次进入一个batch的数据
+                self.set_shared_variables(self.data['train'], minibatch_index)#这里的函数总算把数据传给了模型里面初始化的变量
                 total_cost += self.train_model()
                 self.reset_zero()
             end_time = time.time()
