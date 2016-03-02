@@ -376,17 +376,17 @@ class Model:
             row = row[:self.max_seqlen]
             c[i, :len(row)] = row
 
-        q[:len(indices)] = dataset['Q'][indices]
-
+        q[:len(indices)] = dataset['Q'][indices] #问题的行数组成的列表
+        '''底下这个整个循环是得到一个batch对应的那个调整的矩阵'''
         for key, mask in [('C', c_pe), ('Q', q_pe)]:
             for i, row in enumerate(dataset[key][indices]):
-                sentences = self.S[row].reshape((-1, self.max_sentlen))
+                sentences = self.S[row].reshape((-1, self.max_sentlen)) #这句相当于把每一句，从标号变成具体的词，并补0
                 for ii, word_idxs in enumerate(sentences):
                     J = np.count_nonzero(word_idxs)
                     for j in np.arange(J):
                         mask[i, ii, j, :] = (1 - (j+1)/J) - ((np.arange(self.embedding_size)+1)/self.embedding_size)*(1 - 2*(j+1)/J)
 
-        y[:len(indices), 1:self.num_classes] = self.lb.transform(dataset['Y'][indices])
+        y[:len(indices), 1:self.num_classes] = self.lb.transform(dataset['Y'][indices])#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
 
         self.c_shared.set_value(c)
         self.q_shared.set_value(q)
