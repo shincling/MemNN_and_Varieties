@@ -347,7 +347,7 @@ class Model:
                 lasagne.layers.helper.set_all_param_values(self.network, prev_weights)
             else:
                 print 'TEST', '=' * 40
-                test_f1, test_errors = self.compute_f1(self.data['test'])
+                test_f1, test_errors = self.compute_f1(self.data['test']) #有点奇怪这里的f1和test_error怎么好像不对应的？
                 print '*** TEST_ERROR:', (1-test_f1)*100
 
             prev_train_f1 = train_f1
