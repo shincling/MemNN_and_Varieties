@@ -171,7 +171,8 @@ class Model:
                 print k, self.data['test'][k][i]
         print 'batch_size:', batch_size, 'max_seqlen:', max_seqlen, 'max_sentlen:', max_sentlen
         print 'sentences:', S.shape
-        print 'vocab:', len(vocab), vocab
+        print 'vocab size:', len(vocab)
+        print 'the first 20:',vocab[:20]
         for d in ['train', 'test']:
             print d,
             for k in ['C', 'Q', 'Y']:
