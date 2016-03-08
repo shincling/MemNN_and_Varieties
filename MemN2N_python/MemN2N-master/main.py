@@ -262,7 +262,7 @@ class Model:
         print 'params:', params
         grads = T.grad(cost, params)
         scaled_grads = lasagne.updates.total_norm_constraint(grads, self.max_norm)
-        updates = lasagne.updates.sgd(scaled_grads, params, learning_rate=self.lr)
+        updates = lasagne.updates.adagrad(scaled_grads, params, learning_rate=self.lr)
 
         givens = {
             c: self.c_shared,
@@ -332,7 +332,7 @@ class Model:
             print 'TRAIN', '=' * 40
             train_f1, train_errors = self.compute_f1(self.data['train'])
             print 'TRAIN_ERROR:', (1-train_f1)*100
-            if False:
+            if True:
                 for i, pred in train_errors[:10]:
                     print 'context: ', self.to_words(self.data['train']['C'][i])
                     print 'question: ', self.to_words([self.data['train']['Q'][i]])
@@ -451,7 +451,7 @@ class Model:
             line = line.strip()
             line = line[line.find(' ')+1:] #去掉序号开始到末尾
             if line.find('?') == -1: #如果不是问句
-                lines.append({'type': 's', 'text': line})
+                lines.append({'type': 's', 'text': line[:-2]})
             else: #如果是问句
                 idx = line.find('?')
                 tmp = line[idx+1:].split('\t')
