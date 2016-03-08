@@ -351,6 +351,7 @@ class Model:
             else:
                 print 'TEST', '=' * 40
                 test_f1, test_errors = self.compute_f1(self.data['test']) #有点奇怪这里的f1和test_error怎么好像不对应的？
+                print 'test_f1,test_errors:',test_f1,test_errors
                 print '*** TEST_ERROR:', (1-test_f1)*100
 
             prev_train_f1 = train_f1
@@ -481,7 +482,7 @@ def main():
     parser.add_argument('--adj_weight_tying', type='bool', default=True, help='Whether to use adjacent weight tying')
     parser.add_argument('--linear_start', type='bool', default=True, help='Whether to start with linear activations')
     parser.add_argument('--shuffle_batch', type='bool', default=True, help='Whether to shuffle minibatches')
-    parser.add_argument('--n_epochs', type=int, default=100, help='Num epochs')
+    parser.add_argument('--n_epochs', type=int, default=500, help='Num epochs')
     args = parser.parse_args()
     print '*' * 80
     print 'args:', args
