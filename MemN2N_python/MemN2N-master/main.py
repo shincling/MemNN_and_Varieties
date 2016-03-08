@@ -3,15 +3,12 @@ from __future__ import division
 import argparse
 import glob
 import lasagne
-import nltk
 import numpy as np
-import sys
 import theano
 import theano.tensor as T
 import time
 from sklearn import metrics
 from sklearn.preprocessing import LabelBinarizer
-from theano.printing import Print as pp
 
 import warnings
 warnings.filterwarnings('ignore', '.*topo.*')
@@ -343,7 +340,7 @@ class Model:
                     print 'predicted answer: ', pred
                     print '---' * 20
             '''这块负责了linearity和softmanx的切换'''
-            if epoch>150 and prev_train_f1 is not None and train_f1 < prev_train_f1 and self.nonlinearity is None:
+            if False and prev_train_f1 is not None and train_f1 < prev_train_f1 and self.nonlinearity is None:
                 print 'The linearity ends.××××××××××××××××××\n\n'
                 prev_weights = lasagne.layers.helper.get_all_param_values(self.network)
                 self.build_network(nonlinearity=lasagne.nonlinearities.softmax)
