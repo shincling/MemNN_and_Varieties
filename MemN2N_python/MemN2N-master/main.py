@@ -172,7 +172,7 @@ class Model:
         print 'batch_size:', batch_size, 'max_seqlen:', max_seqlen, 'max_sentlen:', max_sentlen
         print 'sentences:', S.shape
         print 'vocab size:', len(vocab)
-        print 'the first 20:',vocab[:20]
+
         for d in ['train', 'test']:
             print d,
             for k in ['C', 'Q', 'Y']:
@@ -198,6 +198,7 @@ class Model:
         self.S = S
         self.idx_to_word = idx_to_word
         self.nonlinearity = None if linear_start else lasagne.nonlinearities.softmax
+        self.idx_to_word=idx_to_word
 
         self.build_network(self.nonlinearity)
 
@@ -297,8 +298,8 @@ class Model:
         n_batches = len(dataset['Y']) // self.batch_size
         y_pred = np.concatenate([self.predict(dataset, i) for i in xrange(n_batches)]).astype(np.int32) - 1
         y_true = [self.vocab.index(y) for y in dataset['Y'][:len(y_pred)]]
-        print metrics.confusion_matrix(y_true, y_pred)
-        print metrics.classification_report(y_true, y_pred)
+        # print metrics.confusion_matrix(y_true, y_pred)
+        # print metrics.classification_report(y_true, y_pred)
         errors = []
         for i, (t, p) in enumerate(zip(y_true, y_pred)):
             if t != p:
@@ -326,7 +327,7 @@ class Model:
             for minibatch_index in indices:#一次进入一个batch的数据
                 self.set_shared_variables(self.data['train'], minibatch_index)#这里的函数总算把数据传给了模型里面初始化的变量
                 total_cost += self.train_model()
-                self.reset_zero()
+                self.reset_zero()  #reset是把A,C的第一行（也就是第一个元素，对应字典了的第一个词）reset了一次，变成了0
             end_time = time.time()
             print '\n' * 3, '*' * 80
             print 'epoch:', epoch, 'cost:', (total_cost / len(indices)), ' took: %d(s)' % (end_time - start_time)
@@ -341,8 +342,9 @@ class Model:
                     print 'correct answer: ', self.data['train']['Y'][i]
                     print 'predicted answer: ', pred
                     print '---' * 20
-
-            if prev_train_f1 is not None and train_f1 < prev_train_f1 and self.nonlinearity is None:
+            '''这块负责了linearity和softmanx的切换'''
+            if False and prev_train_f1 is not None and train_f1 < prev_train_f1 and self.nonlinearity is None:
+                print 'The linearity ends.××××××××××××××××××\n\n'
                 prev_weights = lasagne.layers.helper.get_all_param_values(self.network)
                 self.build_network(nonlinearity=lasagne.nonlinearities.softmax)
                 lasagne.layers.helper.set_all_param_values(self.network, prev_weights)
@@ -468,7 +470,7 @@ def str2bool(v):
 def main():
     parser = argparse.ArgumentParser()
     parser.register('type', 'bool', str2bool)
-    parser.add_argument('--task', type=int, default=1, help='Task#')
+    parser.add_argument('--task', type=int, default=22, help='Task#')
     parser.add_argument('--train_file', type=str, default='', help='Train file')
     parser.add_argument('--test_file', type=str, default='', help='Test file')
     parser.add_argument('--batch_size', type=int, default=32, help='Batch size')
@@ -477,7 +479,7 @@ def main():
     parser.add_argument('--lr', type=float, default=0.01, help='Learning rate')
     parser.add_argument('--num_hops', type=int, default=3, help='Num hops')
     parser.add_argument('--adj_weight_tying', type='bool', default=True, help='Whether to use adjacent weight tying')
-    parser.add_argument('--linear_start', type='bool', default=False, help='Whether to start with linear activations')
+    parser.add_argument('--linear_start', type='bool', default=True, help='Whether to start with linear activations')
     parser.add_argument('--shuffle_batch', type='bool', default=True, help='Whether to shuffle minibatches')
     parser.add_argument('--n_epochs', type=int, default=100, help='Num epochs')
     args = parser.parse_args()
