@@ -343,7 +343,7 @@ class Model:
                     print 'predicted answer: ', pred
                     print '---' * 20
             '''这块负责了linearity和softmanx的切换'''
-            if False and prev_train_f1 is not None and train_f1 < prev_train_f1 and self.nonlinearity is None:
+            if epoch>150 and prev_train_f1 is not None and train_f1 < prev_train_f1 and self.nonlinearity is None:
                 print 'The linearity ends.××××××××××××××××××\n\n'
                 prev_weights = lasagne.layers.helper.get_all_param_values(self.network)
                 self.build_network(nonlinearity=lasagne.nonlinearities.softmax)
@@ -351,7 +351,7 @@ class Model:
             else:
                 print 'TEST', '=' * 40
                 test_f1, test_errors = self.compute_f1(self.data['test']) #有点奇怪这里的f1和test_error怎么好像不对应的？
-                print 'test_f1,test_errors:',test_f1,test_errors
+                print 'test_f1,test_errors:',test_f1,len(test_errors)
                 print '*** TEST_ERROR:', (1-test_f1)*100
 
             prev_train_f1 = train_f1
