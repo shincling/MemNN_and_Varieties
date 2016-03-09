@@ -332,7 +332,7 @@ class Model:
             print 'TRAIN', '=' * 40
             train_f1, train_errors = self.compute_f1(self.data['train'])
             print 'TRAIN_ERROR:', (1-train_f1)*100
-            if True:
+            if False:
                 for i, pred in train_errors[:10]:
                     print 'context: ', self.to_words(self.data['train']['C'][i])
                     print 'question: ', self.to_words([self.data['train']['Q'][i]])
@@ -350,6 +350,13 @@ class Model:
                 test_f1, test_errors = self.compute_f1(self.data['test']) #有点奇怪这里的f1和test_error怎么好像不对应的？
                 print 'test_f1,test_errors:',test_f1,len(test_errors)
                 print '*** TEST_ERROR:', (1-test_f1)*100
+                if True:
+                    for i, pred in test_errors[:10]:
+                        print 'context: ', self.to_words(self.data['test']['C'][i])
+                        print 'question: ', self.to_words([self.data['test']['Q'][i]])
+                        print 'correct answer: ', self.data['test']['Y'][i]
+                        print 'predicted answer: ', pred
+                        print '---' * 20
 
             prev_train_f1 = train_f1
 
