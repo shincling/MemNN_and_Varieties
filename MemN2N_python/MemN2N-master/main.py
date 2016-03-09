@@ -224,19 +224,19 @@ class Model:
         l_context_pe_in = lasagne.layers.InputLayer(shape=(batch_size, max_seqlen, max_sentlen, embedding_size))
         l_question_pe_in = lasagne.layers.InputLayer(shape=(batch_size, 1, max_sentlen, embedding_size))
         '''底下这几部分是在初始化映射矩阵'''
-        A, C = lasagne.init.Normal(std=0.01).sample((len(vocab)+1, embedding_size)), lasagne.init.Normal(std=0.01)
+        B, C = lasagne.init.Normal(std=0.01).sample((len(vocab)+1, embedding_size)), lasagne.init.Normal(std=0.01)
         A_T, C_T = lasagne.init.Normal(std=0.01), lasagne.init.Normal(std=0.01)
-        W = A if self.adj_weight_tying else lasagne.init.Normal(std=0.01) #这里决定了原文里的 A与B两个映射矩阵相同
+        # W = A if self.adj_weight_tying else lasagne.init.Normal(std=0.01) #这里决定了原文里的 A与B两个映射矩阵相同
 
         l_question_in = lasagne.layers.ReshapeLayer(l_question_in, shape=(batch_size * max_sentlen, ))
-        l_B_embedding = lasagne.layers.EmbeddingLayer(l_question_in, len(vocab)+1, embedding_size, W=W) #到这变成了224*20
+        l_B_embedding = lasagne.layers.EmbeddingLayer(l_question_in, len(vocab)+1, embedding_size, W=B) #到这变成了224*20
         B = l_B_embedding.W #B就是上一行初始化用到的W,是(len(vocab)+1, embedding_size)这种size
         l_B_embedding = lasagne.layers.ReshapeLayer(l_B_embedding, shape=(batch_size, 1, max_sentlen, embedding_size)) #reshape变成了32*1*7*20
         l_B_embedding = lasagne.layers.ElemwiseMergeLayer((l_B_embedding, l_question_pe_in), merge_function=T.mul)
         l_B_embedding = lasagne.layers.ReshapeLayer(l_B_embedding, shape=(batch_size, max_sentlen, embedding_size))
         l_B_embedding = SumLayer(l_B_embedding, axis=1)
         #这是个初始化第一层，后面的层在循环里动态连接了#
-        self.mem_layers = [MemoryNetworkLayer((l_context_in, l_B_embedding, l_context_pe_in), vocab, embedding_size, A=A, A_T=A_T, C=C, C_T=C_T, nonlinearity=nonlinearity)]
+        self.mem_layers = [MemoryNetworkLayer((l_context_in, l_B_embedding, l_context_pe_in), vocab, embedding_size, A=B, A_T=A_T, C=C, C_T=C_T, nonlinearity=nonlinearity)]
         for _ in range(1, self.num_hops):
             if self.adj_weight_tying:
                 A, C = self.mem_layers[-1].C, lasagne.init.Normal(std=0.01)
@@ -311,6 +311,14 @@ class Model:
 
         while (epoch < n_epochs):
             epoch += 1
+            # if epoch and epoch%20==0:
+            #     tmp=lasagne.layers.helper.get_all_param_values(self.network)
+            #     for idx,i in enumerate(tmp):
+            #         print '*'*50
+            #         print idx
+            #         print i
+
+
 
             if epoch % 25 == 0: #每隔25个epoch，则速率减半
                 self.lr /= 2.0
