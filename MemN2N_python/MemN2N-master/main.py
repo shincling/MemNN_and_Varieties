@@ -63,7 +63,7 @@ class SumLayer(lasagne.layers.Layer):
 
 class TemporalEncodingLayer(lasagne.layers.Layer):
     '''对应了论文里的Temporal Encoding部分，引入了T_A或者T_C参数来学习'''
-    def __init__(self, incoming, T=lasagne.init.Normal(std=0.1), **kwargs):
+    def __init__(self, incoming, T=lasagne.init.Uniform(range=0.2), **kwargs):
         super(TemporalEncodingLayer, self).__init__(incoming, **kwargs)
         self.T = self.add_param(T, self.input_shape[-2:], name="T")
 
@@ -224,9 +224,9 @@ class Model:
         l_context_pe_in = lasagne.layers.InputLayer(shape=(batch_size, max_seqlen, max_sentlen, embedding_size))
         l_question_pe_in = lasagne.layers.InputLayer(shape=(batch_size, 1, max_sentlen, embedding_size))
         '''底下这几部分是在初始化映射矩阵'''
-        A, C = lasagne.init.Normal(std=0.1).sample((len(vocab)+1, embedding_size)), lasagne.init.Normal(std=0.1)
-        A_T, C_T = lasagne.init.Normal(std=0.1), lasagne.init.Normal(std=0.1)
-        W = A if self.adj_weight_tying else lasagne.init.Normal(std=0.1) #这里决定了原文里的 A与B两个映射矩阵相同
+        A, C = lasagne.init.Uniform(range=0.2).sample((len(vocab)+1, embedding_size)), lasagne.init.Uniform(range=0.2)
+        A_T, C_T = lasagne.init.Uniform(range=0.2), lasagne.init.Uniform(range=0.2)
+        W = A if self.adj_weight_tying else lasagne.init.Uniform(range=0.2) #这里决定了原文里的 A与B两个映射矩阵相同
 
         l_question_in = lasagne.layers.ReshapeLayer(l_question_in, shape=(batch_size * max_sentlen, ))
         l_B_embedding = lasagne.layers.EmbeddingLayer(l_question_in, len(vocab)+1, embedding_size, W=W) #到这变成了224*20
@@ -239,8 +239,8 @@ class Model:
         self.mem_layers = [MemoryNetworkLayer((l_context_in, l_B_embedding, l_context_pe_in), vocab, embedding_size, A=A, A_T=A_T, C=C, C_T=C_T, nonlinearity=nonlinearity)]
         for _ in range(1, self.num_hops):
             if self.adj_weight_tying:
-                A, C = self.mem_layers[-1].C, lasagne.init.Normal(std=0.1)
-                A_T, C_T = self.mem_layers[-1].C_T, lasagne.init.Normal(std=0.1)
+                A, C = self.mem_layers[-1].C, lasagne.init.Uniform(range=0.2)
+                A_T, C_T = self.mem_layers[-1].C_T, lasagne.init.Uniform(range=0.2)
             else:  # RNN style
                 A, C = self.mem_layers[-1].A, self.mem_layers[-1].C
                 A_T, C_T = self.mem_layers[-1].A_T, self.mem_layers[-1].C_T
@@ -249,7 +249,7 @@ class Model:
         if self.adj_weight_tying:
             l_pred = TransposedDenseLayer(self.mem_layers[-1], self.num_classes, W=self.mem_layers[-1].C, b=None, nonlinearity=lasagne.nonlinearities.softmax)
         else:
-            l_pred = lasagne.layers.DenseLayer(self.mem_layers[-1], self.num_classes, W=lasagne.init.Normal(std=0.1), b=None, nonlinearity=lasagne.nonlinearities.softmax)
+            l_pred = lasagne.layers.DenseLayer(self.mem_layers[-1], self.num_classes, W=lasagne.init.Uniform(range=0.2), b=None, nonlinearity=lasagne.nonlinearities.softmax)
 
         probas = lasagne.layers.helper.get_output(l_pred, {l_context_in: cc, l_question_in: qq, l_context_pe_in: c_pe, l_question_pe_in: q_pe})
         probas = T.clip(probas, 1e-7, 1.0-1e-7)
@@ -456,7 +456,8 @@ class Model:
         for i, line in enumerate(open(fname)):
             id = int(line[0:line.find(' ')]) #找到每行的对应的故事里的序号
             line = line.strip()
-            line = line[line.find(' ')+1:] #去掉序号开始到末尾
+            # line = line[line.find(' ')+1:] #去掉序号开始到末尾
+
             if line.find('?') == -1: #如果不是问句
                 lines.append({'type': 's', 'text': line[:-2]})
             else: #如果是问句
