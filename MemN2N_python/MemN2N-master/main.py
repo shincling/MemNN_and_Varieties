@@ -195,7 +195,7 @@ class Model:
         self.S = S
         self.idx_to_word = idx_to_word
         self.nonlinearity = None if linear_start else lasagne.nonlinearities.softmax
-        self.idx_to_word=idx_to_word
+        self.word_to_idx=word_to_idx
 
         self.build_network(self.nonlinearity)
 
@@ -383,7 +383,7 @@ class Model:
     def set_shared_variables(self, dataset, index):
         c = np.zeros((self.batch_size, self.max_seqlen), dtype=np.int32)
         q = np.zeros((self.batch_size, ), dtype=np.int32)
-        y = np.zeros((self.batch_size, self.num_classes), dtype=np.int32)
+        y = np.zeros((self.batch_size, self.embedding_size), dtype=np.int32)
         c_pe = np.zeros((self.batch_size, self.max_seqlen, self.max_sentlen, self.embedding_size), dtype=theano.config.floatX)
         q_pe = np.zeros((self.batch_size, 1, self.max_sentlen, self.embedding_size), dtype=theano.config.floatX)
 
@@ -401,9 +401,8 @@ class Model:
                     J = np.count_nonzero(word_idxs)
                     for j in np.arange(J):
                         mask[i, ii, j, :] = (1 - (j+1)/J) - ((np.arange(self.embedding_size)+1)/self.embedding_size)*(1 - 2*(j+1)/J)
-
-        y[:len(indices), 1:self.num_classes] = self.lb.transform(dataset['Y'][indices])#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
-
+        # y[:len(indices), 1:self.embedding_size] = self.lb.transform(dataset['Y'][indices])#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
+        y[:len(indices), 1:self.embedding_size] = self.lb.transform(dataset['Y'][indices])#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
         self.c_shared.set_value(c)
         self.q_shared.set_value(q)
         self.a_shared.set_value(y)
