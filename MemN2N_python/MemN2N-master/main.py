@@ -402,7 +402,7 @@ class Model:
                     for j in np.arange(J):
                         mask[i, ii, j, :] = (1 - (j+1)/J) - ((np.arange(self.embedding_size)+1)/self.embedding_size)*(1 - 2*(j+1)/J)
         # y[:len(indices), 1:self.embedding_size] = self.lb.transform(dataset['Y'][indices])#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
-        y[:len(indices), 1:self.embedding_size] = self.lb.transform(dataset['Y'][indices])#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
+        y[:len(indices), 1:self.embedding_size] = self.mem_layers[0].A[[self.word_to_idx(i) for i in list(dataset['Y'][indices])]]#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
         self.c_shared.set_value(c)
         self.q_shared.set_value(q)
         self.a_shared.set_value(y)
