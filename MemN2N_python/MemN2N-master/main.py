@@ -8,7 +8,7 @@ import theano
 import theano.tensor as T
 import time
 from sklearn import metrics
-from sklearn.preprocessing import LabelBinarizer
+from sklearn.preprocessing import LabelBinarizer,label_binarize
 
 import warnings
 warnings.filterwarnings('ignore', '.*topo.*')
@@ -178,9 +178,15 @@ class Model:
                 print k, self.data[d][k].shape,
             print ''
 
+        vocab=[]
+        for i in range(len(idx_to_word)):
+            vocab.append(idx_to_word[i+1])
+
+
         lb = LabelBinarizer()
-        lb.fit(list(vocab))
-        vocab = lb.classes_.tolist()
+        # lb.fit(list(vocab))
+        # vocab = lb.classes_.tolist()
+
 
         self.enable_time=enable_time
         self.batch_size = batch_size
@@ -311,7 +317,8 @@ class Model:
         errors = []
         for i, (t, p) in enumerate(zip(y_true, y_pred)):
             if t != p:
-                errors.append((i, self.lb.classes_[p]))
+                # errors.append((i, self.lb.classes_[p]))
+                pass
         return metrics.f1_score(y_true, y_pred, average='weighted', pos_label=None), errors
 
     def train(self, n_epochs=100, shuffle_batch=False):
@@ -412,7 +419,10 @@ class Model:
                     J = np.count_nonzero(word_idxs)
                     for j in np.arange(J):
                         mask[i, ii, j, :] = (1 - (j+1)/J) - ((np.arange(self.embedding_size)+1)/self.embedding_size)*(1 - 2*(j+1)/J)
-        y[:len(indices), 1:self.num_classes] = self.lb.transform(dataset['Y'][indices])#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
+
+
+        # y[:len(indices), 1:self.num_classes] = self.lb.transform(dataset['Y'][indices])#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
+        y[:len(indices), 1:self.num_classes] = label_binarize(dataset['Y'][indices],self.vocab)#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
         # y[:len(indices), 1:self.embedding_size] = self.mem_layers[0].A[[self.word_to_idx(i) for i in list(dataset['Y'][indices])]]#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
         self.c_shared.set_value(c)
         self.q_shared.set_value(q)
