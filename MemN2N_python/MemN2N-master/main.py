@@ -218,6 +218,9 @@ class Model:
         self.q_pe_shared = theano.shared(np.zeros((batch_size, 1, max_sentlen, embedding_size), dtype=theano.config.floatX), borrow=True)
         S_shared = theano.shared(self.S, borrow=True)#这个S把train test放到了一起来干事情#
 
+        if enable_time:
+            pass
+
         cc = S_shared[c.flatten()].reshape((batch_size, max_seqlen, max_sentlen))
         qq = S_shared[q.flatten()].reshape((batch_size, max_sentlen))
 
@@ -245,13 +248,15 @@ class Model:
         for _ in range(1, self.num_hops):
             if self.adj_weight_tying:
                 A, C = self.mem_layers[-1].C, lasagne.init.Normal(std=0.01)
-                A_T, C_T = self.mem_layers[-1].C_T, lasagne.init.Normal(std=0.01)
+                if not enable_time:
+                    A_T, C_T = self.mem_layers[-1].C_T, lasagne.init.Normal(std=0.01)
             else:  # RNN style
                 A, C = self.mem_layers[-1].A, self.mem_layers[-1].C
-                A_T, C_T = self.mem_layers[-1].A_T, self.mem_layers[-1].C_T
+                if not enable_time:
+                    A_T, C_T = self.mem_layers[-1].A_T, self.mem_layers[-1].C_T
             self.mem_layers += [MemoryNetworkLayer((l_context_in, self.mem_layers[-1], l_context_pe_in), vocab, embedding_size, enable_time,A=A, A_T=A_T, C=C, C_T=C_T, nonlinearity=nonlinearity)]
 
-        if False and self.adj_weight_tying:
+        if True and self.adj_weight_tying:
             l_pred = TransposedDenseLayer(self.mem_layers[-1], self.num_classes, W=self.mem_layers[-1].C, b=None, nonlinearity=lasagne.nonlinearities.softmax)
         else:
             l_pred = lasagne.layers.DenseLayer(self.mem_layers[-1], self.num_classes, W=lasagne.init.Normal(std=0.01), b=None, nonlinearity=lasagne.nonlinearities.softmax)
@@ -262,7 +267,7 @@ class Model:
 
         pred = T.argmax(probas, axis=1)
 
-        cost = T.nnet.binary_crossentropy(probas, y).sum()
+        cost = T.nnet.categorical_crossentropy(probas, y).sum()
 
         params = lasagne.layers.helper.get_all_params(l_pred, trainable=True)
         print 'params:', params
@@ -294,7 +299,7 @@ class Model:
             l.reset_zero()
 
     def predict(self, dataset, index):
-        self.set_shared_variables(dataset, index)
+        self.set_shared_variables(dataset, index,self.enable_time)
         return self.compute_pred()
 
     def compute_f1(self, dataset):
@@ -336,7 +341,7 @@ class Model:
             total_cost = 0
             start_time = time.time()
             for minibatch_index in indices:#一次进入一个batch的数据
-                self.set_shared_variables(self.data['train'], minibatch_index)#这里的函数总算把数据传给了模型里面初始化的变量
+                self.set_shared_variables(self.data['train'], minibatch_index,self.enable_time)#这里的函数总算把数据传给了模型里面初始化的变量
                 total_cost += self.train_model()
                 self.reset_zero()  #reset是把A,C的第一行（也就是第一个元素，对应字典了的第一个词）reset了一次，变成了0
             end_time = time.time()
@@ -386,7 +391,7 @@ class Model:
         for k in ['C', 'Q', 'Y']:
             dataset[k] = dataset[k][p]
 
-    def set_shared_variables(self, dataset, index):
+    def set_shared_variables(self, dataset, index,enable_time):
         c = np.zeros((self.batch_size, self.max_seqlen), dtype=np.int32)
         q = np.zeros((self.batch_size, ), dtype=np.int32)
         y = np.zeros((self.batch_size, self.num_classes), dtype=np.int32)
