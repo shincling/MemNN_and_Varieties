@@ -182,7 +182,7 @@ class Model:
 
         self.batch_size = batch_size
         self.max_seqlen = max_seqlen
-        self.max_sentlen = max_sentlen
+        self.max_sentlen = max_sentlen if not enable_time else max_sentlen+1
         self.embedding_size = embedding_size
         self.num_classes = len(vocab) + 1
         self.vocab = vocab
@@ -248,14 +248,14 @@ class Model:
                 A_T, C_T = self.mem_layers[-1].A_T, self.mem_layers[-1].C_T
             self.mem_layers += [MemoryNetworkLayer((l_context_in, self.mem_layers[-1], l_context_pe_in), vocab, embedding_size, A=A, A_T=A_T, C=C, C_T=C_T, nonlinearity=nonlinearity)]
 
-        if self.adj_weight_tying:
+        if False and self.adj_weight_tying:
             l_pred = TransposedDenseLayer(self.mem_layers[-1], self.num_classes, W=self.mem_layers[-1].C, b=None, nonlinearity=lasagne.nonlinearities.softmax)
         else:
             l_pred = lasagne.layers.DenseLayer(self.mem_layers[-1], self.num_classes, W=lasagne.init.Normal(std=0.01), b=None, nonlinearity=lasagne.nonlinearities.softmax)
 
         probas = lasagne.layers.helper.get_output(l_pred, {l_context_in: cc, l_question_in: qq, l_context_pe_in: c_pe, l_question_pe_in: q_pe})
         # probas = lasagne.layers.helper.get_output(l_pred,None)
-        # probas = T.clip(probas, 1e-7, 1.0-1e-7)
+        probas = T.clip(probas, 1e-7, 1.0-1e-7)
 
         pred = T.argmax(probas, axis=1)
 
@@ -498,6 +498,7 @@ def main():
     parser.add_argument('--linear_start', type='bool', default=True, help='Whether to start with linear activations')
     parser.add_argument('--shuffle_batch', type='bool', default=True, help='Whether to shuffle minibatches')
     parser.add_argument('--n_epochs', type=int, default=500, help='Num epochs')
+    parser.add_argument('--enable_time', type=bool, default=False, help='time word embedding')
     args = parser.parse_args()
     print '*' * 80
     print 'args:', args
