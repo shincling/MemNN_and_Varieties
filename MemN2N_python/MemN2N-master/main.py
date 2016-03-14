@@ -96,7 +96,7 @@ class TransposedDenseLayer(lasagne.layers.DenseLayer):
 
 class MemoryNetworkLayer(lasagne.layers.MergeLayer):
 
-    def __init__(self, incomings, vocab, embedding_size, A, A_T, C, C_T, nonlinearity=lasagne.nonlinearities.softmax, **kwargs):
+    def __init__(self, incomings, vocab, embedding_size,enable_time, A, A_T, C, C_T, nonlinearity=lasagne.nonlinearities.softmax, **kwargs):
         super(MemoryNetworkLayer, self).__init__(incomings, **kwargs) #？？？不知道这个super到底做什么的，会引入input_layers和input_shapes这些属性
         if len(incomings) != 3:
             raise NotImplementedError
@@ -113,16 +113,18 @@ class MemoryNetworkLayer(lasagne.layers.MergeLayer):
         l_A_embedding = lasagne.layers.ReshapeLayer(l_A_embedding, shape=(batch_size, max_seqlen, max_sentlen, embedding_size)) #reshape把一行的东西再转回来
         l_A_embedding = lasagne.layers.ElemwiseMergeLayer((l_A_embedding, l_context_pe_in), merge_function=T.mul)
         l_A_embedding = SumLayer(l_A_embedding, axis=2) #同样地，把一个句子里按所有词加起来
-        l_A_embedding = TemporalEncodingLayer(l_A_embedding, T=A_T)
-        self.A_T = l_A_embedding.T
+        if not enable_time:
+            l_A_embedding = TemporalEncodingLayer(l_A_embedding, T=A_T)
+            self.A_T = l_A_embedding.T
 
         l_C_embedding = lasagne.layers.EmbeddingLayer(l_context_in, len(vocab)+1, embedding_size, W=C)
         self.C = l_C_embedding.W
         l_C_embedding = lasagne.layers.ReshapeLayer(l_C_embedding, shape=(batch_size, max_seqlen, max_sentlen, embedding_size))
         l_C_embedding = lasagne.layers.ElemwiseMergeLayer((l_C_embedding, l_context_pe_in), merge_function=T.mul)
         l_C_embedding = SumLayer(l_C_embedding, axis=2)
-        l_C_embedding = TemporalEncodingLayer(l_C_embedding, T=C_T)
-        self.C_T = l_C_embedding.T
+        if not enable_time:
+            l_C_embedding = TemporalEncodingLayer(l_C_embedding, T=C_T)
+            self.C_T = l_C_embedding.T
         '''注意这底下的几个层都是暂时直接实例化，至进行了init，具体的操作需要用到各个类里面的函数来计算'''
         l_prob = InnerProductLayer((l_A_embedding, l_B_embedding), nonlinearity=nonlinearity) #32*10*20 和 32*20*1结合，成32*10
         l_weighted_output = BatchedDotLayer((l_prob, l_C_embedding))
@@ -154,7 +156,7 @@ class MemoryNetworkLayer(lasagne.layers.MergeLayer):
 
 
 class Model:
-    def __init__(self, train_file, test_file, batch_size=32, embedding_size=20, max_norm=40, lr=0.01, num_hops=3, adj_weight_tying=True, linear_start=True, **kwargs):
+    def __init__(self, train_file, test_file, batch_size=32, embedding_size=20, max_norm=40, lr=0.01, num_hops=3, adj_weight_tying=True, linear_start=True, enable_time=False,**kwargs):
         train_lines, test_lines = self.get_lines(train_file), self.get_lines(test_file)
         lines = np.concatenate([train_lines, test_lines], axis=0) #直接头尾拼接
         vocab, word_to_idx, idx_to_word, max_seqlen, max_sentlen = self.get_vocab(lines)
@@ -180,6 +182,7 @@ class Model:
         lb.fit(list(vocab))
         vocab = lb.classes_.tolist()
 
+        self.enable_time=enable_time
         self.batch_size = batch_size
         self.max_seqlen = max_seqlen
         self.max_sentlen = max_sentlen if not enable_time else max_sentlen+1
@@ -200,7 +203,7 @@ class Model:
         self.build_network(self.nonlinearity)
 
     def build_network(self, nonlinearity):
-        batch_size, max_seqlen, max_sentlen, embedding_size, vocab = self.batch_size, self.max_seqlen, self.max_sentlen, self.embedding_size, self.vocab
+        batch_size, max_seqlen, max_sentlen, embedding_size, vocab,enable_time = self.batch_size, self.max_seqlen, self.max_sentlen, self.embedding_size, self.vocab,self.enable_time
 
         c = T.imatrix()
         q = T.ivector()
@@ -238,7 +241,7 @@ class Model:
         l_B_embedding = lasagne.layers.ReshapeLayer(l_B_embedding, shape=(batch_size, max_sentlen, embedding_size))
         l_B_embedding = SumLayer(l_B_embedding, axis=1)
         #这是个初始化第一层，后面的层在循环里动态连接了#
-        self.mem_layers = [MemoryNetworkLayer((l_context_in, l_B_embedding, l_context_pe_in), vocab, embedding_size, A=B, A_T=A_T, C=C, C_T=C_T, nonlinearity=nonlinearity)]
+        self.mem_layers = [MemoryNetworkLayer((l_context_in, l_B_embedding, l_context_pe_in), vocab, embedding_size,enable_time, A=B, A_T=A_T, C=C, C_T=C_T, nonlinearity=nonlinearity)]
         for _ in range(1, self.num_hops):
             if self.adj_weight_tying:
                 A, C = self.mem_layers[-1].C, lasagne.init.Normal(std=0.01)
@@ -246,7 +249,7 @@ class Model:
             else:  # RNN style
                 A, C = self.mem_layers[-1].A, self.mem_layers[-1].C
                 A_T, C_T = self.mem_layers[-1].A_T, self.mem_layers[-1].C_T
-            self.mem_layers += [MemoryNetworkLayer((l_context_in, self.mem_layers[-1], l_context_pe_in), vocab, embedding_size, A=A, A_T=A_T, C=C, C_T=C_T, nonlinearity=nonlinearity)]
+            self.mem_layers += [MemoryNetworkLayer((l_context_in, self.mem_layers[-1], l_context_pe_in), vocab, embedding_size, enable_time,A=A, A_T=A_T, C=C, C_T=C_T, nonlinearity=nonlinearity)]
 
         if False and self.adj_weight_tying:
             l_pred = TransposedDenseLayer(self.mem_layers[-1], self.num_classes, W=self.mem_layers[-1].C, b=None, nonlinearity=lasagne.nonlinearities.softmax)
