@@ -290,7 +290,7 @@ class Model:
         }
 
         self.train_model = theano.function([], cost, givens=givens, updates=updates)
-        self.compute_pred = theano.function([], pred, givens=givens, on_unused_input='ignore')
+        self.compute_pred = theano.function([], [pred,probas], givens=givens, on_unused_input='ignore')
 
         zero_vec_tensor = T.vector()
         self.zero_vec = np.zeros(embedding_size, dtype=theano.config.floatX)
@@ -306,7 +306,8 @@ class Model:
 
     def predict(self, dataset, index):
         self.set_shared_variables(dataset, index,self.enable_time)
-        return self.compute_pred()
+        result=self.compute_pred()
+        return result[0]
 
     def compute_f1(self, dataset):
         n_batches = len(dataset['Y']) // self.batch_size
