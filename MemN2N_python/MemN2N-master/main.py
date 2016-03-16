@@ -63,7 +63,7 @@ class SumLayer(lasagne.layers.Layer):
 
 class TemporalEncodingLayer(lasagne.layers.Layer):
     '''对应了论文里的Temporal Encoding部分，引入了T_A或者T_C参数来学习'''
-    def __init__(self, incoming, T=lasagne.init.Normal(std=0.01), **kwargs):
+    def __init__(self, incoming, T=lasagne.init.Normal(std=0.1), **kwargs):
         super(TemporalEncodingLayer, self).__init__(incoming, **kwargs)
         self.T = self.add_param(T, self.input_shape[-2:], name="T")
 
@@ -236,11 +236,11 @@ class Model:
         l_context_pe_in = lasagne.layers.InputLayer(shape=(batch_size, max_seqlen, max_sentlen, embedding_size))
         l_question_pe_in = lasagne.layers.InputLayer(shape=(batch_size, 1, max_sentlen, embedding_size))
         '''底下这几部分是在初始化映射矩阵'''
-        # A, C = lasagne.init.Normal(std=0.01).sample((len(vocab)+1, embedding_size)), lasagne.init.Normal(std=0.01)
-        # B, C = lasagne.init.Normal(std=0.01).sample((len(vocab)+1, embedding_size)), lasagne.init.Normal(std=0.01)
-        B, C = lasagne.init.Normal(std=0.01), lasagne.init.Normal(std=0.01)
+        # A, C = lasagne.init.Normal(std=0.1).sample((len(vocab)+1, embedding_size)), lasagne.init.Normal(std=0.1)
+        # B, C = lasagne.init.Normal(std=0.1).sample((len(vocab)+1, embedding_size)), lasagne.init.Normal(std=0.1)
+        B, C = lasagne.init.Normal(std=0.1), lasagne.init.Normal(std=0.1)
         A_T, C_T = lasagne.init.Normal(std=0.01), lasagne.init.Normal(std=0.01)
-        W = B if self.adj_weight_tying else lasagne.init.Normal(std=0.01) #这里决定了原文里的 A与B两个映射矩阵相同
+        W = B if self.adj_weight_tying else lasagne.init.Normal(std=0.1) #这里决定了原文里的 A与B两个映射矩阵相同
 
         l_question_in = lasagne.layers.ReshapeLayer(l_question_in, shape=(batch_size * max_sentlen, ))
         l_B_embedding = lasagne.layers.EmbeddingLayer(l_question_in, len(vocab)+1, embedding_size, W=W) #到这变成了224*20
@@ -253,9 +253,9 @@ class Model:
         self.mem_layers = [MemoryNetworkLayer((l_context_in, l_B_embedding, l_context_pe_in), vocab, embedding_size,enable_time, A=B, A_T=A_T, C=C, C_T=C_T, nonlinearity=nonlinearity)]
         for _ in range(1, self.num_hops):
             if self.adj_weight_tying:
-                A, C = self.mem_layers[-1].C, lasagne.init.Normal(std=0.01)
+                A, C = self.mem_layers[-1].C, lasagne.init.Normal(std=0.1)
                 if not enable_time:
-                    A_T, C_T = self.mem_layers[-1].C_T, lasagne.init.Normal(std=0.01)
+                    A_T, C_T = self.mem_layers[-1].C_T, lasagne.init.Normal(std=0.1)
             else:  # RNN style
                 A, C = self.mem_layers[-1].A, self.mem_layers[-1].C
                 if not enable_time:
@@ -265,7 +265,7 @@ class Model:
         if True and self.adj_weight_tying:
             l_pred = TransposedDenseLayer(self.mem_layers[-1], self.num_classes, W=self.mem_layers[-1].C, b=None, nonlinearity=lasagne.nonlinearities.softmax)
         else:
-            l_pred = lasagne.layers.DenseLayer(self.mem_layers[-1], self.num_classes, W=lasagne.init.Normal(std=0.01), b=None, nonlinearity=lasagne.nonlinearities.softmax)
+            l_pred = lasagne.layers.DenseLayer(self.mem_layers[-1], self.num_classes, W=lasagne.init.Normal(std=0.1), b=None, nonlinearity=lasagne.nonlinearities.softmax)
 
         c_emb = lasagne.layers.helper.get_output(self.mem_layers[-1],{l_context_in: cc, l_question_in: qq, l_context_pe_in: c_pe, l_question_pe_in: q_pe})
         probas = lasagne.layers.helper.get_output(l_pred, {l_context_in: cc, l_question_in: qq, l_context_pe_in: c_pe, l_question_pe_in: q_pe})
@@ -322,6 +322,7 @@ class Model:
         for i, (t, p) in enumerate(zip(y_true, y_pred)):
             if t != p:
                 # errors.append((i, self.lb.classes_[p]))
+                errors.append((i, self.vocab[p]))
                 pass
         return metrics.f1_score(y_true, y_pred, average='weighted', pos_label=None), errors
 
@@ -508,7 +509,7 @@ def str2bool(v):
 def main():
     parser = argparse.ArgumentParser()
     parser.register('type', 'bool', str2bool)
-    parser.add_argument('--task', type=int, default=1, help='Task#')
+    parser.add_argument('--task', type=int, default=22, help='Task#')
     parser.add_argument('--train_file', type=str, default='', help='Train file')
     parser.add_argument('--test_file', type=str, default='', help='Test file')
     parser.add_argument('--batch_size', type=int, default=32, help='Batch size')
