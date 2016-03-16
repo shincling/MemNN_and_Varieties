@@ -267,6 +267,7 @@ class Model:
         else:
             l_pred = lasagne.layers.DenseLayer(self.mem_layers[-1], self.num_classes, W=lasagne.init.Normal(std=0.01), b=None, nonlinearity=lasagne.nonlinearities.softmax)
 
+        c_emb = lasagne.layers.helper.get_output(self.mem_layers[-1],{l_context_in: cc, l_question_in: qq, l_context_pe_in: c_pe, l_question_pe_in: q_pe})
         probas = lasagne.layers.helper.get_output(l_pred, {l_context_in: cc, l_question_in: qq, l_context_pe_in: c_pe, l_question_pe_in: q_pe})
         # probas = lasagne.layers.helper.get_output(l_pred,None)
         probas = T.clip(probas, 1e-7, 1.0-1e-7)
@@ -290,7 +291,7 @@ class Model:
         }
 
         self.train_model = theano.function([], cost, givens=givens, updates=updates)
-        self.compute_pred = theano.function([], [pred,probas], givens=givens, on_unused_input='ignore')
+        self.compute_pred = theano.function([], outputs= [pred,probas,c_emb], givens=givens, on_unused_input='ignore')
 
         zero_vec_tensor = T.vector()
         self.zero_vec = np.zeros(embedding_size, dtype=theano.config.floatX)
@@ -307,6 +308,8 @@ class Model:
     def predict(self, dataset, index):
         self.set_shared_variables(dataset, index,self.enable_time)
         result=self.compute_pred()
+        # print 'probas:\n'
+        # print result[1]
         return result[0]
 
     def compute_f1(self, dataset):
@@ -505,7 +508,7 @@ def str2bool(v):
 def main():
     parser = argparse.ArgumentParser()
     parser.register('type', 'bool', str2bool)
-    parser.add_argument('--task', type=int, default=22, help='Task#')
+    parser.add_argument('--task', type=int, default=1, help='Task#')
     parser.add_argument('--train_file', type=str, default='', help='Train file')
     parser.add_argument('--test_file', type=str, default='', help='Test file')
     parser.add_argument('--batch_size', type=int, default=32, help='Batch size')
