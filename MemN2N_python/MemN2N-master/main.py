@@ -239,7 +239,7 @@ class Model:
         # A, C = lasagne.init.Normal(std=0.1).sample((len(vocab)+1, embedding_size)), lasagne.init.Normal(std=0.1)
         # B, C = lasagne.init.Normal(std=0.1).sample((len(vocab)+1, embedding_size)), lasagne.init.Normal(std=0.1)
         B, C = lasagne.init.Normal(std=0.1), lasagne.init.Normal(std=0.1)
-        A_T, C_T = lasagne.init.Normal(std=0.01), lasagne.init.Normal(std=0.01)
+        A_T, C_T = lasagne.init.Normal(std=0.1), lasagne.init.Normal(std=0.1)
         W = B if self.adj_weight_tying else lasagne.init.Normal(std=0.1) #这里决定了原文里的 A与B两个映射矩阵相同
 
         l_question_in = lasagne.layers.ReshapeLayer(l_question_in, shape=(batch_size * max_sentlen, ))
@@ -515,7 +515,7 @@ def main():
     parser.add_argument('--batch_size', type=int, default=32, help='Batch size')
     parser.add_argument('--embedding_size', type=int, default=30, help='Embedding size')
     parser.add_argument('--max_norm', type=float, default=40.0, help='Max norm')
-    parser.add_argument('--lr', type=float, default=0.05, help='Learning rate')
+    parser.add_argument('--lr', type=float, default=0.02, help='Learning rate')
     parser.add_argument('--num_hops', type=int, default=3, help='Num hops')
     parser.add_argument('--adj_weight_tying', type='bool', default=True, help='Whether to use adjacent weight tying')
     parser.add_argument('--linear_start', type='bool', default=True, help='Whether to start with linear activations')
