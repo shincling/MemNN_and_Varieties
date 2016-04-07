@@ -165,7 +165,7 @@ class Model:
         S_train, self.data['train']['C'], self.data['train']['Q'], self.data['train']['Y'] = self.process_dataset(train_lines, word_to_idx, max_sentlen, offset=0)
         S_test, self.data['test']['C'], self.data['test']['Q'], self.data['test']['Y'] = self.process_dataset(test_lines, word_to_idx, max_sentlen, offset=len(S_train))
         S = np.concatenate([np.zeros((1, max_sentlen), dtype=np.int32), S_train, S_test], axis=0)
-        for i in range(10):
+        for i in range(min(10,len(self.data['test']['C']))):
             for k in ['C', 'Q', 'Y']:
                 print k, self.data['test'][k][i]
         print 'batch_size:', batch_size, 'max_seqlen:', max_seqlen, 'max_sentlen:', max_sentlen
@@ -528,8 +528,10 @@ def main():
     print '*' * 80
 
     if args.train_file == '' or args.test_file == '':
-        args.train_file = glob.glob('data/en/qa%d_*train.txt' % args.task)[0]
-        args.test_file = glob.glob('data/en/qa%d_*test.txt' % args.task)[0]
+        # args.train_file = glob.glob('data/en/qa%d_*train.txt' % args.task)[0]
+        # args.test_file = glob.glob('data/en/qa%d_*test.txt' % args.task)[0]
+        args.train_file = '/home/shin/DeepLearning/MemoryNetwork/MemN2N_python/MemN2N-master/data/en/qqq_train.txt'
+        args.test_file ='/home/shin/DeepLearning/MemoryNetwork/MemN2N_python/MemN2N-master/data/en/qqq_test.txt'
 
     model = Model(**args.__dict__)
     model.train(n_epochs=args.n_epochs, shuffle_batch=args.shuffle_batch)
