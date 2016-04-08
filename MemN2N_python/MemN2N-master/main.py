@@ -263,7 +263,8 @@ class Model:
             self.mem_layers += [MemoryNetworkLayer((l_context_in, self.mem_layers[-1], l_context_pe_in), vocab, embedding_size, enable_time,A=A, A_T=A_T, C=C, C_T=C_T, nonlinearity=nonlinearity)]
 
         if True and self.adj_weight_tying:
-            l_pred = TransposedDenseLayer(self.mem_layers[-1], self.num_classes, W=self.mem_layers[-1].C, b=None, nonlinearity=lasagne.nonlinearities.softmax)
+            # l_pred = TransposedDenseLayer(self.mem_layers[-1], self.num_classes, W=self.mem_layers[-1].C, b=None, nonlinearity=lasagne.nonlinearities.softmax)
+            l_pred = TransposedDenseLayer(self.mem_layers[-1], 1, W=self.mem_layers[-1].C, b=None, nonlinearity=lasagne.nonlinearities.softmax)
         else:
             l_pred = lasagne.layers.DenseLayer(self.mem_layers[-1], self.num_classes, W=lasagne.init.Normal(std=0.1), b=None, nonlinearity=lasagne.nonlinearities.softmax)
 
@@ -528,10 +529,10 @@ def main():
     print '*' * 80
 
     if args.train_file == '' or args.test_file == '':
-        # args.train_file = glob.glob('data/en/qa%d_*train.txt' % args.task)[0]
-        # args.test_file = glob.glob('data/en/qa%d_*test.txt' % args.task)[0]
-        args.train_file = '/home/shin/DeepLearning/MemoryNetwork/MemN2N_python/MemN2N-master/data/en/qqq_train.txt'
-        args.test_file ='/home/shin/DeepLearning/MemoryNetwork/MemN2N_python/MemN2N-master/data/en/qqq_test.txt'
+        args.train_file = glob.glob('data/en/qa%d_*train.txt' % args.task)[0]
+        args.test_file = glob.glob('data/en/qa%d_*test.txt' % args.task)[0]
+        # args.train_file = '/home/shin/DeepLearning/MemoryNetwork/MemN2N_python/MemN2N-master/data/en/qqq_train.txt'
+        # args.test_file ='/home/shin/DeepLearning/MemoryNetwork/MemN2N_python/MemN2N-master/data/en/qqq_test.txt'
 
     model = Model(**args.__dict__)
     model.train(n_epochs=args.n_epochs, shuffle_batch=args.shuffle_batch)
