@@ -63,7 +63,7 @@ class SumLayer(lasagne.layers.Layer):
 
 class TemporalEncodingLayer(lasagne.layers.Layer):
     '''对应了论文里的Temporal Encoding部分，引入了T_A或者T_C参数来学习'''
-    def __init__(self, incoming, T=lasagne.init.Normal(std=0.1), **kwargs):
+    def __init__(self, incoming, T=lasagne.init.Normal(std=0.05), **kwargs):
         super(TemporalEncodingLayer, self).__init__(incoming, **kwargs)
         self.T = self.add_param(T, self.input_shape[-2:], name="T")
 
@@ -236,11 +236,11 @@ class Model:
         l_context_pe_in = lasagne.layers.InputLayer(shape=(batch_size, max_seqlen, max_sentlen, embedding_size))
         l_question_pe_in = lasagne.layers.InputLayer(shape=(batch_size, 1, max_sentlen, embedding_size))
         '''底下这几部分是在初始化映射矩阵'''
-        # A, C = lasagne.init.Normal(std=0.1).sample((len(vocab)+1, embedding_size)), lasagne.init.Normal(std=0.1)
-        # B, C = lasagne.init.Normal(std=0.1).sample((len(vocab)+1, embedding_size)), lasagne.init.Normal(std=0.1)
-        B, C = lasagne.init.Normal(std=0.1), lasagne.init.Normal(std=0.1)
-        A_T, C_T = lasagne.init.Normal(std=0.1), lasagne.init.Normal(std=0.1)
-        W = B if self.adj_weight_tying else lasagne.init.Normal(std=0.1) #这里决定了原文里的 A与B两个映射矩阵相同
+        # A, C = lasagne.init.Normal(std=0.05).sample((len(vocab)+1, embedding_size)), lasagne.init.Normal(std=0.05)
+        # B, C = lasagne.init.Normal(std=0.05).sample((len(vocab)+1, embedding_size)), lasagne.init.Normal(std=0.05)
+        B, C = lasagne.init.Normal(std=0.05), lasagne.init.Normal(std=0.05)
+        A_T, C_T = lasagne.init.Normal(std=0.05), lasagne.init.Normal(std=0.05)
+        W = B if self.adj_weight_tying else lasagne.init.Normal(std=0.05) #这里决定了原文里的 A与B两个映射矩阵相同
 
         l_question_in = lasagne.layers.ReshapeLayer(l_question_in, shape=(batch_size * max_sentlen, ))
         l_B_embedding = lasagne.layers.EmbeddingLayer(l_question_in, len(vocab)+1, embedding_size, W=W) #到这变成了224*20
@@ -253,9 +253,9 @@ class Model:
         self.mem_layers = [MemoryNetworkLayer((l_context_in, l_B_embedding, l_context_pe_in), vocab, embedding_size,enable_time, A=B, A_T=A_T, C=C, C_T=C_T, nonlinearity=nonlinearity)]
         for _ in range(1, self.num_hops):
             if self.adj_weight_tying:
-                A, C = self.mem_layers[-1].C, lasagne.init.Normal(std=0.1)
+                A, C = self.mem_layers[-1].C, lasagne.init.Normal(std=0.05)
                 if not enable_time:
-                    A_T, C_T = self.mem_layers[-1].C_T, lasagne.init.Normal(std=0.1)
+                    A_T, C_T = self.mem_layers[-1].C_T, lasagne.init.Normal(std=0.05)
             else:  # RNN style
                 A, C = self.mem_layers[-1].A, self.mem_layers[-1].C
                 if not enable_time:
@@ -266,7 +266,7 @@ class Model:
             # l_pred = TransposedDenseLayer(self.mem_layers[-1], self.num_classes, W=self.mem_layers[-1].C, b=None, nonlinearity=lasagne.nonlinearities.softmax)
             l_pred = TransposedDenseLayer(self.mem_layers[-1], 1, W=self.mem_layers[-1].C, b=None, nonlinearity=lasagne.nonlinearities.softmax)
         else:
-            l_pred = lasagne.layers.DenseLayer(self.mem_layers[-1], self.num_classes, W=lasagne.init.Normal(std=0.1), b=None, nonlinearity=lasagne.nonlinearities.softmax)
+            l_pred = lasagne.layers.DenseLayer(self.mem_layers[-1], self.num_classes, W=lasagne.init.Normal(std=0.05), b=None, nonlinearity=lasagne.nonlinearities.softmax)
 
         c_emb = lasagne.layers.helper.get_output(self.mem_layers[-1],{l_context_in: cc, l_question_in: qq, l_context_pe_in: c_pe, l_question_pe_in: q_pe})
         probas = lasagne.layers.helper.get_output(l_pred, {l_context_in: cc, l_question_in: qq, l_context_pe_in: c_pe, l_question_pe_in: q_pe})
@@ -275,7 +275,7 @@ class Model:
 
         pred = T.argmax(probas, axis=1)
 
-        cost = T.nnet.categorical_crossentropy(probas, y).sum()
+        cost = T.nnet.binary_crossentropy(probas, y).sum()
 
         params = lasagne.layers.helper.get_all_params(l_pred, trainable=True)
         print 'params:', params
@@ -382,7 +382,7 @@ class Model:
                 test_f1, test_errors = self.compute_f1(self.data['test']) #有点奇怪这里的f1和test_error怎么好像不对应的？
                 print 'test_f1,test_errors:',test_f1,len(test_errors)
                 print '*** TEST_ERROR:', (1-test_f1)*100
-                if False:
+                if 1 or False:
                     for i, pred in test_errors[:10]:
                         print 'context: ', self.to_words(self.data['test']['C'][i])
                         print 'question: ', self.to_words([self.data['test']['Q'][i]])
@@ -497,7 +497,8 @@ class Model:
             else: #如果是问句
                 idx = line.find('?')
                 tmp = line[idx+1:].split('\t')
-                lines.append({'id': id, 'type': 'q', 'text': line[:idx], 'answer': tmp[1].strip(), 'refs': [int(x)-1 for x in tmp[2:][0].split(' ')]}) #这里为什么int(x)要减去1？？？
+                # lines.append({'id': id, 'type': 'q', 'text': line[:idx], 'answer': tmp[1].strip(), 'refs': [int(x)-1 for x in tmp[2:][0].split(' ')]}) #这里为什么int(x)要减去1？？？
+                lines.append({'id': id, 'type': 'q', 'text': line[:idx], 'answer': tmp[1].strip(), 'refs': [0]}) #这里为什么int(x)要减去1？？？
             if False and i > 1000:
                 break
         return np.array(lines)
@@ -510,7 +511,7 @@ def str2bool(v):
 def main():
     parser = argparse.ArgumentParser()
     parser.register('type', 'bool', str2bool)
-    parser.add_argument('--task', type=int, default=35, help='Task#')
+    parser.add_argument('--task', type=int, default=28, help='Task#')
     parser.add_argument('--train_file', type=str, default='', help='Train file')
     parser.add_argument('--test_file', type=str, default='', help='Test file')
     parser.add_argument('--batch_size', type=int, default=32, help='Batch size')
