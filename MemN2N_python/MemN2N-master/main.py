@@ -117,13 +117,13 @@ class MemoryNetworkLayer(lasagne.layers.MergeLayer):
             l_A_embedding = TemporalEncodingLayer(l_A_embedding, T=A_T)
             self.A_T = l_A_embedding.T
 
-        l_C_embedding = lasagne.layers.EmbeddingLayer(l_context_in, len(vocab)+1, embedding_size, W=C)
+        l_C_embedding = lasagne.layers.EmbeddingLayer(l_context_in, len(vocab)+1, embedding_size, W=self.A)
         self.C = l_C_embedding.W
         l_C_embedding = lasagne.layers.ReshapeLayer(l_C_embedding, shape=(batch_size, max_seqlen, max_sentlen, embedding_size))
         l_C_embedding = lasagne.layers.ElemwiseMergeLayer((l_C_embedding, l_context_pe_in), merge_function=T.mul)
         l_C_embedding = SumLayer(l_C_embedding, axis=2)
         if not enable_time:
-            l_C_embedding = TemporalEncodingLayer(l_C_embedding, T=C_T)
+            l_C_embedding = TemporalEncodingLayer(l_C_embedding, T=self.A_T)
             self.C_T = l_C_embedding.T
         '''注意这底下的几个层都是暂时直接实例化，至进行了init，具体的操作需要用到各个类里面的函数来计算'''
         l_prob = InnerProductLayer((l_A_embedding, l_B_embedding), nonlinearity=nonlinearity) #32*10*20 和 32*20*1结合，成32*10
@@ -143,7 +143,7 @@ class MemoryNetworkLayer(lasagne.layers.MergeLayer):
 
         zero_vec_tensor = T.vector()
         self.zero_vec = np.zeros(embedding_size, dtype=theano.config.floatX)
-        self.set_zero = theano.function([zero_vec_tensor], updates=[(x, T.set_subtensor(x[0, :], zero_vec_tensor)) for x in [self.A, self.C]])
+        self.set_zero = theano.function([zero_vec_tensor], updates=[(x, T.set_subtensor(x[0, :], zero_vec_tensor)) for x in [self.A]])
 
     def get_output_shape_for(self, input_shapes):
         return lasagne.layers.helper.get_output_shape(self.network)
@@ -250,12 +250,20 @@ class Model:
         l_B_embedding = lasagne.layers.ReshapeLayer(l_B_embedding, shape=(batch_size, max_sentlen, embedding_size))
         l_B_embedding = SumLayer(l_B_embedding, axis=1)
         #这是个初始化第一层，后面的层在循环里动态连接了#
-        self.mem_layers = [MemoryNetworkLayer((l_context_in, l_B_embedding, l_context_pe_in), vocab, embedding_size,enable_time, A=B, A_T=A_T, C=C, C_T=C_T, nonlinearity=nonlinearity)]
+        self.mem_layers = [MemoryNetworkLayer((l_context_in, l_B_embedding, l_context_pe_in), vocab, embedding_size,enable_time, A=B, A_T=C_T, C=B, C_T=C_T, nonlinearity=nonlinearity)]
         for _ in range(1, self.num_hops):
             if self.adj_weight_tying:
-                A, C = self.mem_layers[-1].C, lasagne.init.Normal(std=0.1)
+                # A, C = self.mem_layers[-1].C, lasagne.init.Normal(std=0.1)
+                # if not enable_time:
+                #     A_T, C_T = self.mem_layers[-1].C_T, lasagne.init.Normal(std=0.1)
+                A, C = self.mem_layers[-1].C,self.mem_layers[-1].C
                 if not enable_time:
-                    A_T, C_T = self.mem_layers[-1].C_T, lasagne.init.Normal(std=0.1)
+                    A_T, C_T = self.mem_layers[-1].C_T, self.mem_layers[-1].C_T
+                # A=lasagne.init.Normal(std=0.1)
+                # C=A
+                # if not enable_time:
+                #     A_T=lasagne.init.Normal(std=0.1)
+                #     C_T=A_T
             else:  # RNN style
                 A, C = self.mem_layers[-1].A, self.mem_layers[-1].C
                 if not enable_time:
@@ -511,7 +519,7 @@ def str2bool(v):
 def main():
     parser = argparse.ArgumentParser()
     parser.register('type', 'bool', str2bool)
-    parser.add_argument('--task', type=int, default=35, help='Task#')
+    parser.add_argument('--task', type=int, default=22, help='Task#')
     parser.add_argument('--train_file', type=str, default='', help='Train file')
     parser.add_argument('--test_file', type=str, default='', help='Test file')
     parser.add_argument('--batch_size', type=int, default=32, help='Batch size')
