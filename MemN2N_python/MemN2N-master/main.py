@@ -392,7 +392,7 @@ class Model:
                 test_f1, test_errors = self.compute_f1(self.data['test']) #有点奇怪这里的f1和test_error怎么好像不对应的？
                 print 'test_f1,test_errors:',test_f1,len(test_errors)
                 print '*** TEST_ERROR:', (1-test_f1)*100
-                if 1 or False:
+                if 0 :
                     for i, pred in test_errors[:10]:
                         print 'context: ', self.to_words(self.data['test']['C'][i])
                         print 'question: ', self.to_words([self.data['test']['Q'][i]])
@@ -420,6 +420,8 @@ class Model:
         y = np.zeros((self.batch_size, self.num_classes), dtype=np.int32)
         c_pe = np.zeros((self.batch_size, self.max_seqlen, self.max_sentlen, self.embedding_size), dtype=theano.config.floatX)
         q_pe = np.zeros((self.batch_size, 1, self.max_sentlen, self.embedding_size), dtype=theano.config.floatX)
+        # c_pe = np.ones((self.batch_size, self.max_seqlen, self.max_sentlen, self.embedding_size), dtype=theano.config.floatX)
+        # q_pe = np.ones((self.batch_size, 1, self.max_sentlen, self.embedding_size), dtype=theano.config.floatX)
 
         indices = range(index*self.batch_size, (index+1)*self.batch_size)
         for i, row in enumerate(dataset['C'][indices]):
@@ -436,6 +438,8 @@ class Model:
                     for j in np.arange(J):
                         mask[i, ii, j, :] = (1 - (j+1)/J) - ((np.arange(self.embedding_size)+1)/self.embedding_size)*(1 - 2*(j+1)/J)
 
+        # c_pe=np.not_equal(c_pe,0)
+        # q_pe=np.not_equal(q_pe,0)
 
         # y[:len(indices), 1:self.num_classes] = self.lb.transform(dataset['Y'][indices])#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
         y[:len(indices), 1:self.num_classes] = label_binarize(dataset['Y'][indices],self.vocab)#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
