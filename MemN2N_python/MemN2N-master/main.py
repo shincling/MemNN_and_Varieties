@@ -392,7 +392,7 @@ class Model:
                 test_f1, test_errors = self.compute_f1(self.data['test']) #有点奇怪这里的f1和test_error怎么好像不对应的？
                 print 'test_f1,test_errors:',test_f1,len(test_errors)
                 print '*** TEST_ERROR:', (1-test_f1)*100
-                if 0 :
+                if 1 :
                     for i, pred in test_errors[:10]:
                         print 'context: ', self.to_words(self.data['test']['C'][i])
                         print 'question: ', self.to_words([self.data['test']['Q'][i]])
