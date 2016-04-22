@@ -62,6 +62,13 @@ locationDict=['纽约','伦敦','东京','巴黎','香港','新加坡','悉尼',
 #dayDict=['一号','二号','两号','三号','四号','五号','六号','七号','八号','九号','十号','十一''''''''''''''''''''''''''''''''''''''''''''''''']
 
 def namePart(f,ind,final_next,slot_status):
+    if final_next:
+        if not slot_status:
+            f.write('%d next ?\t%s\t%d'%(ind+1,random.choice(namelist_question_cut).encode('utf8'),ind))
+        if slot_status:
+            f.write('%d 0111111 next ?\t%s\t%d'%(ind+1,random.choice(countlist_question_cut).encode('utf8'),ind))
+        ind+=1
+        return f,ind,False
 
     fullname=random.choice(familyName)+random.choice(lastName)
 
@@ -87,6 +94,8 @@ def countPart(f,ind,final_next,slot_status):
             f.write('%d next ?\t%s\t%d'%(ind+1,random.choice(countlist_question_cut).encode('utf8'),ind))
         if slot_status:
             f.write('%d 1011111 next ?\t%s\t%d'%(ind+1,random.choice(countlist_question_cut).encode('utf8'),ind))
+        ind+=1
+        return f,ind,False
 
     f.write('%d%s'%(ind+1,random.choice(countlist_question_cut).encode('utf8')))
     # f.write('%d%s'%(ind+1,countlist_question_cut[0].encode('utf8')))
@@ -112,6 +121,13 @@ def countPart(f,ind,final_next,slot_status):
 
 
 def departurePart(f,ind,final_next,slot_status):
+    if final_next:
+        if not slot_status:
+            f.write('%d next ?\t%s\t%d'%(ind+1,random.choice(departurelist_question_cut).encode('utf8'),ind))
+        if slot_status:
+            f.write('%d 1101111 next ?\t%s\t%d'%(ind+1,random.choice(countlist_question_cut).encode('utf8'),ind))
+        ind+=1
+        return f,ind,False
 
     f.write('%d%s'%(ind+1,random.choice(departurelist_question_cut).encode('utf8')))
     # f.write('%d%s'%(ind+1,departurelist_question_cut[0].encode('utf8')))
