@@ -66,7 +66,7 @@ def namePart(f,ind,final_next,slot_status):
         if not slot_status:
             f.write('%d next ?\t%s\t%d'%(ind+1,random.choice(namelist_question_cut).encode('utf8'),ind))
         if slot_status:
-            f.write('%d 0111111 next ?\t%s\t%d'%(ind+1,random.choice(countlist_question_cut).encode('utf8'),ind))
+            f.write('%d 0111111 next ?\t%s\t%d'%(ind+1,random.choice(namelist_question_cut).encode('utf8'),ind))
         ind+=1
         return f,ind,False
 
@@ -125,7 +125,7 @@ def departurePart(f,ind,final_next,slot_status):
         if not slot_status:
             f.write('%d next ?\t%s\t%d'%(ind+1,random.choice(departurelist_question_cut).encode('utf8'),ind))
         if slot_status:
-            f.write('%d 1101111 next ?\t%s\t%d'%(ind+1,random.choice(countlist_question_cut).encode('utf8'),ind))
+            f.write('%d 1101111 next ?\t%s\t%d'%(ind+1,random.choice(departurelist_question_cut).encode('utf8'),ind))
         ind+=1
         return f,ind,False
 
@@ -153,6 +153,14 @@ def departurePart(f,ind,final_next,slot_status):
 
 
 def destinationPart(f,ind,final_next,slot_status):
+    if final_next:
+        if not slot_status:
+            f.write('%d next ?\t%s\t%d'%(ind+1,random.choice(departurelist_question_cut).encode('utf8'),ind))
+        if slot_status:
+            f.write('%d 1110111 next ?\t%s\t%d'%(ind+1,random.choice(departurelist_question_cut).encode('utf8'),ind))
+        ind+=1
+        return f,ind,False
+
 
     f.write('%d%s'%(ind+1,random.choice(destinationlist_question_cut).encode('utf8')))
     # f.write('%d%s'%(ind+1,destinationlist_question_cut[0].encode('utf8')))
@@ -178,6 +186,13 @@ def destinationPart(f,ind,final_next,slot_status):
 
 
 def timePart(f,ind,final_next,slot_status):
+    if final_next:
+        if not slot_status:
+            f.write('%d next ?\t%s\t%d'%(ind+1,random.choice(timelist_question_cut).encode('utf8'),ind))
+        if slot_status:
+            f.write('%d 1111011 next ?\t%s\t%d'%(ind+1,random.choice(timelist_question_cut).encode('utf8'),ind))
+        ind+=1
+        return f,ind,False
 
     f.write('%d%s'%(ind+1,random.choice(timelist_question_cut).encode('utf8')))
     # f.write('%d%s'%(ind+1,timelist_question_cut[0].encode('utf8')))
