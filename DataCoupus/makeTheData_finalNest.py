@@ -37,7 +37,7 @@ print 'phone question:%d'%len(phonelist_question_cut)
 print 'phone answer:%d\n'%len(phonelist_answer_cut)
 
 storyNumber=1000
-fw=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/201604/qa40_ticket_finalnext_test.txt','w')
+fw=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/201604/qa40_ticket_finalnext_slot_test.txt','w')
 
 familyName=['号','王','李','赵','周','吴','顾','郑','何','万','黄','周','吴','徐','孙','胡','朱','高',
            '林','何','郭','马','罗','梁','宋','谢','韩','唐','冯','于','董','萧','程','曹','袁','邓',
@@ -155,9 +155,9 @@ def departurePart(f,ind,final_next,slot_status):
 def destinationPart(f,ind,final_next,slot_status):
     if final_next:
         if not slot_status:
-            f.write('%d next ?\t%s\t%d\n'%(ind+1,random.choice(departurelist_question_cut).encode('utf8').strip(),ind))
+            f.write('%d next ?\t%s\t%d\n'%(ind+1,random.choice(destinationlist_question_cut).encode('utf8').strip(),ind))
         if slot_status:
-            f.write('%d 1110111 next ?\t%s\t%d\n'%(ind+1,random.choice(departurelist_question_cut).encode('utf8').strip(),ind))
+            f.write('%d 1110111 next ?\t%s\t%d\n'%(ind+1,random.choice(destinationlist_question_cut).encode('utf8').strip(),ind))
         ind+=1
         return f,ind,False
 
@@ -220,7 +220,7 @@ def idnumberPart(f,ind,final_next,slot_status):
         if not slot_status:
             f.write('%d next ?\t%s\t%d\n'%(ind+1,random.choice(idnumberlist_question_cut).encode('utf8').strip(),ind))
         if slot_status:
-            f.write('%d 1111011 next ?\t%s\t%d\n'%(ind+1,random.choice(idnumberlist_question_cut).encode('utf8').strip(),ind))
+            f.write('%d 1111101 next ?\t%s\t%d\n'%(ind+1,random.choice(idnumberlist_question_cut).encode('utf8').strip(),ind))
         ind+=1
         return f,ind,False
 
@@ -248,7 +248,7 @@ def phonePart(f,ind,final_next,slot_status):
         if not slot_status:
             f.write('%d next ?\t%s\t%d\n'%(ind+1,random.choice(phonelist_question_cut).encode('utf8').strip(),ind))
         if slot_status:
-            f.write('%d 1111011 next ?\t%s\t%d\n'%(ind+1,random.choice(phonelist_question_cut).encode('utf8').strip(),ind))
+            f.write('%d 1111110 next ?\t%s\t%d\n'%(ind+1,random.choice(phonelist_question_cut).encode('utf8').strip(),ind))
         ind+=1
         return f,ind,False
 
@@ -298,7 +298,7 @@ for story_ind in range(storyNumber):
 
     '''---------------greeting--------------'''
     final_next=0
-    slot_status=0
+    slot_status=1
     for i in orderlist:
         if i == orderlist[-1]:
             final_next=1
