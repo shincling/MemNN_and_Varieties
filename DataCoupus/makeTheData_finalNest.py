@@ -37,7 +37,7 @@ print 'phone question:%d'%len(phonelist_question_cut)
 print 'phone answer:%d\n'%len(phonelist_answer_cut)
 
 storyNumber=1000
-fw=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/0113系列实验/qa35_ticket_randAll_finalQ_test.txt','w')
+fw=open('/home/shin/DeepLearning/MemoryNetwork/MemNN/DataCoupus/201604/qa40_ticket_finalnext_test.txt','w')
 
 familyName=['号','王','李','赵','周','吴','顾','郑','何','万','黄','周','吴','徐','孙','胡','朱','高',
            '林','何','郭','马','罗','梁','宋','谢','韩','唐','冯','于','董','萧','程','曹','袁','邓',
@@ -216,6 +216,14 @@ def timePart(f,ind,final_next,slot_status):
     return f,ind,fulltime
 
 def idnumberPart(f,ind,final_next,slot_status):
+    if final_next:
+        if not slot_status:
+            f.write('%d next ?\t%s\t%d'%(ind+1,random.choice(idnumberlist_question_cut).encode('utf8'),ind))
+        if slot_status:
+            f.write('%d 1111011 next ?\t%s\t%d'%(ind+1,random.choice(idnumberlist_question_cut).encode('utf8'),ind))
+        ind+=1
+        return f,ind,False
+
 
     f.write('%d%s'%(ind+1,random.choice(idnumberlist_question_cut).encode('utf8')))
     # f.write('%d%s'%(ind+1,idnumberlist_question_cut[0].encode('utf8')))
@@ -236,6 +244,14 @@ def idnumberPart(f,ind,final_next,slot_status):
     return f,ind,fullidnumber
 
 def phonePart(f,ind,final_next,slot_status):
+    if final_next:
+        if not slot_status:
+            f.write('%d next ?\t%s\t%d'%(ind+1,random.choice(phonelist_question_cut).encode('utf8'),ind))
+        if slot_status:
+            f.write('%d 1111011 next ?\t%s\t%d'%(ind+1,random.choice(phonelist_question_cut).encode('utf8'),ind))
+        ind+=1
+        return f,ind,False
+
 
     f.write('%d%s'%(ind+1,random.choice(phonelist_question_cut).encode('utf8')))
     # f.write('%d%s'%(ind+1,phonelist_question_cut[0].encode('utf8')))
@@ -282,32 +298,33 @@ for story_ind in range(storyNumber):
 
     '''---------------greeting--------------'''
     final_next=0
+    slot_status=0
     for i in orderlist:
         if i == orderlist[-1]:
             final_next=1
         if i==0:
-            fw,line_ind,name=namePart(fw,line_ind,final_next)
+            fw,line_ind,name=namePart(fw,line_ind,final_next,slot_status)
             continue
         if i==1:
-            fw,line_ind,count=countPart(fw,line_ind,final_next)
+            fw,line_ind,count=countPart(fw,line_ind,final_next,slot_status)
             continue
         if i==2:
-            fw,line_ind,departure=departurePart(fw,line_ind,final_next)
+            fw,line_ind,departure=departurePart(fw,line_ind,final_next,slot_status)
             continue
         if i==3:
-            fw,line_ind,destination=destinationPart(fw,line_ind,final_next)
+            fw,line_ind,destination=destinationPart(fw,line_ind,final_next,slot_status)
             continue
         if i==4:
-            fw,line_ind,time=timePart(fw,line_ind,final_next)
+            fw,line_ind,time=timePart(fw,line_ind,final_next,slot_status)
             continue
         if i==5:
-            fw,line_ind,idnumber=idnumberPart(fw,line_ind,final_next)
+            fw,line_ind,idnumber=idnumberPart(fw,line_ind,final_next,slot_status)
             continue
         if i==6:
-            fw,line_ind,phone=phonePart(fw,line_ind,final_next)
+            fw,line_ind,phone=phonePart(fw,line_ind,final_next,slot_status)
             continue
 
-
+    '''
     fw.write('%d 已经 为 您 预订 完毕 。\n'%(line_ind+1))
     line_ind+=1
     fw.write('%d 非常 谢谢 。\n'%(line_ind+1))
@@ -318,7 +335,7 @@ for story_ind in range(storyNumber):
     fw.write('%d idnumber ?	%s	%d\n'%(line_ind+6,idnumber,line_ind))
     fw.write('%d time ?	%s	%d\n'%(line_ind+7,time,line_ind))
     fw.write('%d phone ?	%s	%d\n'%(line_ind+8,phone,line_ind))
-
+    '''
 
 
 
