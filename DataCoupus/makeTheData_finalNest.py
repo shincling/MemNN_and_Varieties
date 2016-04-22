@@ -61,7 +61,7 @@ locationDict=['纽约','伦敦','东京','巴黎','香港','新加坡','悉尼',
 
 #dayDict=['一号','二号','两号','三号','四号','五号','六号','七号','八号','九号','十号','十一''''''''''''''''''''''''''''''''''''''''''''''''']
 
-def namePart(f,ind):
+def namePart(f,ind,final_next,slot_status):
 
     fullname=random.choice(familyName)+random.choice(lastName)
 
@@ -81,7 +81,12 @@ def namePart(f,ind):
     ind=ind+2
     return f,ind,fullname
 
-def countPart(f,ind):
+def countPart(f,ind,final_next,slot_status):
+    if final_next:
+        if not slot_status:
+            f.write('%d next ?\t%s\t%d'%(ind+1,random.choice(countlist_question_cut).encode('utf8'),ind))
+        if slot_status:
+            f.write('%d 1011111 next ?\t%s\t%d'%(ind+1,random.choice(countlist_question_cut).encode('utf8'),ind))
 
     f.write('%d%s'%(ind+1,random.choice(countlist_question_cut).encode('utf8')))
     # f.write('%d%s'%(ind+1,countlist_question_cut[0].encode('utf8')))
@@ -106,7 +111,7 @@ def countPart(f,ind):
     return f,ind,fullcount
 
 
-def departurePart(f,ind):
+def departurePart(f,ind,final_next,slot_status):
 
     f.write('%d%s'%(ind+1,random.choice(departurelist_question_cut).encode('utf8')))
     # f.write('%d%s'%(ind+1,departurelist_question_cut[0].encode('utf8')))
@@ -131,7 +136,7 @@ def departurePart(f,ind):
     return f,ind,fulldeparture
 
 
-def destinationPart(f,ind):
+def destinationPart(f,ind,final_next,slot_status):
 
     f.write('%d%s'%(ind+1,random.choice(destinationlist_question_cut).encode('utf8')))
     # f.write('%d%s'%(ind+1,destinationlist_question_cut[0].encode('utf8')))
@@ -156,7 +161,7 @@ def destinationPart(f,ind):
     return f,ind,fulldestination
 
 
-def timePart(f,ind):
+def timePart(f,ind,final_next,slot_status):
 
     f.write('%d%s'%(ind+1,random.choice(timelist_question_cut).encode('utf8')))
     # f.write('%d%s'%(ind+1,timelist_question_cut[0].encode('utf8')))
@@ -179,7 +184,7 @@ def timePart(f,ind):
     ind=ind+2
     return f,ind,fulltime
 
-def idnumberPart(f,ind):
+def idnumberPart(f,ind,final_next,slot_status):
 
     f.write('%d%s'%(ind+1,random.choice(idnumberlist_question_cut).encode('utf8')))
     # f.write('%d%s'%(ind+1,idnumberlist_question_cut[0].encode('utf8')))
@@ -199,7 +204,7 @@ def idnumberPart(f,ind):
     ind=ind+2
     return f,ind,fullidnumber
 
-def phonePart(f,ind):
+def phonePart(f,ind,final_next,slot_status):
 
     f.write('%d%s'%(ind+1,random.choice(phonelist_question_cut).encode('utf8')))
     # f.write('%d%s'%(ind+1,phonelist_question_cut[0].encode('utf8')))
@@ -245,28 +250,30 @@ for story_ind in range(storyNumber):
 
 
     '''---------------greeting--------------'''
-
+    final_next=0
     for i in orderlist:
+        if i == orderlist[-1]:
+            final_next=1
         if i==0:
-            fw,line_ind,name=namePart(fw,line_ind)
+            fw,line_ind,name=namePart(fw,line_ind,final_next)
             continue
         if i==1:
-            fw,line_ind,count=countPart(fw,line_ind)
+            fw,line_ind,count=countPart(fw,line_ind,final_next)
             continue
         if i==2:
-            fw,line_ind,departure=departurePart(fw,line_ind)
+            fw,line_ind,departure=departurePart(fw,line_ind,final_next)
             continue
         if i==3:
-            fw,line_ind,destination=destinationPart(fw,line_ind)
+            fw,line_ind,destination=destinationPart(fw,line_ind,final_next)
             continue
         if i==4:
-            fw,line_ind,time=timePart(fw,line_ind)
+            fw,line_ind,time=timePart(fw,line_ind,final_next)
             continue
         if i==5:
-            fw,line_ind,idnumber=idnumberPart(fw,line_ind)
+            fw,line_ind,idnumber=idnumberPart(fw,line_ind,final_next)
             continue
         if i==6:
-            fw,line_ind,phone=phonePart(fw,line_ind)
+            fw,line_ind,phone=phonePart(fw,line_ind,final_next)
             continue
 
 
