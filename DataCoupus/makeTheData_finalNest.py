@@ -64,9 +64,9 @@ locationDict=['纽约','伦敦','东京','巴黎','香港','新加坡','悉尼',
 def namePart(f,ind,final_next,slot_status):
     if final_next:
         if not slot_status:
-            f.write('%d next ?\t%s\t%d'%(ind+1,random.choice(namelist_question_cut).encode('utf8'),ind))
+            f.write('%d next ?\t%s\t%d\n'%(ind+1,random.choice(namelist_question_cut).encode('utf8').strip(),ind))
         if slot_status:
-            f.write('%d 0111111 next ?\t%s\t%d'%(ind+1,random.choice(namelist_question_cut).encode('utf8'),ind))
+            f.write('%d 0111111 next ?\t%s\t%d\n'%(ind+1,random.choice(namelist_question_cut).encode('utf8').strip(),ind))
         ind+=1
         return f,ind,False
 
@@ -91,9 +91,9 @@ def namePart(f,ind,final_next,slot_status):
 def countPart(f,ind,final_next,slot_status):
     if final_next:
         if not slot_status:
-            f.write('%d next ?\t%s\t%d'%(ind+1,random.choice(countlist_question_cut).encode('utf8'),ind))
+            f.write('%d next ?\t%s\t%d\n'%(ind+1,random.choice(countlist_question_cut).encode('utf8').strip(),ind))
         if slot_status:
-            f.write('%d 1011111 next ?\t%s\t%d'%(ind+1,random.choice(countlist_question_cut).encode('utf8'),ind))
+            f.write('%d 1011111 next ?\t%s\t%d\n'%(ind+1,random.choice(countlist_question_cut).encode('utf8').strip(),ind))
         ind+=1
         return f,ind,False
 
@@ -123,9 +123,9 @@ def countPart(f,ind,final_next,slot_status):
 def departurePart(f,ind,final_next,slot_status):
     if final_next:
         if not slot_status:
-            f.write('%d next ?\t%s\t%d'%(ind+1,random.choice(departurelist_question_cut).encode('utf8'),ind))
+            f.write('%d next ?\t%s\t%d\n'%(ind+1,random.choice(departurelist_question_cut).encode('utf8').strip(),ind))
         if slot_status:
-            f.write('%d 1101111 next ?\t%s\t%d'%(ind+1,random.choice(departurelist_question_cut).encode('utf8'),ind))
+            f.write('%d 1101111 next ?\t%s\t%d\n'%(ind+1,random.choice(departurelist_question_cut).encode('utf8').strip(),ind))
         ind+=1
         return f,ind,False
 
@@ -155,9 +155,9 @@ def departurePart(f,ind,final_next,slot_status):
 def destinationPart(f,ind,final_next,slot_status):
     if final_next:
         if not slot_status:
-            f.write('%d next ?\t%s\t%d'%(ind+1,random.choice(departurelist_question_cut).encode('utf8'),ind))
+            f.write('%d next ?\t%s\t%d\n'%(ind+1,random.choice(departurelist_question_cut).encode('utf8').strip(),ind))
         if slot_status:
-            f.write('%d 1110111 next ?\t%s\t%d'%(ind+1,random.choice(departurelist_question_cut).encode('utf8'),ind))
+            f.write('%d 1110111 next ?\t%s\t%d\n'%(ind+1,random.choice(departurelist_question_cut).encode('utf8').strip(),ind))
         ind+=1
         return f,ind,False
 
@@ -188,9 +188,9 @@ def destinationPart(f,ind,final_next,slot_status):
 def timePart(f,ind,final_next,slot_status):
     if final_next:
         if not slot_status:
-            f.write('%d next ?\t%s\t%d'%(ind+1,random.choice(timelist_question_cut).encode('utf8'),ind))
+            f.write('%d next ?\t%s\t%d\n'%(ind+1,random.choice(timelist_question_cut).encode('utf8').strip(),ind))
         if slot_status:
-            f.write('%d 1111011 next ?\t%s\t%d'%(ind+1,random.choice(timelist_question_cut).encode('utf8'),ind))
+            f.write('%d 1111011 next ?\t%s\t%d\n'%(ind+1,random.choice(timelist_question_cut).encode('utf8').strip(),ind))
         ind+=1
         return f,ind,False
 
@@ -218,9 +218,9 @@ def timePart(f,ind,final_next,slot_status):
 def idnumberPart(f,ind,final_next,slot_status):
     if final_next:
         if not slot_status:
-            f.write('%d next ?\t%s\t%d'%(ind+1,random.choice(idnumberlist_question_cut).encode('utf8'),ind))
+            f.write('%d next ?\t%s\t%d\n'%(ind+1,random.choice(idnumberlist_question_cut).encode('utf8').strip(),ind))
         if slot_status:
-            f.write('%d 1111011 next ?\t%s\t%d'%(ind+1,random.choice(idnumberlist_question_cut).encode('utf8'),ind))
+            f.write('%d 1111011 next ?\t%s\t%d\n'%(ind+1,random.choice(idnumberlist_question_cut).encode('utf8').strip(),ind))
         ind+=1
         return f,ind,False
 
@@ -246,9 +246,9 @@ def idnumberPart(f,ind,final_next,slot_status):
 def phonePart(f,ind,final_next,slot_status):
     if final_next:
         if not slot_status:
-            f.write('%d next ?\t%s\t%d'%(ind+1,random.choice(phonelist_question_cut).encode('utf8'),ind))
+            f.write('%d next ?\t%s\t%d\n'%(ind+1,random.choice(phonelist_question_cut).encode('utf8').strip(),ind))
         if slot_status:
-            f.write('%d 1111011 next ?\t%s\t%d'%(ind+1,random.choice(phonelist_question_cut).encode('utf8'),ind))
+            f.write('%d 1111011 next ?\t%s\t%d\n'%(ind+1,random.choice(phonelist_question_cut).encode('utf8').strip(),ind))
         ind+=1
         return f,ind,False
 
