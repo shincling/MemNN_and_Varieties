@@ -10,6 +10,30 @@ import time
 from sklearn import metrics
 from sklearn.preprocessing import LabelBinarizer,label_binarize
 
+class SimpleAttentionLayer(lasagne.layers.MergeLayer):
+    def __init__(self, incomings, vocab, embedding_size,enable_time, W_h, W_q,W_o, nonlinearity=lasagne.nonlinearities.tanh, **kwargs):
+        super(SimpleAttentionLayer, self).__init__(incomings, **kwargs) #？？？不知道这个super到底做什么的，会引入input_layers和input_shapes这些属性
+        if len(incomings) != 2:
+            raise NotImplementedError
+        batch_size, max_sentlen ,embedding_size = self.input_shapes[0]
+        self.W_h=self.add_param(W_h,(embedding_size,embedding_size), name='Attention_layer_W_h')
+        self.W_q=self.add_param(W_q,(embedding_size,embedding_size), name='Attention_layer_W_q')
+        self.W_o=self.add_param(W_o,(embedding_size,), name='Attention_layer_W_o')
+        self.nonliearity=nonlinearity
+        zero_vec_tensor = T.vector()
+        self.zero_vec = np.zeros(embedding_size, dtype=theano.config.floatX)
+        self.set_zero = theano.function([zero_vec_tensor], updates=[(x, T.set_subtensor(x[0, :], zero_vec_tensor)) for x in [self.A,self.C]])
+
+    def get_output_shape_for(self, input_shapes):
+        return self.input_shapes[1]
+    def get_output_for(self, inputs, **kwargs):
+        activation=self.nonliearity(T.dot(inputs[0],self.W_h)+T.dot(inputs[1],self.W_q))
+        final=T.dot(activation,self.W_o)
+        final=lasagne.nonlinearities.softmax(final)
+        return final
+    def reset_zero(self):
+        self.set_zero(self.zero_vec)
+
 
 class Model:
     def __init__(self, train_file, test_file, batch_size=32, embedding_size=20, max_norm=40, lr=0.01, num_hops=3, adj_weight_tying=True, linear_start=True, enable_time=False,**kwargs):
@@ -79,7 +103,17 @@ class Model:
         l_context_emb = lasagne.layers.EmbeddingLayer(l_context_in,len(vocab)+1,embedding_size,W=w_emb,name='sentence_embedding') #(BS,max_sentlen,emb_size)
         l_question_emb= lasagne.layers.EmbeddingLayer(l_question_in,len(vocab)+1,embedding_size,W=l_context_emb.W,name='question_embedding') #(BS,1,d)
 
+        l_context_rnn=lasagne.layers.LSTMLayer(l_context_emb,embedding_size,name='context_lstm') #(BS,max_sentlen,emb_size)
+
+        w_h,w_q=lasagne.init.Normal(std=0.1),lasagne.init.Normal(std=0.1)
+        #下面这个层是用来利用question做attention，得到文档在当前q下的最后一个表示,输出一个(BS,emb_size)的东西
+        l_context_attention=SimpleAttentionLayer((l_context_rnn,l_question_emb),vocab, embedding_size,enable_time, W_h=w_h, W_q=w_q, nonlinearity=self.nonlinearity)
+
+        context_attention_h=lasagne.layers.helper.get_output(l_context_attention)
+
         return
+
+
 
 
     def get_lines(self, fname):
