@@ -15,7 +15,7 @@ class Model:
     def __init__(self, train_file, test_file, batch_size=32, embedding_size=20, max_norm=40, lr=0.01, num_hops=3, adj_weight_tying=True, linear_start=True, enable_time=False,**kwargs):
         train_lines, test_lines = self.get_lines(train_file), self.get_lines(test_file)
         lines = np.concatenate([train_lines, test_lines], axis=0) #直接头尾拼接
-        vocab, word_to_idx, idx_to_word, max_seqlen, max_sentlen = self.get_vocab(lines)
+        vocab, word_to_idx, idx_to_word, max_sentlen = self.get_vocab(lines)
         #C是document的列表，Q是定位问题序列的列表，Y是答案组成的列表，目前为知都是字符形式的，没有向量化#
         self.data = {'train': {}, 'test': {}}  #各是一个字典
         S_train, self.data['train']['C'], self.data['train']['Q'], self.data['train']['Y'] = self.process_dataset(train_lines, word_to_idx, max_sentlen, offset=0)
@@ -78,7 +78,26 @@ class Model:
             lines.append({'id':id,'sentence':sentence,'question':question,'target':answer})
         return np.array(lines)
 
+    def get_vocab(self, lines): #这个函数相当于预处理的函数
+        vocab = set()
+        max_sentlen = 0
+        for i, line in enumerate(lines):
+            #words = nltk.word_tokenize(line['text'])
+            words=line['sentence'].split(' ')  #这里做了一个修改，替换掉了nltk的工具
+            max_sentlen = max(max_sentlen, len(words))
+            for w in words:
+                vocab.add(w)
+            vocab.add(line['target'])
 
+        word_to_idx = {}
+        for w in vocab:
+            word_to_idx[w] = len(word_to_idx) + 1
+
+        idx_to_word = {}
+        for w, idx in word_to_idx.iteritems():
+            idx_to_word[idx] = w
+
+        return vocab, word_to_idx, idx_to_word, max_sentlen
 
 def str2bool(v):
     return v.lower() in ('yes', 'true', 't', '1')
