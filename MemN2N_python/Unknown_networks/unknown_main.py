@@ -18,8 +18,8 @@ class Model:
         vocab, word_to_idx, idx_to_word, max_sentlen = self.get_vocab(lines)
         #C是document的列表，Q是定位问题序列的列表，Y是答案组成的列表，目前为知都是字符形式的，没有向量化#
         self.data = {'train': {}, 'test': {}}  #各是一个字典
-        S_train, self.data['train']['C'], self.data['train']['Q'], self.data['train']['Y'] = self.process_dataset(train_lines, word_to_idx, max_sentlen, offset=0)
-        S_test, self.data['test']['C'], self.data['test']['Q'], self.data['test']['Y'] = self.process_dataset(test_lines, word_to_idx, max_sentlen, offset=len(S_train))
+        S_train, self.data['train']['Q'], self.data['train']['Y'] = self.process_dataset(train_lines, word_to_idx, max_sentlen, offset=0)
+        S_test, self.data['test']['Q'], self.data['test']['Y'] = self.process_dataset(test_lines, word_to_idx, max_sentlen)
         S = np.concatenate([np.zeros((1, max_sentlen), dtype=np.int32), S_train, S_test], axis=0)
         for i in range(min(10,len(self.data['test']['C']))):
             for k in ['C', 'Q', 'Y']:
@@ -46,7 +46,7 @@ class Model:
 
         self.enable_time=enable_time
         self.batch_size = batch_size
-        self.max_seqlen = max_seqlen
+        # self.max_seqlen = max_seqlen
         self.max_sentlen = max_sentlen if not enable_time else max_sentlen+1
         self.embedding_size = embedding_size
         self.num_classes = len(vocab) + 1
@@ -87,6 +87,7 @@ class Model:
             max_sentlen = max(max_sentlen, len(words))
             for w in words:
                 vocab.add(w)
+            vocab.add(line['question'])
             vocab.add(line['target'])
 
         word_to_idx = {}
@@ -98,6 +99,19 @@ class Model:
             idx_to_word[idx] = w
 
         return vocab, word_to_idx, idx_to_word, max_sentlen
+
+
+    def process_dataset(self,lines, word_to_idx, max_sentlen, offset=0):
+        S,Q,Y=[],[],[]
+        for i, line in enumerate(lines):
+            word_indices = [word_to_idx[w] for w in line['sentence'].split(' ')]
+            word_indices += [0] * (max_sentlen - len(word_indices)) #这是补零，把句子填充到max_sentLen
+            S.append(word_indices)
+            Q.append(word_to_idx[line['question']])
+            Y.append(word_to_idx[line['target']])
+        return np.array(S),np.array(Q),np.array(Y)
+
+
 
 def str2bool(v):
     return v.lower() in ('yes', 'true', 't', '1')
