@@ -56,9 +56,30 @@ class Model:
         self.nonlinearity = None if linear_start else lasagne.nonlinearities.softmax
         self.word_to_idx=word_to_idx
 
-        self.build_network(self.nonlinearity)
+        self.build_network()
 
+    def build_network(self):
+        batch_size, max_sentlen, embedding_size, vocab, enable_time = self.batch_size, self.max_sentlen, self.embedding_size, self.vocab,self.enable_time
 
+        s = T.imatrix()
+        q = T.ivector()
+        y = T.imatrix()
+        # c_pe = T.tensor4()
+        # q_pe = T.tensor4()
+        self.s_shared = theano.shared(np.zeros((batch_size, max_sentlen), dtype=np.int32), borrow=True)
+        self.q_shared = theano.shared(np.zeros((batch_size, ), dtype=np.int32), borrow=True)
+        '''最后的softmax层的参数'''
+        self.a_shared = theano.shared(np.zeros((batch_size, self.num_classes), dtype=np.int32), borrow=True)
+        S_shared = theano.shared(self.S, borrow=True)#这个S把train test放到了一起来干事情#
+
+        l_context_in = lasagne.layers.InputLayer(shape=(batch_size, max_sentlen))
+        l_question_in = lasagne.layers.InputLayer(shape=(batch_size,1))
+
+        w_emb=lasagne.init.Normal(std=0.1)
+        l_context_emb = lasagne.layers.EmbeddingLayer(l_context_in,len(vocab)+1,embedding_size,W=w_emb,name='sentence_embedding') #(BS,max_sentlen,emb_size)
+        l_question_emb= lasagne.layers.EmbeddingLayer(l_question_in,len(vocab)+1,embedding_size,W=l_context_emb.W,name='question_embedding') #(BS,1,d)
+
+        return
 
 
     def get_lines(self, fname):
@@ -138,7 +159,7 @@ def main():
         # args.test_file ='/home/shin/DeepLearning/MemoryNetwork/MemN2N_python/MemN2N-master/data/en/qqq_test.txt'
 
     model = Model(**args.__dict__)
-    model.train(n_epochs=args.n_epochs, shuffle_batch=args.shuffle_batch)
+    # model.train(n_epochs=args.n_epochs, shuffle_batch=args.shuffle_batch)
 
 if __name__ == '__main__':
     main()
