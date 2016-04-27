@@ -21,16 +21,17 @@ class Model:
         S_train, self.data['train']['Q'], self.data['train']['Y'] = self.process_dataset(train_lines, word_to_idx, max_sentlen, offset=0)
         S_test, self.data['test']['Q'], self.data['test']['Y'] = self.process_dataset(test_lines, word_to_idx, max_sentlen)
         S = np.concatenate([np.zeros((1, max_sentlen), dtype=np.int32), S_train, S_test], axis=0)
-        for i in range(min(10,len(self.data['test']['C']))):
-            for k in ['C', 'Q', 'Y']:
+        self.data['train']['S'],self.data['test']['S']=S_train,S_test
+        for i in range(min(10,len(self.data['test']['Y']))):
+            for k in ['S', 'Q', 'Y']:
                 print k, self.data['test'][k][i]
-        print 'batch_size:', batch_size, 'max_seqlen:', max_seqlen, 'max_sentlen:', max_sentlen
+        print 'batch_size:', batch_size, 'max_sentlen:', max_sentlen
         print 'sentences:', S.shape
         print 'vocab size:', len(vocab)
 
         for d in ['train', 'test']:
             print d,
-            for k in ['C', 'Q', 'Y']:
+            for k in ['S', 'Q', 'Y']:
                 print k, self.data[d][k].shape,
             print ''
 
@@ -38,21 +39,14 @@ class Model:
         for i in range(len(idx_to_word)):
             vocab.append(idx_to_word[i+1])
 
-
         lb = LabelBinarizer()
-        # lb.fit(list(vocab))
-        # vocab = lb.classes_.tolist()
-
 
         self.enable_time=enable_time
         self.batch_size = batch_size
-        # self.max_seqlen = max_seqlen
         self.max_sentlen = max_sentlen if not enable_time else max_sentlen+1
         self.embedding_size = embedding_size
         self.num_classes = len(vocab) + 1
         self.vocab = vocab
-        self.adj_weight_tying = adj_weight_tying
-        self.num_hops = num_hops
         self.lb = lb
         self.init_lr = lr
         self.lr = self.init_lr
@@ -128,7 +122,6 @@ def main():
     parser.add_argument('--max_norm', type=float, default=40.0, help='Max norm')
     parser.add_argument('--lr', type=float, default=0.01, help='Learning rate')
     parser.add_argument('--num_hops', type=int, default=3, help='Num hops')
-    parser.add_argument('--adj_weight_tying', type='bool', default=True, help='Whether to use adjacent weight tying')
     parser.add_argument('--linear_start', type='bool', default=True, help='Whether to start with linear activations')
     parser.add_argument('--shuffle_batch', type='bool', default=True, help='Whether to shuffle minibatches')
     parser.add_argument('--n_epochs', type=int, default=500, help='Num epochs')
