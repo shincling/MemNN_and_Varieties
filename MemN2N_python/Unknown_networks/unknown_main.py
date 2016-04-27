@@ -64,6 +64,22 @@ class Model:
 
         self.build_network(self.nonlinearity)
 
+
+
+
+    def get_lines(self, fname):
+        lines = [] #每个元素是个字典看来
+        for i, line in enumerate(open(fname)):
+            ll=line.split('\t')
+            id = int(ll[0])
+            sentence=ll[1]
+            question=ll[2][0:ll[2].find(' ')]
+            answer=ll[3].strip()
+            lines.append({'id':id,'sentence':sentence,'question':question,'target':answer})
+        return np.array(lines)
+
+
+
 def str2bool(v):
     return v.lower() in ('yes', 'true', 't', '1')
 
@@ -90,8 +106,8 @@ def main():
     print '*' * 80
 
     if args.train_file == '' or args.test_file == '':
-        args.train_file = glob.glob('data/en/qa%d_*train.txt' % args.task)[0]
-        args.test_file = glob.glob('data/en/qa%d_*test.txt' % args.task)[0]
+        args.train_file = glob.glob('*toy_train.txt' )[0]
+        args.test_file = glob.glob('*_toy_test.txt' )[0]
         # args.train_file = '/home/shin/DeepLearning/MemoryNetwork/MemN2N_python/MemN2N-master/data/en/qqq_train.txt'
         # args.test_file ='/home/shin/DeepLearning/MemoryNetwork/MemN2N_python/MemN2N-master/data/en/qqq_test.txt'
 
