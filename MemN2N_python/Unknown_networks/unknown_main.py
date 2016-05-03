@@ -154,7 +154,16 @@ class Model:
         w_final_softmax=lasagne.init.Normal(std=0.1)
         l_pred = TransposedDenseLayer(l_merge, 1,embedding_size=embedding_size,vocab_size=len(vocab)+1,W_final_softmax=w_final_softmax, b=None, nonlinearity=lasagne.nonlinearities.softmax)
 
-        context_attention_h=lasagne.layers.helper.get_output(l_merge,{l_context_in:s,l_question_in:q})
+        probas=lasagne.layers.helper.get_output(l_merge,{l_context_in:s,l_question_in:q})
+        probas = T.clip(probas, 1e-7, 1.0-1e-7)
+
+        pred = T.argmax(probas, axis=1)
+
+        cost = T.nnet.categorical_crossentropy(probas, y).sum()
+
+
+
+
         return
 
 
