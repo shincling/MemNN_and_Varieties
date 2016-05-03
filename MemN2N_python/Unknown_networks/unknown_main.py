@@ -156,9 +156,9 @@ class Model:
 
         w_final_softmax=lasagne.init.Normal(std=0.1)
         # l_pred = TransposedDenseLayer(l_merge, len(vocab)+1,embedding_size=embedding_size,vocab_size=len(vocab)+1,W_final_softmax=w_final_softmax, b=None, nonlinearity=lasagne.nonlinearities.softmax)
-        l_pred = lasagne.layers.DenseLayer(l_merge, len(vocab)+1, W=lasagne.init.Normal(std=0.1), b=None, nonlinearity=lasagne.nonlinearities.softmax)
+        l_pred = lasagne.layers.DenseLayer(l_merge, len(vocab)+1, W=w_final_softmax, b=None, nonlinearity=lasagne.nonlinearities.softmax,name='l_final')
 
-        probas=lasagne.layers.helper.get_output(l_merge,{l_context_in:s,l_question_in:q})
+        probas=lasagne.layers.helper.get_output(l_pred,{l_context_in:s,l_question_in:q})
         probas = T.clip(probas, 1e-7, 1.0-1e-7)
 
         pred = T.argmax(probas, axis=1)
@@ -171,6 +171,19 @@ class Model:
         scaled_grads = lasagne.updates.total_norm_constraint(grads, self.max_norm)
         updates = lasagne.updates.sgd(scaled_grads, params, learning_rate=self.lr)
 
+
+        givens = {
+            s: self.s_shared,
+            q: self.q_shared,
+            y: self.a_shared,
+        }
+
+        # self.c_shared.set_value(c)
+        # self.q_shared.set_value(q)
+        # self.a_shared.set_value(y)
+
+        self.train_model = theano.function([], cost, givens=givens, updates=updates)
+        self.compute_pred = theano.function([], outputs= pred, givens=givens, on_unused_input='ignore')
 
         return
 
@@ -221,7 +234,24 @@ class Model:
             Y.append(word_to_idx[line['target']])
         return np.array(S),np.array(Q),np.array(Y)
 
+    def set_shared_variables(self, dataset, index,enable_time):
+        c = np.zeros((self.batch_size, self.max_seqlen), dtype=np.int32)
+        q = np.zeros((self.batch_size, ), dtype=np.int32)
+        y = np.zeros((self.batch_size, self.num_classes), dtype=np.int32)
 
+        indices = range(index*self.batch_size, (index+1)*self.batch_size)
+        for i, row in enumerate(dataset['C'][indices]):
+            row = row[:self.max_seqlen]
+            c[i, :len(row)] = row
+
+        q[:len(indices)] = dataset['Q'][indices] #问题的行数组成的列表
+        '''底下这个整个循环是得到一个batch对应的那个调整的矩阵'''
+        # y[:len(indices), 1:self.num_classes] = self.lb.transform(dataset['Y'][indices])#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
+        y[:len(indices), 1:self.num_classes] = label_binarize(dataset['Y'][indices],self.vocab)#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
+        # y[:len(indices), 1:self.embedding_size] = self.mem_layers[0].A[[self.word_to_idx(i) for i in list(dataset['Y'][indices])]]#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
+        self.c_shared.set_value(c)
+        self.q_shared.set_value(q)
+        self.a_shared.set_value(y)
 
 def str2bool(v):
     return v.lower() in ('yes', 'true', 't', '1')
