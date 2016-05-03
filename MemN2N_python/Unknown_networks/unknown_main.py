@@ -273,7 +273,7 @@ class Model:
             for minibatch_index in indices:#一次进入一个batch的数据
                 self.set_shared_variables(self.data['train'], minibatch_index,self.enable_time)#这里的函数总算把数据传给了模型里面初始化的变量
                 total_cost += self.train_model()
-                self.reset_zero()  #reset是把A,C的第一行（也就是第一个元素，对应字典了的第一个词）reset了一次，变成了0
+                # self.reset_zero()  #reset是把A,C的第一行（也就是第一个元素，对应字典了的第一个词）reset了一次，变成了0
             end_time = time.time()
             print '\n' * 3, '*' * 80
             print 'epoch:', epoch, 'cost:', (total_cost / len(indices)), ' took: %d(s)' % (end_time - start_time)
@@ -308,12 +308,40 @@ class Model:
                         print '---' * 20
 
             prev_train_f1 = train_f1
+    def predict(self, dataset, index):
+        self.set_shared_variables(dataset, index,self.enable_time)
+        result=self.compute_pred()
+        # print 'probas:\n'
+        # print result[1]
+        return result[0]
+
+    def compute_f1(self, dataset):
+        n_batches = len(dataset['Y']) // self.batch_size
+        y_pred = np.concatenate([self.predict(dataset, i) for i in xrange(n_batches)]).astype(np.int32) - 1
+        y_true = [self.vocab.index(y) for y in dataset['Y'][:len(y_pred)]]
+        # print metrics.confusion_matrix(y_true, y_pred)
+        # print metrics.classification_report(y_true, y_pred)
+        errors = []
+        for i, (t, p) in enumerate(zip(y_true, y_pred)):
+            if t != p:
+                # errors.append((i, self.lb.classes_[p]))
+                errors.append((i, self.vocab[p]))
+                pass
+        return metrics.f1_score(y_true, y_pred, average='weighted', pos_label=None), errors
+
+
 
     def shuffle_sync(self, dataset):
         p = np.random.permutation(len(dataset['Y']))
         for k in ['S', 'Q', 'Y']:
             dataset[k] = dataset[k][p]
 
+    def to_words(self, indices):
+        sents = []
+        for idx in indices:
+            words = ' '.join([self.idx_to_word[idx] for idx in self.S[idx] if idx > 0])
+            sents.append(words)
+        return ' '.join(sents)
 
 def str2bool(v):
     return v.lower() in ('yes', 'true', 't', '1')
