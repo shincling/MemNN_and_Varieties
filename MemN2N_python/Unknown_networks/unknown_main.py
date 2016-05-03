@@ -141,8 +141,8 @@ class Model:
         l_question_in = lasagne.layers.InputLayer(shape=(batch_size,1))
 
         w_emb=lasagne.init.Normal(std=0.1)
-        l_context_emb = lasagne.layers.EmbeddingLayer(l_context_in,len(vocab)+1,embedding_size,W=w_emb,name='sentence_embedding') #(BS,max_sentlen,emb_size)
-        l_question_emb= lasagne.layers.EmbeddingLayer(l_question_in,len(vocab)+1,embedding_size,W=l_context_emb.W,name='question_embedding') #(BS,1,d)
+        l_context_emb = lasagne.layers.EmbeddingLayer(l_context_in,self.num_classes,embedding_size,W=w_emb,name='sentence_embedding') #(BS,max_sentlen,emb_size)
+        l_question_emb= lasagne.layers.EmbeddingLayer(l_question_in,self.num_classes,embedding_size,W=l_context_emb.W,name='question_embedding') #(BS,1,d)
 
         l_context_rnn=lasagne.layers.LSTMLayer(l_context_emb,embedding_size,name='context_lstm') #(BS,max_sentlen,emb_size)
 
@@ -155,8 +155,8 @@ class Model:
         l_merge=TmpMergeLayer((l_context_attention,l_question_emb),W_merge_r=w_merge_r,W_merge_q=w_merge_q, nonlinearity=lasagne.nonlinearities.tanh)
 
         w_final_softmax=lasagne.init.Normal(std=0.1)
-        # l_pred = TransposedDenseLayer(l_merge, len(vocab)+1,embedding_size=embedding_size,vocab_size=len(vocab)+1,W_final_softmax=w_final_softmax, b=None, nonlinearity=lasagne.nonlinearities.softmax)
-        l_pred = lasagne.layers.DenseLayer(l_merge, len(vocab)+1, W=w_final_softmax, b=None, nonlinearity=lasagne.nonlinearities.softmax,name='l_final')
+        # l_pred = TransposedDenseLayer(l_merge, self.num_classes,embedding_size=embedding_size,vocab_size=self.num_classes,W_final_softmax=w_final_softmax, b=None, nonlinearity=lasagne.nonlinearities.softmax)
+        l_pred = lasagne.layers.DenseLayer(l_merge, self.num_classes, W=w_final_softmax, b=None, nonlinearity=lasagne.nonlinearities.softmax,name='l_final')
 
         probas=lasagne.layers.helper.get_output(l_pred,{l_context_in:s,l_question_in:q})
         probas = T.clip(probas, 1e-7, 1.0-1e-7)
@@ -235,23 +235,85 @@ class Model:
         return np.array(S),np.array(Q),np.array(Y)
 
     def set_shared_variables(self, dataset, index,enable_time):
-        c = np.zeros((self.batch_size, self.max_seqlen), dtype=np.int32)
+        c = np.zeros((self.batch_size, self.max_sentlen), dtype=np.int32)
         q = np.zeros((self.batch_size, ), dtype=np.int32)
         y = np.zeros((self.batch_size, self.num_classes), dtype=np.int32)
 
         indices = range(index*self.batch_size, (index+1)*self.batch_size)
-        for i, row in enumerate(dataset['C'][indices]):
-            row = row[:self.max_seqlen]
+        for i, row in enumerate(dataset['S'][indices]):
+            row = row[:self.max_sentlen]
             c[i, :len(row)] = row
 
         q[:len(indices)] = dataset['Q'][indices] #问题的行数组成的列表
         '''底下这个整个循环是得到一个batch对应的那个调整的矩阵'''
         # y[:len(indices), 1:self.num_classes] = self.lb.transform(dataset['Y'][indices])#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
-        y[:len(indices), 1:self.num_classes] = label_binarize(dataset['Y'][indices],self.vocab)#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
+        y[:len(indices), 1:self.num_classes] = label_binarize([self.idx_to_word[i] for i in dataset['Y'][indices]],self.vocab)#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
         # y[:len(indices), 1:self.embedding_size] = self.mem_layers[0].A[[self.word_to_idx(i) for i in list(dataset['Y'][indices])]]#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
-        self.c_shared.set_value(c)
+        self.s_shared.set_value(c)
         self.q_shared.set_value(q)
         self.a_shared.set_value(y)
+
+    def train(self, n_epochs=100, shuffle_batch=False):
+        epoch = 0
+        n_train_batches = len(self.data['train']['Y']) // self.batch_size
+        self.lr = self.init_lr
+        prev_train_f1 = None
+
+        while (epoch < n_epochs):
+            epoch += 1
+            if epoch % 25 == 0: #每隔25个epoch，则速率减半
+                self.lr /= 2.0
+
+            indices = range(n_train_batches)
+            if shuffle_batch:
+                self.shuffle_sync(self.data['train'])#保持对应性地一次性shuffle了C Q Y
+
+            total_cost = 0
+            start_time = time.time()
+            for minibatch_index in indices:#一次进入一个batch的数据
+                self.set_shared_variables(self.data['train'], minibatch_index,self.enable_time)#这里的函数总算把数据传给了模型里面初始化的变量
+                total_cost += self.train_model()
+                self.reset_zero()  #reset是把A,C的第一行（也就是第一个元素，对应字典了的第一个词）reset了一次，变成了0
+            end_time = time.time()
+            print '\n' * 3, '*' * 80
+            print 'epoch:', epoch, 'cost:', (total_cost / len(indices)), ' took: %d(s)' % (end_time - start_time)
+
+            print 'TRAIN', '=' * 40
+            train_f1, train_errors = self.compute_f1(self.data['train'])
+            print 'TRAIN_ERROR:', (1-train_f1)*100
+            if False:
+                for i, pred in train_errors[:10]:
+                    print 'context: ', self.to_words(self.data['train']['C'][i])
+                    print 'question: ', self.to_words([self.data['train']['Q'][i]])
+                    print 'correct answer: ', self.data['train']['Y'][i]
+                    print 'predicted answer: ', pred
+                    print '---' * 20
+            '''这块负责了linearity和softmanx的切换'''
+            if False and prev_train_f1 is not None and train_f1 < prev_train_f1 and self.nonlinearity is None:
+                print 'The linearity ends.××××××××××××××××××\n\n'
+                prev_weights = lasagne.layers.helper.get_all_param_values(self.network)
+                self.build_network(nonlinearity=lasagne.nonlinearities.softmax)
+                lasagne.layers.helper.set_all_param_values(self.network, prev_weights)
+            else:
+                print 'TEST', '=' * 40
+                test_f1, test_errors = self.compute_f1(self.data['test']) #有点奇怪这里的f1和test_error怎么好像不对应的？
+                print 'test_f1,test_errors:',test_f1,len(test_errors)
+                print '*** TEST_ERROR:', (1-test_f1)*100
+                if 1 :
+                    for i, pred in test_errors[:10]:
+                        print 'context: ', self.to_words(self.data['test']['C'][i])
+                        print 'question: ', self.to_words([self.data['test']['Q'][i]])
+                        print 'correct answer: ', self.data['test']['Y'][i]
+                        print 'predicted answer: ', pred
+                        print '---' * 20
+
+            prev_train_f1 = train_f1
+
+    def shuffle_sync(self, dataset):
+        p = np.random.permutation(len(dataset['Y']))
+        for k in ['S', 'Q', 'Y']:
+            dataset[k] = dataset[k][p]
+
 
 def str2bool(v):
     return v.lower() in ('yes', 'true', 't', '1')
@@ -263,7 +325,7 @@ def main():
     parser.add_argument('--train_file', type=str, default='', help='Train file')
     parser.add_argument('--test_file', type=str, default='', help='Test file')
     parser.add_argument('--back_method', type=str, default='sgd', help='Train Method to bp')
-    parser.add_argument('--batch_size', type=int, default=32, help='Batch size')
+    parser.add_argument('--batch_size', type=int, default=2, help='Batch size')
     parser.add_argument('--embedding_size', type=int, default=100, help='Embedding size')
     parser.add_argument('--max_norm', type=float, default=40.0, help='Max norm')
     parser.add_argument('--lr', type=float, default=0.01, help='Learning rate')
@@ -284,7 +346,7 @@ def main():
         # args.test_file ='/home/shin/DeepLearning/MemoryNetwork/MemN2N_python/MemN2N-master/data/en/qqq_test.txt'
 
     model = Model(**args.__dict__)
-    # model.train(n_epochs=args.n_epochs, shuffle_batch=args.shuffle_batch)
+    model.train(n_epochs=args.n_epochs, shuffle_batch=args.shuffle_batch)
 
 if __name__ == '__main__':
     main()
