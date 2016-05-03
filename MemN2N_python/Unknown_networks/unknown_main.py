@@ -59,8 +59,8 @@ class TransposedDenseLayer(lasagne.layers.DenseLayer):
     def __init__(self, incoming, num_units,embedding_size,vocab_size, W_final_softmax=lasagne.init.GlorotUniform(),
                  b=lasagne.init.Constant(0.), nonlinearity=lasagne.nonlinearities.rectify,
                  **kwargs):
-        super(TransposedDenseLayer, self).__init__(incoming, num_units, W, b, nonlinearity, **kwargs)
-        self.W_final_softmax=self.add_param(W_final_softmax,(embedding_size,embedding_size),name='MergeLayer_w_r')
+        super(TransposedDenseLayer, self).__init__(incoming, **kwargs)
+        self.W_final_softmax=self.add_param(W_final_softmax,(embedding_size,embedding_size),name='softmax_layer_w')
     def get_output_shape_for(self, input_shape):
         return (input_shape[0], self.num_units)
 
