@@ -39,7 +39,7 @@ class SimpleAttentionLayer(lasagne.layers.MergeLayer):
 
 class TmpMergeLayer(lasagne.layers.MergeLayer):
     def __init__(self,incomings,W_merge_r,W_merge_q, nonlinearity=lasagne.nonlinearities.tanh,**kwargs):
-        super(SimpleAttentionLayer, self).__init__(incomings, **kwargs) #？？？不知道这个super到底做什么的，会引入input_layers和input_shapes这些属性
+        super(TmpMergeLayer, self).__init__(incomings, **kwargs) #？？？不知道这个super到底做什么的，会引入input_layers和input_shapes这些属性
         if len(incomings) != 2:
             raise NotImplementedError
         batch_size,embedding_size=self.input_shapes[0]
@@ -51,7 +51,7 @@ class TmpMergeLayer(lasagne.layers.MergeLayer):
         return self.input_shapes[0]
     def get_output_for(self, inputs, **kwargs):
         h_r,h_q=inputs[0],inputs[1] # h_r:(BS,emb_size),h_q:(BS,1,emb_size)
-        result=T.dot(self.W_merge_r,h_r)+T.dot(self.W_merge_q,h_q.reshape(self.batch_size,self.embedding_size))
+        result=T.dot(self.W_merge_r,h_r)+T.dot(self.W_merge_q,h_q.reshape((self.batch_size,self.embedding_size)))
         return result
 
 class TransposedDenseLayer(lasagne.layers.DenseLayer):
@@ -59,7 +59,7 @@ class TransposedDenseLayer(lasagne.layers.DenseLayer):
     def __init__(self, incoming, num_units,embedding_size,vocab_size, W_final_softmax=lasagne.init.GlorotUniform(),
                  b=lasagne.init.Constant(0.), nonlinearity=lasagne.nonlinearities.rectify,
                  **kwargs):
-        super(TransposedDenseLayer, self).__init__(incoming, **kwargs)
+        super(TransposedDenseLayer, self).__init__(incoming,num_units, **kwargs)
         self.W_final_softmax=self.add_param(W_final_softmax,(embedding_size,embedding_size),name='softmax_layer_w')
     def get_output_shape_for(self, input_shape):
         return (input_shape[0], self.num_units)
