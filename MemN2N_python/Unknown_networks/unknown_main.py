@@ -59,8 +59,8 @@ class TransposedDenseLayer(lasagne.layers.DenseLayer):
     def __init__(self, incoming, num_units,embedding_size,vocab_size, W_final_softmax=lasagne.init.GlorotUniform(),
                  b=lasagne.init.Constant(0.), nonlinearity=lasagne.nonlinearities.rectify,
                  **kwargs):
-        super(TransposedDenseLayer, self).__init__(incoming,num_units, **kwargs)
-        self.W_final_softmax=self.add_param(W_final_softmax,(embedding_size,embedding_size),name='softmax_layer_w')
+        super(TransposedDenseLayer, self).__init__(incoming,num_units, name='softmax_layer_w',**kwargs)
+        # self.W_final_softmax=self.add_param(W_final_softmax,(embedding_size,num_units),name='softmax_layer_w')
     def get_output_shape_for(self, input_shape):
         return (input_shape[0], self.num_units)
 
@@ -68,10 +68,13 @@ class TransposedDenseLayer(lasagne.layers.DenseLayer):
         if input.ndim > 2:
             input = input.flatten(2)
 
-        activation = T.dot(input, self.W.T)
+        activation = T.dot(input, self.W)
         if self.b is not None:
             activation = activation + self.b.dimshuffle('x', 0)
         return self.nonlinearity(activation)
+
+
+
 
 class Model:
     def __init__(self, train_file, test_file, batch_size=32, embedding_size=20, max_norm=40, lr=0.01, num_hops=3, adj_weight_tying=True, linear_start=True, enable_time=False,**kwargs):
@@ -152,7 +155,8 @@ class Model:
         l_merge=TmpMergeLayer((l_context_attention,l_question_emb),W_merge_r=w_merge_r,W_merge_q=w_merge_q, nonlinearity=lasagne.nonlinearities.tanh)
 
         w_final_softmax=lasagne.init.Normal(std=0.1)
-        l_pred = TransposedDenseLayer(l_merge, 1,embedding_size=embedding_size,vocab_size=len(vocab)+1,W_final_softmax=w_final_softmax, b=None, nonlinearity=lasagne.nonlinearities.softmax)
+        # l_pred = TransposedDenseLayer(l_merge, len(vocab)+1,embedding_size=embedding_size,vocab_size=len(vocab)+1,W_final_softmax=w_final_softmax, b=None, nonlinearity=lasagne.nonlinearities.softmax)
+        l_pred = lasagne.layers.DenseLayer(l_merge, len(vocab)+1, W=lasagne.init.Normal(std=0.1), b=None, nonlinearity=lasagne.nonlinearities.softmax)
 
         probas=lasagne.layers.helper.get_output(l_merge,{l_context_in:s,l_question_in:q})
         probas = T.clip(probas, 1e-7, 1.0-1e-7)
@@ -161,7 +165,11 @@ class Model:
 
         cost = T.nnet.categorical_crossentropy(probas, y).sum()
 
-
+        params = lasagne.layers.helper.get_all_params(l_pred, trainable=True)
+        print 'params:', params
+        grads = T.grad(cost, params)
+        scaled_grads = lasagne.updates.total_norm_constraint(grads, self.max_norm)
+        updates = lasagne.updates.sgd(scaled_grads, params, learning_rate=self.lr)
 
 
         return
