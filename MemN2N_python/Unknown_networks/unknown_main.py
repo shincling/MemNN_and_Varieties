@@ -29,7 +29,9 @@ class SimpleAttentionLayer(lasagne.layers.MergeLayer):
         return (self.batch_size,self.embedding_size)
     def get_output_for(self, inputs, **kwargs):
         #input[0]:(BS,max_senlen,emb_size),input[1]:(BS,1,emb_size)
-        activation=self.nonlinearity(T.dot(inputs[0],self.W_h)+T.dot(inputs[1],self.W_q))
+        activation0=(T.dot(inputs[0],self.W_h))
+        activation1=T.dot(inputs[1],self.W_q).reshape([self.batch_size,self.embedding_size]).dimshuffle(0,'x',1)
+        activation=self.nonlinearity(activation0+activation1)#.dimshuffle(0,'x',2)#.repeat(self.max_sentlen,axis=1)
         final=T.dot(activation,self.W_o) #(BS,max_sentlen)
         alpha=lasagne.nonlinearities.softmax(final) #(BS,max_sentlen)
         final=T.batched_dot(alpha,inputs[0])#(BS,max_sentlen)*(BS,max_sentlen,emb_size)--(BS,emb_size)
@@ -51,7 +53,8 @@ class TmpMergeLayer(lasagne.layers.MergeLayer):
         return self.input_shapes[0]
     def get_output_for(self, inputs, **kwargs):
         h_r,h_q=inputs[0],inputs[1] # h_r:(BS,emb_size),h_q:(BS,1,emb_size)
-        result=T.dot(self.W_merge_r,h_r)+T.dot(self.W_merge_q,h_q.reshape((self.batch_size,self.embedding_size)))
+        # result=T.dot(self.W_merge_r,h_r)+T.dot(self.W_merge_q,h_q).reshape((self.batch_size,self.embedding_size))
+        result=T.dot(h_r,self.W_merge_r)+T.dot(h_q,self.W_merge_q).reshape((self.batch_size,self.embedding_size))
         return result
 
 class TransposedDenseLayer(lasagne.layers.DenseLayer):
@@ -127,12 +130,13 @@ class Model:
         batch_size, max_sentlen, embedding_size, vocab, enable_time = self.batch_size, self.max_sentlen, self.embedding_size, self.vocab,self.enable_time
 
         s = T.imatrix()
-        q = T.ivector()
+        # q = T.ivector()
+        q = T.imatrix()
         y = T.imatrix()
         # c_pe = T.tensor4()
         # q_pe = T.tensor4()
         self.s_shared = theano.shared(np.zeros((batch_size, max_sentlen), dtype=np.int32), borrow=True)
-        self.q_shared = theano.shared(np.zeros((batch_size, ), dtype=np.int32), borrow=True)
+        self.q_shared = theano.shared(np.zeros((batch_size, 1), dtype=np.int32), borrow=True)
         '''最后的softmax层的参数'''
         self.a_shared = theano.shared(np.zeros((batch_size, self.num_classes), dtype=np.int32), borrow=True)
         S_shared = theano.shared(self.S, borrow=True)#这个S把train test放到了一起来干事情#
@@ -178,10 +182,8 @@ class Model:
             y: self.a_shared,
         }
 
-        # self.c_shared.set_value(c)
-        # self.q_shared.set_value(q)
-        # self.a_shared.set_value(y)
-
+        test_output=lasagne.layers.helper.get_output(l_context_attention,{l_context_in:s,l_question_in:q}).flatten().sum()
+        # self.train_model1 = theano.function([],test_output, givens=givens,on_unused_input='warn' )
         self.train_model = theano.function([], cost, givens=givens, updates=updates)
         self.compute_pred = theano.function([], outputs= pred, givens=givens, on_unused_input='ignore')
 
@@ -230,13 +232,13 @@ class Model:
             word_indices = [word_to_idx[w] for w in line['sentence'].split(' ')]
             word_indices += [0] * (max_sentlen - len(word_indices)) #这是补零，把句子填充到max_sentLen
             S.append(word_indices)
-            Q.append(word_to_idx[line['question']])
+            Q.append([word_to_idx[line['question']]])
             Y.append(word_to_idx[line['target']])
         return np.array(S),np.array(Q),np.array(Y)
 
     def set_shared_variables(self, dataset, index,enable_time):
         c = np.zeros((self.batch_size, self.max_sentlen), dtype=np.int32)
-        q = np.zeros((self.batch_size, ), dtype=np.int32)
+        q = np.zeros((self.batch_size, 1), dtype=np.int32)
         y = np.zeros((self.batch_size, self.num_classes), dtype=np.int32)
 
         indices = range(index*self.batch_size, (index+1)*self.batch_size)
@@ -244,7 +246,7 @@ class Model:
             row = row[:self.max_sentlen]
             c[i, :len(row)] = row
 
-        q[:len(indices)] = dataset['Q'][indices] #问题的行数组成的列表
+        q[:len(indices),:] = dataset['Q'][indices] #问题的行数组成的列表
         '''底下这个整个循环是得到一个batch对应的那个调整的矩阵'''
         # y[:len(indices), 1:self.num_classes] = self.lb.transform(dataset['Y'][indices])#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
         y[:len(indices), 1:self.num_classes] = label_binarize([self.idx_to_word[i] for i in dataset['Y'][indices]],self.vocab)#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
@@ -270,9 +272,13 @@ class Model:
 
             total_cost = 0
             start_time = time.time()
+            # print 'TRAIN', '=' * 40
+            # train_f1, train_errors = self.compute_f1(self.data['train'])
+            # print 'TRAIN_ERROR:', (1-train_f1)*100
             for minibatch_index in indices:#一次进入一个batch的数据
                 self.set_shared_variables(self.data['train'], minibatch_index,self.enable_time)#这里的函数总算把数据传给了模型里面初始化的变量
                 total_cost += self.train_model()
+                # print self.train_model1()
                 # self.reset_zero()  #reset是把A,C的第一行（也就是第一个元素，对应字典了的第一个词）reset了一次，变成了0
             end_time = time.time()
             print '\n' * 3, '*' * 80
