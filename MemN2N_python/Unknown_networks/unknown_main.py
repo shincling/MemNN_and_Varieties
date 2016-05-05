@@ -106,6 +106,8 @@ class Model:
         vocab=[]
         for i in range(len(idx_to_word)):
             vocab.append(idx_to_word[i+1])
+        idx_to_word[0]='#'
+        word_to_idx['#']=0
 
         lb = LabelBinarizer()
 
@@ -305,11 +307,11 @@ class Model:
                 test_f1, test_errors = self.compute_f1(self.data['test']) #有点奇怪这里的f1和test_error怎么好像不对应的？
                 print 'test_f1,test_errors:',test_f1,len(test_errors)
                 print '*** TEST_ERROR:', (1-test_f1)*100
-                if 0 :
+                if 1 :
                     for i, pred in test_errors[:10]:
-                        print 'context: ', self.to_words(self.data['test']['S'][i])
-                        print 'question: ', self.to_words([self.data['test']['Q'][i]])
-                        print 'correct answer: ', self.data['test']['Y'][i]
+                        print 'context: ', self.to_words(self.data['test']['S'][i],'S')
+                        print 'question: ', self.to_words([self.data['test']['Q'][i]],'Q')
+                        print 'correct answer: ', self.to_words(self.data['test']['Y'][i],'Y')
                         print 'predicted answer: ', pred
                         print '---' * 20
 
@@ -343,12 +345,25 @@ class Model:
         for k in ['S', 'Q', 'Y']:
             dataset[k] = dataset[k][p]
 
-    def to_words(self, indices):
-        sents = []
-        for idx in indices:
-            words = ' '.join([self.idx_to_word[idx] for idx in self.S[idx] if idx > 0])
-            sents.append(words)
-        return ' '.join(sents)
+    def to_words(self, indices,ty):
+        # sents = []
+        # for idx in indices:
+        #     words = ' '.join([self.idx_to_word[idx] for idx in self.S[idx] if idx > 0])
+        #     words = ' '.join([self.idx_to_word[idx] for i in idx)
+        #     sents.append(words)
+        # return ' '.join(sents)
+        sent = ''
+        if ty =='S':
+            for idx in indices:
+                sent+=self.idx_to_word[idx]
+                sent+=' '
+        elif ty =='Q':
+            for idx in indices[0]:
+                sent+=self.idx_to_word[idx]
+                sent+=' '
+        elif ty =='Y':
+            sent=self.idx_to_word[indices]
+        return sent
 
 def str2bool(v):
     return v.lower() in ('yes', 'true', 't', '1')
