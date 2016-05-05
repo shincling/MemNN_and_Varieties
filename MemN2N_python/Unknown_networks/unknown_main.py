@@ -305,9 +305,9 @@ class Model:
                 test_f1, test_errors = self.compute_f1(self.data['test']) #有点奇怪这里的f1和test_error怎么好像不对应的？
                 print 'test_f1,test_errors:',test_f1,len(test_errors)
                 print '*** TEST_ERROR:', (1-test_f1)*100
-                if 1 :
+                if 0 :
                     for i, pred in test_errors[:10]:
-                        print 'context: ', self.to_words(self.data['test']['C'][i])
+                        print 'context: ', self.to_words(self.data['test']['S'][i])
                         print 'question: ', self.to_words([self.data['test']['Q'][i]])
                         print 'correct answer: ', self.data['test']['Y'][i]
                         print 'predicted answer: ', pred
@@ -319,12 +319,13 @@ class Model:
         result=self.compute_pred()
         # print 'probas:\n'
         # print result[1]
-        return result[0]
+        return result
 
     def compute_f1(self, dataset):
         n_batches = len(dataset['Y']) // self.batch_size
-        y_pred = np.concatenate([self.predict(dataset, i) for i in xrange(n_batches)]).astype(np.int32) - 1
-        y_true = [self.vocab.index(y) for y in dataset['Y'][:len(y_pred)]]
+        y_pred = np.concatenate([self.predict(dataset, i) for i in xrange(n_batches)]).astype(np.int32) #- 1
+        # y_true = [self.vocab.index(y) for y in dataset['Y'][:len(y_pred)]]
+        y_true = dataset['Y'][:len(y_pred)]
         # print metrics.confusion_matrix(y_true, y_pred)
         # print metrics.classification_report(y_true, y_pred)
         errors = []
