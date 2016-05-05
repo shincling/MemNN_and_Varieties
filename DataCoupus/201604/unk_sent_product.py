@@ -8,7 +8,8 @@ def main():
         name=chr(random.randint(97, 122))+chr(random.randint(97, 122))+chr(random.randint(97, 122))+chr(random.randint(97, 122))+chr(random.randint(97, 122))
         phone=random.randint(10000000,99999999)
         question=random.choice(['phone','name'])
-        ans=slot_num+3 if question=='name' else slot_num+7
+        # ans=slot_num+3 if question=='name' else slot_num+7
+        ans=name if question=='name' else phone
         line=str(num)+'\t'
         line+='哈 '*slot_num
         line+='我的 名字 叫 {} ,'.format(name)
@@ -18,6 +19,6 @@ def main():
 
 
 if __name__=='__main__':
-    output_path='unk_sent_test.txt'
+    output_path='unk_sent_real_train.txt'
     sent_num=1000
     main()
