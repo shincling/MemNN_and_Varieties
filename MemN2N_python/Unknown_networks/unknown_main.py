@@ -36,6 +36,7 @@ class SimpleAttentionLayer(lasagne.layers.MergeLayer):
         alpha=lasagne.nonlinearities.softmax(final) #(BS,max_sentlen)
         final=T.batched_dot(alpha,inputs[0])#(BS,max_sentlen)*(BS,max_sentlen,emb_size)--(BS,emb_size)
         return final
+    # TODO:think about the set_zero
     def reset_zero(self):
         self.set_zero(self.zero_vec)
 
@@ -307,7 +308,7 @@ class Model:
                 test_f1, test_errors = self.compute_f1(self.data['test']) #有点奇怪这里的f1和test_error怎么好像不对应的？
                 print 'test_f1,test_errors:',test_f1,len(test_errors)
                 print '*** TEST_ERROR:', (1-test_f1)*100
-                if 1 :
+                if 0 :
                     for i, pred in test_errors[:10]:
                         print 'context: ', self.to_words(self.data['test']['S'][i],'S')
                         print 'question: ', self.to_words([self.data['test']['Q'][i]],'Q')
@@ -325,6 +326,7 @@ class Model:
 
     def compute_f1(self, dataset):
         n_batches = len(dataset['Y']) // self.batch_size
+        # TODO: find out why not -1
         y_pred = np.concatenate([self.predict(dataset, i) for i in xrange(n_batches)]).astype(np.int32) #- 1
         # y_true = [self.vocab.index(y) for y in dataset['Y'][:len(y_pred)]]
         y_true = dataset['Y'][:len(y_pred)]
