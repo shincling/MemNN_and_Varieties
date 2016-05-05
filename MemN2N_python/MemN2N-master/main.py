@@ -326,6 +326,9 @@ class Model:
     def compute_f1(self, dataset):
         n_batches = len(dataset['Y']) // self.batch_size
         y_pred = np.concatenate([self.predict(dataset, i) for i in xrange(n_batches)]).astype(np.int32) - 1
+        '''为什么上面要减1呢，因为predict的时候，用到的都是len(vocab)+1的那个东西，而vocab.index是从没加补位符开始的
+        也就是说如果predict到了词典的第一个词，那么y_pred应该是1，-1之后才是vocab.index(0)对应的结果。'''
+
         y_true = [self.vocab.index(y) for y in dataset['Y'][:len(y_pred)]]
         # print metrics.confusion_matrix(y_true, y_pred)
         # print metrics.classification_report(y_true, y_pred)
