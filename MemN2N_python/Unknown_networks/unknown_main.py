@@ -309,7 +309,12 @@ class Model:
         q[:len(indices),:] = dataset['Q'][indices] #问题的行数组成的列表
         '''底下这个整个循环是得到一个batch对应的那个调整的矩阵'''
         # y[:len(indices), 1:self.num_classes] = self.lb.transform(dataset['Y'][indices])#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
-        y[:len(indices), 1:self.max_sentlen] = label_binarize([self.idx_to_word[i] for i in dataset['Y'][indices]],self.vocab)#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
+        # y[:len(indices), 1:self.max_sentlen] = label_binarize([self.idx_to_word[i] for i in dataset['Y'][indices]],self.vocab)#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
+        # y[:len(indices), 1:self.max_sentlen] = [label_binarize([dataset['Y'][indices]],)#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
+        for i in range(len(indices)):
+            one_hot=label_binarize([dataset['Y'][i]],dataset['S'][i])
+            y[i,:]=one_hot
+
         # y[:len(indices), 1:self.embedding_size] = self.mem_layers[0].A[[self.word_to_idx(i) for i in list(dataset['Y'][indices])]]#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
         self.s_shared.set_value(c)
         self.q_shared.set_value(q)
@@ -379,7 +384,10 @@ class Model:
 
             prev_train_f1 = train_f1
     def predict(self, dataset, index):
-        self.set_shared_variables(dataset, index,self.enable_time)
+        if not self.set_shared_variables_pointer:
+            self.set_shared_variables(dataset, index,self.enable_time)
+        else:
+            self.set_shared_variables_pointer(dataset, index,self.enable_time)
         result=self.compute_pred()
         # print 'probas:\n'
         # print result[1]
