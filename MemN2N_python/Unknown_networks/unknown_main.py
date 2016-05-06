@@ -48,16 +48,16 @@ class SimplePointerLayer(lasagne.layers.MergeLayer):
             raise NotImplementedError
         batch_size, max_sentlen ,embedding_size = self.input_shapes[0]
         self.batch_size,self.max_sentlen,self.embedding_size=batch_size,max_sentlen,embedding_size
-        self.W_h=self.add_param(W_h,(embedding_size,embedding_size), name='Attention_layer_W_h')
-        self.W_q=self.add_param(W_q,(embedding_size,embedding_size), name='Attention_layer_W_q')
-        self.W_o=self.add_param(W_o,(embedding_size,), name='Attention_layer_W_o')
+        self.W_h=self.add_param(W_h,(embedding_size,embedding_size), name='Pointer_layer_W_h')
+        self.W_q=self.add_param(W_q,(embedding_size,embedding_size), name='Pointer_layer_W_q')
+        self.W_o=self.add_param(W_o,(embedding_size,), name='Pointer_layer_W_o')
         self.nonlinearity=nonlinearity
         zero_vec_tensor = T.vector()
         self.zero_vec = np.zeros(embedding_size, dtype=theano.config.floatX)
         # self.set_zero = theano.function([zero_vec_tensor], updates=[(x, T.set_subtensor(x[0, :], zero_vec_tensor)) for x in [self.A,self.C]])
 
     def get_output_shape_for(self, input_shapes):
-        return (self.batch_size,self.embedding_size)
+        return (self.batch_size,self.max_sentlen)
     def get_output_for(self, inputs, **kwargs):
         #input[0]:(BS,max_senlen,emb_size),input[1]:(BS,1,emb_size)
         activation0=(T.dot(inputs[0],self.W_h))
@@ -157,7 +157,7 @@ class Model:
         self.nonlinearity = None if linear_start else lasagne.nonlinearities.softmax
         self.word_to_idx=word_to_idx
         self.pointer_nn=pointer_nn
-        self.build_network()
+        # self.build_network()
 
     def build_network(self):
         batch_size, max_sentlen, embedding_size, vocab, enable_time = self.batch_size, self.max_sentlen, self.embedding_size, self.vocab,self.enable_time
@@ -202,6 +202,13 @@ class Model:
 
             cost = T.nnet.categorical_crossentropy(probas, y).sum()
         else :
+            l_context_pointer=SimplePointerLayer((l_context_rnn,l_question_emb),vocab, embedding_size,enable_time, W_h=w_h, W_q=w_q,W_o=w_o, nonlinearity=lasagne.nonlinearities.tanh)
+            l_pred=l_context_pointer
+            probas=lasagne.layers.helper.get_output(l_context_pointer,{l_context_in:s,l_question_in:q})
+            probas = T.clip(probas, 1e-7, 1.0-1e-7)
+            pred = T.argmax(probas, axis=1)
+
+            cost = T.nnet.categorical_crossentropy(probas, y).sum()
             pass
         params = lasagne.layers.helper.get_all_params(l_pred, trainable=True)
         print 'params:', params
@@ -216,7 +223,7 @@ class Model:
             y: self.a_shared,
         }
 
-        test_output=lasagne.layers.helper.get_output(l_context_attention,{l_context_in:s,l_question_in:q}).flatten().sum()
+        # test_output=lasagne.layers.helper.get_output(l_context_attention,{l_context_in:s,l_question_in:q}).flatten().sum()
         # self.train_model1 = theano.function([],test_output, givens=givens,on_unused_input='warn' )
         self.train_model = theano.function([], cost, givens=givens, updates=updates)
         self.compute_pred = theano.function([], outputs= pred, givens=givens, on_unused_input='ignore')
@@ -289,6 +296,26 @@ class Model:
         self.q_shared.set_value(q)
         self.a_shared.set_value(y)
 
+    def set_shared_variables_pointer(self, dataset, index,enable_time):
+        c = np.zeros((self.batch_size, self.max_sentlen), dtype=np.int32)
+        q = np.zeros((self.batch_size, 1), dtype=np.int32)
+        y = np.zeros((self.batch_size, self.max_sentlen), dtype=np.int32)
+
+        indices = range(index*self.batch_size, (index+1)*self.batch_size)
+        for i, row in enumerate(dataset['S'][indices]):
+            row = row[:self.max_sentlen]
+            c[i, :len(row)] = row
+
+        q[:len(indices),:] = dataset['Q'][indices] #问题的行数组成的列表
+        '''底下这个整个循环是得到一个batch对应的那个调整的矩阵'''
+        # y[:len(indices), 1:self.num_classes] = self.lb.transform(dataset['Y'][indices])#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
+        y[:len(indices), 1:self.max_sentlen] = label_binarize([self.idx_to_word[i] for i in dataset['Y'][indices]],self.vocab)#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
+        # y[:len(indices), 1:self.embedding_size] = self.mem_layers[0].A[[self.word_to_idx(i) for i in list(dataset['Y'][indices])]]#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
+        self.s_shared.set_value(c)
+        self.q_shared.set_value(q)
+        self.a_shared.set_value(y)
+
+
     def train(self, n_epochs=100, shuffle_batch=False):
         epoch = 0
         n_train_batches = len(self.data['train']['Y']) // self.batch_size
@@ -310,7 +337,10 @@ class Model:
             # train_f1, train_errors = self.compute_f1(self.data['train'])
             # print 'TRAIN_ERROR:', (1-train_f1)*100
             for minibatch_index in indices:#一次进入一个batch的数据
-                self.set_shared_variables(self.data['train'], minibatch_index,self.enable_time)#这里的函数总算把数据传给了模型里面初始化的变量
+                if not self.pointer_nn:
+                    self.set_shared_variables(self.data['train'], minibatch_index,self.enable_time)#这里的函数总算把数据传给了模型里面初始化的变量
+                else:
+                    self.set_shared_variables_pointer(self.data['train'], minibatch_index,self.enable_time)#这里的函数总算把数据传给了模型里面初始化的变量
                 total_cost += self.train_model()
                 # print self.train_model1()
                 # self.reset_zero()  #reset是把A,C的第一行（也就是第一个元素，对应字典了的第一个词）reset了一次，变成了0
@@ -417,7 +447,7 @@ def main():
     parser.add_argument('--shuffle_batch', type='bool', default=True, help='Whether to shuffle minibatches')
     parser.add_argument('--n_epochs', type=int, default=500, help='Num epochs')
     parser.add_argument('--enable_time', type=bool, default=False, help='time word embedding')
-    parser.add_argument('--pointer_nn',type=bool,default=False,help='Whether to use the pointer networks')
+    parser.add_argument('--pointer_nn',type=bool,default=True,help='Whether to use the pointer networks')
     args = parser.parse_args()
     print '*' * 80
     print 'args:', args
