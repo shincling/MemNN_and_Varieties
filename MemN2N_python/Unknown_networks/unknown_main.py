@@ -40,6 +40,36 @@ class SimpleAttentionLayer(lasagne.layers.MergeLayer):
     def reset_zero(self):
         self.set_zero(self.zero_vec)
 
+
+class SimplePointerLayer(lasagne.layers.MergeLayer):
+    def __init__(self, incomings, vocab, embedding_size,enable_time, W_h, W_q,W_o, nonlinearity=lasagne.nonlinearities.tanh, **kwargs):
+        super(SimplePointerLayer, self).__init__(incomings, **kwargs) #？？？不知道这个super到底做什么的，会引入input_layers和input_shapes这些属性
+        if len(incomings) != 2:
+            raise NotImplementedError
+        batch_size, max_sentlen ,embedding_size = self.input_shapes[0]
+        self.batch_size,self.max_sentlen,self.embedding_size=batch_size,max_sentlen,embedding_size
+        self.W_h=self.add_param(W_h,(embedding_size,embedding_size), name='Attention_layer_W_h')
+        self.W_q=self.add_param(W_q,(embedding_size,embedding_size), name='Attention_layer_W_q')
+        self.W_o=self.add_param(W_o,(embedding_size,), name='Attention_layer_W_o')
+        self.nonlinearity=nonlinearity
+        zero_vec_tensor = T.vector()
+        self.zero_vec = np.zeros(embedding_size, dtype=theano.config.floatX)
+        # self.set_zero = theano.function([zero_vec_tensor], updates=[(x, T.set_subtensor(x[0, :], zero_vec_tensor)) for x in [self.A,self.C]])
+
+    def get_output_shape_for(self, input_shapes):
+        return (self.batch_size,self.embedding_size)
+    def get_output_for(self, inputs, **kwargs):
+        #input[0]:(BS,max_senlen,emb_size),input[1]:(BS,1,emb_size)
+        activation0=(T.dot(inputs[0],self.W_h))
+        activation1=T.dot(inputs[1],self.W_q).reshape([self.batch_size,self.embedding_size]).dimshuffle(0,'x',1)
+        activation=self.nonlinearity(activation0+activation1)#.dimshuffle(0,'x',2)#.repeat(self.max_sentlen,axis=1)
+        final=T.dot(activation,self.W_o) #(BS,max_sentlen)
+        alpha=lasagne.nonlinearities.softmax(final) #(BS,max_sentlen)
+        # final=T.batched_dot(alpha,inputs[0])#(BS,max_sentlen)*(BS,max_sentlen,emb_size)--(BS,emb_size)
+        return alpha
+    # TODO:think about the set_zero
+    def reset_zero(self):
+        self.set_zero(self.zero_vec)
 class TmpMergeLayer(lasagne.layers.MergeLayer):
     def __init__(self,incomings,W_merge_r,W_merge_q, nonlinearity=lasagne.nonlinearities.tanh,**kwargs):
         super(TmpMergeLayer, self).__init__(incomings, **kwargs) #？？？不知道这个super到底做什么的，会引入input_layers和input_shapes这些属性
@@ -81,7 +111,7 @@ class TransposedDenseLayer(lasagne.layers.DenseLayer):
 
 
 class Model:
-    def __init__(self, train_file, test_file, batch_size=32, embedding_size=20, max_norm=40, lr=0.01, num_hops=3, adj_weight_tying=True, linear_start=True, enable_time=False,**kwargs):
+    def __init__(self, train_file, test_file, batch_size=32, embedding_size=20, max_norm=40, lr=0.01, num_hops=3, adj_weight_tying=True, linear_start=True, enable_time=False,pointer_nn=False,**kwargs):
         train_lines, test_lines = self.get_lines(train_file), self.get_lines(test_file)
         lines = np.concatenate([train_lines, test_lines], axis=0) #直接头尾拼接
         vocab, word_to_idx, idx_to_word, max_sentlen = self.get_vocab(lines)
@@ -126,7 +156,7 @@ class Model:
         self.idx_to_word = idx_to_word
         self.nonlinearity = None if linear_start else lasagne.nonlinearities.softmax
         self.word_to_idx=word_to_idx
-
+        self.pointer_nn=pointer_nn
         self.build_network()
 
     def build_network(self):
@@ -156,22 +186,23 @@ class Model:
         w_h,w_q,w_o=lasagne.init.Normal(std=0.1),lasagne.init.Normal(std=0.1),lasagne.init.Normal(std=0.1)
         #下面这个层是用来利用question做attention，得到文档在当前q下的最后一个表示,输出一个(BS,emb_size)的东西
         #得到一个(BS,emb_size)的加权平均后的向量
-        l_context_attention=SimpleAttentionLayer((l_context_rnn,l_question_emb),vocab, embedding_size,enable_time, W_h=w_h, W_q=w_q,W_o=w_o, nonlinearity=lasagne.nonlinearities.tanh)
+        if not self.pointer_nn:
+            l_context_attention=SimpleAttentionLayer((l_context_rnn,l_question_emb),vocab, embedding_size,enable_time, W_h=w_h, W_q=w_q,W_o=w_o, nonlinearity=lasagne.nonlinearities.tanh)
+            w_merge_r,w_merge_q=lasagne.init.Normal(std=0.1),lasagne.init.Normal(std=0.1)
+            l_merge=TmpMergeLayer((l_context_attention,l_question_emb),W_merge_r=w_merge_r,W_merge_q=w_merge_q, nonlinearity=lasagne.nonlinearities.tanh)
 
-        w_merge_r,w_merge_q=lasagne.init.Normal(std=0.1),lasagne.init.Normal(std=0.1)
-        l_merge=TmpMergeLayer((l_context_attention,l_question_emb),W_merge_r=w_merge_r,W_merge_q=w_merge_q, nonlinearity=lasagne.nonlinearities.tanh)
+            w_final_softmax=lasagne.init.Normal(std=0.1)
+            # l_pred = TransposedDenseLayer(l_merge, self.num_classes,embedding_size=embedding_size,vocab_size=self.num_classes,W_final_softmax=w_final_softmax, b=None, nonlinearity=lasagne.nonlinearities.softmax)
+            l_pred = lasagne.layers.DenseLayer(l_merge, self.num_classes, W=w_final_softmax, b=None, nonlinearity=lasagne.nonlinearities.softmax,name='l_final')
 
-        w_final_softmax=lasagne.init.Normal(std=0.1)
-        # l_pred = TransposedDenseLayer(l_merge, self.num_classes,embedding_size=embedding_size,vocab_size=self.num_classes,W_final_softmax=w_final_softmax, b=None, nonlinearity=lasagne.nonlinearities.softmax)
-        l_pred = lasagne.layers.DenseLayer(l_merge, self.num_classes, W=w_final_softmax, b=None, nonlinearity=lasagne.nonlinearities.softmax,name='l_final')
+            probas=lasagne.layers.helper.get_output(l_pred,{l_context_in:s,l_question_in:q})
+            probas = T.clip(probas, 1e-7, 1.0-1e-7)
 
-        probas=lasagne.layers.helper.get_output(l_pred,{l_context_in:s,l_question_in:q})
-        probas = T.clip(probas, 1e-7, 1.0-1e-7)
+            pred = T.argmax(probas, axis=1)
 
-        pred = T.argmax(probas, axis=1)
-
-        cost = T.nnet.categorical_crossentropy(probas, y).sum()
-
+            cost = T.nnet.categorical_crossentropy(probas, y).sum()
+        else :
+            pass
         params = lasagne.layers.helper.get_all_params(l_pred, trainable=True)
         print 'params:', params
         grads = T.grad(cost, params)
@@ -386,6 +417,7 @@ def main():
     parser.add_argument('--shuffle_batch', type='bool', default=True, help='Whether to shuffle minibatches')
     parser.add_argument('--n_epochs', type=int, default=500, help='Num epochs')
     parser.add_argument('--enable_time', type=bool, default=False, help='time word embedding')
+    parser.add_argument('--pointer_nn',type=bool,default=False,help='Whether to use the pointer networks')
     args = parser.parse_args()
     print '*' * 80
     print 'args:', args
