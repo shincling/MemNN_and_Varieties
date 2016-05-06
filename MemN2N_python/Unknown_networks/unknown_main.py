@@ -157,7 +157,7 @@ class Model:
         self.nonlinearity = None if linear_start else lasagne.nonlinearities.softmax
         self.word_to_idx=word_to_idx
         self.pointer_nn=pointer_nn
-        # self.build_network()
+        self.build_network()
 
     def build_network(self):
         batch_size, max_sentlen, embedding_size, vocab, enable_time = self.batch_size, self.max_sentlen, self.embedding_size, self.vocab,self.enable_time
@@ -354,7 +354,10 @@ class Model:
             print 'epoch:', epoch, 'cost:', (total_cost / len(indices)), ' took: %d(s)' % (end_time - start_time)
 
             print 'TRAIN', '=' * 40
-            train_f1, train_errors = self.compute_f1(self.data['train'])
+            if not self.pointer_nn:
+                train_f1, train_errors = self.compute_f1(self.data['train'])
+            else:
+                train_f1, train_errors = self.compute_f1_pointer(self.data['train'])
             print 'TRAIN_ERROR:', (1-train_f1)*100
             if False:
                 for i, pred in train_errors[:10]:
@@ -371,7 +374,11 @@ class Model:
                 lasagne.layers.helper.set_all_param_values(self.network, prev_weights)
             else:
                 print 'TEST', '=' * 40
-                test_f1, test_errors = self.compute_f1(self.data['test']) #有点奇怪这里的f1和test_error怎么好像不对应的？
+                if not self.pointer_nn:
+                    test_f1, test_errors = self.compute_f1(self.data['test']) #有点奇怪这里的f1和test_error怎么好像不对应的？
+                else:
+                    test_f1, test_errors = self.compute_f1_pointer(self.data['test']) #有点奇怪这里的f1和test_error怎么好像不对应的？
+
                 print 'test_f1,test_errors:',test_f1,len(test_errors)
                 print '*** TEST_ERROR:', (1-test_f1)*100
                 if 0 :
@@ -399,6 +406,27 @@ class Model:
         y_pred = np.concatenate([self.predict(dataset, i) for i in xrange(n_batches)]).astype(np.int32) #- 1
         # y_true = [self.vocab.index(y) for y in dataset['Y'][:len(y_pred)]]
         y_true = dataset['Y'][:len(y_pred)]
+        # print metrics.confusion_matrix(y_true, y_pred)
+        # print metrics.classification_report(y_true, y_pred)
+        errors = []
+        for i, (t, p) in enumerate(zip(y_true, y_pred)):
+            if t != p:
+                # errors.append((i, self.lb.classes_[p]))
+                errors.append((i, self.vocab[p]))
+                pass
+        return metrics.f1_score(y_true, y_pred, average='weighted', pos_label=None), errors
+
+    def compute_f1_pointer(self, dataset):
+        n_batches = len(dataset['Y']) // self.batch_size
+        # TODO: find out why not -1
+        y_pred = np.concatenate([self.predict(dataset, i) for i in xrange(n_batches)]).astype(np.int32) #- 1
+        # y_true = [self.vocab.index(y) for y in dataset['Y'][:len(y_pred)]]
+        # y_true = dataset['Y'][:len(y_pred)]
+        y_true=[]
+        for i in range(len(y_pred)):
+            y_true.append(list(dataset['S'][i]).index(dataset['Y'][i]))
+
+
         # print metrics.confusion_matrix(y_true, y_pred)
         # print metrics.classification_report(y_true, y_pred)
         errors = []
@@ -464,6 +492,8 @@ def main():
     if args.train_file == '' or args.test_file == '':
         args.train_file = glob.glob('*_real_train.txt' )[0]
         args.test_file = glob.glob('*_real_test.txt' )[0]
+        # args.train_file = glob.glob('*_toy_train.txt' )[0]
+        # args.test_file = glob.glob('*_toy_test.txt' )[0]
         # args.train_file = '/home/shin/DeepLearning/MemoryNetwork/MemN2N_python/MemN2N-master/data/en/qqq_train.txt'
         # args.test_file ='/home/shin/DeepLearning/MemoryNetwork/MemN2N_python/MemN2N-master/data/en/qqq_test.txt'
 
