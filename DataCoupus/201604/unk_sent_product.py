@@ -8,6 +8,7 @@ def main():
         name=chr(random.randint(97, 122))+chr(random.randint(97, 122))+chr(random.randint(97, 122))+chr(random.randint(97, 122))+chr(random.randint(97, 122))
         phone=random.randint(10000000,99999999)
         question=random.choice(['phone','name'])
+        question='name'
         # ans=slot_num+3 if question=='name' else slot_num+7
         ans=name if question=='name' else phone
         line=str(num)+'\t'
@@ -19,6 +20,6 @@ def main():
 
 
 if __name__=='__main__':
-    output_path='unk_sent_real_train.txt'
+    output_path='unk_sent_onlyName_test.txt'
     sent_num=1000
     main()
