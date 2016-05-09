@@ -183,6 +183,7 @@ class Model:
         l_question_emb= lasagne.layers.EmbeddingLayer(l_question_in,self.num_classes,embedding_size,W=l_context_emb.W,name='question_embedding') #(BS,1,d)
 
         l_context_rnn=lasagne.layers.LSTMLayer(l_context_emb,embedding_size,name='context_lstm') #(BS,max_sentlen,emb_size)
+        # l_context_rnn=lasagne.layers.GRULayer(l_context_emb,embedding_size,name='context_lstm') #(BS,max_sentlen,emb_size)
 
         w_h,w_q,w_o=lasagne.init.Normal(std=1),lasagne.init.Normal(std=1),lasagne.init.Normal(std=1)
         #下面这个层是用来利用question做attention，得到文档在当前q下的最后一个表示,输出一个(BS,emb_size)的东西
@@ -209,7 +210,7 @@ class Model:
             probas = T.clip(probas, 1e-7, 1.0-1e-7)
             pred = T.argmax(probas, axis=1)
 
-            cost = T.nnet.binary_crossentropy(probas, y).sum()
+            cost = T.nnet.categorical_crossentropy(probas, y).sum()
             pass
         params = lasagne.layers.helper.get_all_params(l_pred, trainable=True)
         print 'params:', params
@@ -230,7 +231,7 @@ class Model:
         # test_output=lasagne.layers.helper.get_output(l_context_attention,{l_context_in:s,l_question_in:q}).flatten().sum()
         # self.train_model1 = theano.function([],test_output, givens=givens,on_unused_input='warn' )
         self.train_model = theano.function([], cost, givens=givens, updates=updates)
-        self.compute_pred = theano.function([], outputs= pred, givens=givens, on_unused_input='ignore')
+        self.compute_pred = theano.function([], outputs= [probas,pred], givens=givens, on_unused_input='ignore')
 
         zero_vec_tensor = T.vector()
         self.zero_vec = np.zeros(embedding_size, dtype=theano.config.floatX)
@@ -335,7 +336,7 @@ class Model:
 
         while (epoch < n_epochs):
             epoch += 1
-            if epoch % 25 == 0: #每隔25个epoch，则速率减半
+            if epoch % 50 == 0: #每隔25个epoch，则速率减半
                 self.lr /= 2.0
 
             indices = range(n_train_batches)
@@ -403,8 +404,8 @@ class Model:
             self.set_shared_variables_pointer(dataset, index,self.enable_time)
         result=self.compute_pred()
         # print 'probas:\n'
-        # print result[1]
-        return result
+        # print result[0][-1]
+        return result[1]
 
     def compute_f1(self, dataset):
         n_batches = len(dataset['Y']) // self.batch_size
@@ -483,7 +484,7 @@ def main():
     parser.add_argument('--batch_size', type=int, default=32, help='Batch size')
     parser.add_argument('--embedding_size', type=int, default=50, help='Embedding size')
     parser.add_argument('--max_norm', type=float, default=40.0, help='Max norm')
-    parser.add_argument('--lr', type=float, default=0.001, help='Learning rate')
+    parser.add_argument('--lr', type=float, default=0.01, help='Learning rate')
     parser.add_argument('--num_hops', type=int, default=3, help='Num hops')
     parser.add_argument('--linear_start', type='bool', default=True, help='Whether to start with linear activations')
     parser.add_argument('--shuffle_batch', type='bool', default=True, help='Whether to shuffle minibatches')
