@@ -111,7 +111,7 @@ class TransposedDenseLayer(lasagne.layers.DenseLayer):
 
 
 class Model:
-    def __init__(self, train_file, test_file, batch_size=32, embedding_size=20, max_norm=40, lr=0.01, num_hops=3, adj_weight_tying=True, linear_start=True, enable_time=False,pointer_nn=False,**kwargs):
+    def __init__(self, train_file, test_file, batch_size=32, embedding_size=20, max_norm=40, lr=0.01, num_hops=3, adj_weight_tying=True, linear_start=True, enable_time=False,pointer_nn=False,optimizer='sgd',**kwargs):
         train_lines, test_lines = self.get_lines(train_file), self.get_lines(test_file)
         lines = np.concatenate([train_lines, test_lines], axis=0) #直接头尾拼接
         vocab, word_to_idx, idx_to_word, max_sentlen = self.get_vocab(lines)
@@ -143,6 +143,7 @@ class Model:
         lb = LabelBinarizer()
 
         self.enable_time=enable_time
+        self.optimizer=optimizer
         self.batch_size = batch_size
         self.max_sentlen = max_sentlen if not enable_time else max_sentlen+1
         self.embedding_size = embedding_size
@@ -214,7 +215,10 @@ class Model:
         print 'params:', params
         grads = T.grad(cost, params)
         scaled_grads = lasagne.updates.total_norm_constraint(grads, self.max_norm)
-        updates = lasagne.updates.adagrad(scaled_grads, params, learning_rate=self.lr)
+        if self.optimizer=='sgd':
+            updates = lasagne.updates.sgd(scaled_grads, params, learning_rate=self.lr)
+        elif self.optimizer=='adagrad':
+            updates = lasagne.updates.adagrad(scaled_grads, params, learning_rate=self.lr)
 
 
         givens = {
@@ -473,11 +477,11 @@ def main():
     parser.add_argument('--task', type=int, default=35, help='Task#')
     parser.add_argument('--train_file', type=str, default='', help='Train file')
     parser.add_argument('--test_file', type=str, default='', help='Test file')
-    parser.add_argument('--back_method', type=str, default='sgd', help='Train Method to bp')
+    parser.add_argument('--back_method', type=str, default='adagrad', help='Train Method to bp')
     parser.add_argument('--batch_size', type=int, default=32, help='Batch size')
     parser.add_argument('--embedding_size', type=int, default=100, help='Embedding size')
     parser.add_argument('--max_norm', type=float, default=40.0, help='Max norm')
-    parser.add_argument('--lr', type=float, default=0.05, help='Learning rate')
+    parser.add_argument('--lr', type=float, default=0.03, help='Learning rate')
     parser.add_argument('--num_hops', type=int, default=3, help='Num hops')
     parser.add_argument('--linear_start', type='bool', default=True, help='Whether to start with linear activations')
     parser.add_argument('--shuffle_batch', type='bool', default=True, help='Whether to shuffle minibatches')
@@ -485,18 +489,20 @@ def main():
     parser.add_argument('--enable_time', type=bool, default=False, help='time word embedding')
     parser.add_argument('--pointer_nn',type=bool,default=True,help='Whether to use the pointer networks')
     args = parser.parse_args()
-    print '*' * 80
-    print 'args:', args
-    print '*' * 80
 
     if args.train_file == '' or args.test_file == '':
-        args.train_file = glob.glob('*_real_train.txt' )[0]
-        args.test_file = glob.glob('*_real_test.txt' )[0]
+        # args.train_file = glob.glob('*_real_train.txt' )[0]
+        # args.test_file = glob.glob('*_real_test.txt' )[0]
+        args.train_file = glob.glob('*_onlyName_train.txt' )[0]
+        args.test_file = glob.glob('*_onlyName_test.txt' )[0]
         # args.train_file = glob.glob('*_toy_train.txt' )[0]
         # args.test_file = glob.glob('*_toy_test.txt' )[0]
         # args.train_file = '/home/shin/DeepLearning/MemoryNetwork/MemN2N_python/MemN2N-master/data/en/qqq_train.txt'
         # args.test_file ='/home/shin/DeepLearning/MemoryNetwork/MemN2N_python/MemN2N-master/data/en/qqq_test.txt'
 
+    print '*' * 80
+    print 'args:', args
+    print '*' * 80
     model = Model(**args.__dict__)
     model.train(n_epochs=args.n_epochs, shuffle_batch=args.shuffle_batch)
 
