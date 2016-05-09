@@ -178,21 +178,21 @@ class Model:
         l_context_in = lasagne.layers.InputLayer(shape=(batch_size, max_sentlen))
         l_question_in = lasagne.layers.InputLayer(shape=(batch_size,1))
 
-        w_emb=lasagne.init.Normal(std=0.1)
+        w_emb=lasagne.init.Normal(std=1)
         l_context_emb = lasagne.layers.EmbeddingLayer(l_context_in,self.num_classes,embedding_size,W=w_emb,name='sentence_embedding') #(BS,max_sentlen,emb_size)
         l_question_emb= lasagne.layers.EmbeddingLayer(l_question_in,self.num_classes,embedding_size,W=l_context_emb.W,name='question_embedding') #(BS,1,d)
 
         l_context_rnn=lasagne.layers.LSTMLayer(l_context_emb,embedding_size,name='context_lstm') #(BS,max_sentlen,emb_size)
 
-        w_h,w_q,w_o=lasagne.init.Normal(std=0.1),lasagne.init.Normal(std=0.1),lasagne.init.Normal(std=0.1)
+        w_h,w_q,w_o=lasagne.init.Normal(std=1),lasagne.init.Normal(std=1),lasagne.init.Normal(std=1)
         #下面这个层是用来利用question做attention，得到文档在当前q下的最后一个表示,输出一个(BS,emb_size)的东西
         #得到一个(BS,emb_size)的加权平均后的向量
         if not self.pointer_nn:
             l_context_attention=SimpleAttentionLayer((l_context_rnn,l_question_emb),vocab, embedding_size,enable_time, W_h=w_h, W_q=w_q,W_o=w_o, nonlinearity=lasagne.nonlinearities.tanh)
-            w_merge_r,w_merge_q=lasagne.init.Normal(std=0.1),lasagne.init.Normal(std=0.1)
+            w_merge_r,w_merge_q=lasagne.init.Normal(std=1),lasagne.init.Normal(std=1)
             l_merge=TmpMergeLayer((l_context_attention,l_question_emb),W_merge_r=w_merge_r,W_merge_q=w_merge_q, nonlinearity=lasagne.nonlinearities.tanh)
 
-            w_final_softmax=lasagne.init.Normal(std=0.1)
+            w_final_softmax=lasagne.init.Normal(std=1)
             # l_pred = TransposedDenseLayer(l_merge, self.num_classes,embedding_size=embedding_size,vocab_size=self.num_classes,W_final_softmax=w_final_softmax, b=None, nonlinearity=lasagne.nonlinearities.softmax)
             l_pred = lasagne.layers.DenseLayer(l_merge, self.num_classes, W=w_final_softmax, b=None, nonlinearity=lasagne.nonlinearities.softmax,name='l_final')
 
@@ -209,7 +209,7 @@ class Model:
             probas = T.clip(probas, 1e-7, 1.0-1e-7)
             pred = T.argmax(probas, axis=1)
 
-            cost = T.nnet.categorical_crossentropy(probas, y).sum()
+            cost = T.nnet.binary_crossentropy(probas, y).sum()
             pass
         params = lasagne.layers.helper.get_all_params(l_pred, trainable=True)
         print 'params:', params
@@ -232,7 +232,9 @@ class Model:
         self.train_model = theano.function([], cost, givens=givens, updates=updates)
         self.compute_pred = theano.function([], outputs= pred, givens=givens, on_unused_input='ignore')
 
-        return
+        zero_vec_tensor = T.vector()
+        self.zero_vec = np.zeros(embedding_size, dtype=theano.config.floatX)
+        self.set_zero = theano.function([zero_vec_tensor], updates=[(x, T.set_subtensor(x[0, :], zero_vec_tensor)) for x in [l_context_emb.W]])
 
 
 
@@ -352,7 +354,7 @@ class Model:
                     self.set_shared_variables_pointer(self.data['train'], minibatch_index,self.enable_time)#这里的函数总算把数据传给了模型里面初始化的变量
                 total_cost += self.train_model()
                 # print self.train_model1()
-                # self.reset_zero()  #reset是把A,C的第一行（也就是第一个元素，对应字典了的第一个词）reset了一次，变成了0
+                self.set_zero(self.zero_vec)  #reset是把A,C的第一行（也就是第一个元素，对应字典了的第一个词）reset了一次，变成了0
             end_time = time.time()
             print '\n' * 3, '*' * 80
             print 'epoch:', epoch, 'cost:', (total_cost / len(indices)), ' took: %d(s)' % (end_time - start_time)
@@ -479,9 +481,9 @@ def main():
     parser.add_argument('--test_file', type=str, default='', help='Test file')
     parser.add_argument('--back_method', type=str, default='adagrad', help='Train Method to bp')
     parser.add_argument('--batch_size', type=int, default=32, help='Batch size')
-    parser.add_argument('--embedding_size', type=int, default=100, help='Embedding size')
+    parser.add_argument('--embedding_size', type=int, default=50, help='Embedding size')
     parser.add_argument('--max_norm', type=float, default=40.0, help='Max norm')
-    parser.add_argument('--lr', type=float, default=0.03, help='Learning rate')
+    parser.add_argument('--lr', type=float, default=0.001, help='Learning rate')
     parser.add_argument('--num_hops', type=int, default=3, help='Num hops')
     parser.add_argument('--linear_start', type='bool', default=True, help='Whether to start with linear activations')
     parser.add_argument('--shuffle_batch', type='bool', default=True, help='Whether to shuffle minibatches')
@@ -491,10 +493,10 @@ def main():
     args = parser.parse_args()
 
     if args.train_file == '' or args.test_file == '':
-        # args.train_file = glob.glob('*_real_train.txt' )[0]
-        # args.test_file = glob.glob('*_real_test.txt' )[0]
-        args.train_file = glob.glob('*_onlyName_train.txt' )[0]
-        args.test_file = glob.glob('*_onlyName_test.txt' )[0]
+        args.train_file = glob.glob('*_real_train.txt' )[0]
+        args.test_file = glob.glob('*_real_test.txt' )[0]
+        # args.train_file = glob.glob('*_onlyName_train.txt' )[0]
+        # args.test_file = glob.glob('*_onlyName_test.txt' )[0]
         # args.train_file = glob.glob('*_toy_train.txt' )[0]
         # args.test_file = glob.glob('*_toy_test.txt' )[0]
         # args.train_file = '/home/shin/DeepLearning/MemoryNetwork/MemN2N_python/MemN2N-master/data/en/qqq_train.txt'
