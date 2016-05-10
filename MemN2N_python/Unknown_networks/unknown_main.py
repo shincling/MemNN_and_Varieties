@@ -115,7 +115,7 @@ class TransposedDenseLayer(lasagne.layers.DenseLayer):
 
 
 class Model:
-    def __init__(self, train_file, test_file, batch_size=32, embedding_size=20, max_norm=40, lr=0.01, num_hops=3, adj_weight_tying=True, linear_start=True, enable_time=False,pointer_nn=False,optimizer='sgd',**kwargs):
+    def __init__(self, train_file, test_file, batch_size=32, embedding_size=20, max_norm=40, lr=0.01, num_hops=3, adj_weight_tying=True, linear_start=True, enable_time=False,pointer_nn=False,optimizer='sgd',enable_mask=True,std_rate=0.1,**kwargs):
         train_lines, test_lines = self.get_lines(train_file), self.get_lines(test_file)
         lines = np.concatenate([train_lines, test_lines], axis=0) #直接头尾拼接
         vocab, word_to_idx, idx_to_word, max_sentlen = self.get_vocab(lines)
@@ -162,6 +162,8 @@ class Model:
         self.nonlinearity = None if linear_start else lasagne.nonlinearities.softmax
         self.word_to_idx=word_to_idx
         self.pointer_nn=pointer_nn
+        self.std=std_rate
+        self.enable_mask=enable_mask
         self.build_network()
 
     def build_network(self):
@@ -171,7 +173,7 @@ class Model:
         # q = T.ivector()
         q = T.imatrix()
         y = T.imatrix()
-        mask= T.imatrix()
+        mask= T.imatrix()# if self.enable_mask else None
         # c_pe = T.tensor4()
         # q_pe = T.tensor4()
         self.s_shared = theano.shared(np.zeros((batch_size, max_sentlen), dtype=np.int32), borrow=True)
@@ -185,23 +187,22 @@ class Model:
         l_mask_in = lasagne.layers.InputLayer(shape=(batch_size, max_sentlen))
         l_question_in = lasagne.layers.InputLayer(shape=(batch_size,1))
 
-        w_emb=lasagne.init.Normal(std=0.5)
+        w_emb=lasagne.init.Normal(std=self.std)
         l_context_emb = lasagne.layers.EmbeddingLayer(l_context_in,self.num_classes,embedding_size,W=w_emb,name='sentence_embedding') #(BS,max_sentlen,emb_size)
         l_question_emb= lasagne.layers.EmbeddingLayer(l_question_in,self.num_classes,embedding_size,W=l_context_emb.W,name='question_embedding') #(BS,1,d)
 
-        # mask=None
         l_context_rnn=lasagne.layers.LSTMLayer(l_context_emb,embedding_size,name='context_lstm',mask_input=l_mask_in) #(BS,max_sentlen,emb_size)
         # l_context_rnn=lasagne.layers.GRULayer(l_context_emb,embedding_size,name='context_lstm') #(BS,max_sentlen,emb_size)
 
-        w_h,w_q,w_o=lasagne.init.Normal(std=0.5),lasagne.init.Normal(std=0.5),lasagne.init.Normal(std=0.5)
+        w_h,w_q,w_o=lasagne.init.Normal(std=self.std),lasagne.init.Normal(std=self.std),lasagne.init.Normal(std=self.std)
         #下面这个层是用来利用question做attention，得到文档在当前q下的最后一个表示,输出一个(BS,emb_size)的东西
         #得到一个(BS,emb_size)的加权平均后的向量
         if not self.pointer_nn:
             l_context_attention=SimpleAttentionLayer((l_context_rnn,l_question_emb),vocab, embedding_size,enable_time, W_h=w_h, W_q=w_q,W_o=w_o, nonlinearity=lasagne.nonlinearities.tanh)
-            w_merge_r,w_merge_q=lasagne.init.Normal(std=0.5),lasagne.init.Normal(std=0.5)
+            w_merge_r,w_merge_q=lasagne.init.Normal(std=self.std),lasagne.init.Normal(std=self.std)
             l_merge=TmpMergeLayer((l_context_attention,l_question_emb),W_merge_r=w_merge_r,W_merge_q=w_merge_q, nonlinearity=lasagne.nonlinearities.tanh)
 
-            w_final_softmax=lasagne.init.Normal(std=0.5)
+            w_final_softmax=lasagne.init.Normal(std=self.std)
             # l_pred = TransposedDenseLayer(l_merge, self.num_classes,embedding_size=embedding_size,vocab_size=self.num_classes,W_final_softmax=w_final_softmax, b=None, nonlinearity=lasagne.nonlinearities.softmax)
             l_pred = lasagne.layers.DenseLayer(l_merge, self.num_classes, W=w_final_softmax, b=None, nonlinearity=lasagne.nonlinearities.softmax,name='l_final')
 
@@ -303,7 +304,7 @@ class Model:
         for i, row in enumerate(dataset['S'][indices]):
             row = row[:self.max_sentlen]
             c[i, :len(row)] = row
-        mask=np.int32(c!=0)
+        mask=np.int32(c!=0) #if self.enable_mask else None
 
         q[:len(indices),:] = dataset['Q'][indices] #问题的行数组成的列表
         '''底下这个整个循环是得到一个batch对应的那个调整的矩阵'''
@@ -324,7 +325,7 @@ class Model:
         for i, row in enumerate(dataset['S'][indices]):
             row = row[:self.max_sentlen]
             c[i, :len(row)] = row
-        mask=np.int32(c!=0)
+        mask=np.int32(c!=0) #if self.enable_mask else None
         q[:len(indices),:] = dataset['Q'][indices] #问题的行数组成的列表
         '''底下这个整个循环是得到一个batch对应的那个调整的矩阵'''
         # y[:len(indices), 1:self.num_classes] = self.lb.transform(dataset['Y'][indices])#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
@@ -493,17 +494,19 @@ def main():
     parser.add_argument('--task', type=int, default=35, help='Task#')
     parser.add_argument('--train_file', type=str, default='', help='Train file')
     parser.add_argument('--test_file', type=str, default='', help='Test file')
-    parser.add_argument('--back_method', type=str, default='sgd', help='Train Method to bp')
+    parser.add_argument('--back_method', type=str, default='adagrad', help='Train Method to bp')
     parser.add_argument('--batch_size', type=int, default=32, help='Batch size')
     parser.add_argument('--embedding_size', type=int, default=100, help='Embedding size')
     parser.add_argument('--max_norm', type=float, default=40.0, help='Max norm')
-    parser.add_argument('--lr', type=float, default=0.003, help='Learning rate')
+    parser.add_argument('--lr', type=float, default=0.03, help='Learning rate')
     parser.add_argument('--num_hops', type=int, default=3, help='Num hops')
     parser.add_argument('--linear_start', type='bool', default=True, help='Whether to start with linear activations')
     parser.add_argument('--shuffle_batch', type='bool', default=True, help='Whether to shuffle minibatches')
     parser.add_argument('--n_epochs', type=int, default=500, help='Num epochs')
     parser.add_argument('--enable_time', type=bool, default=False, help='time word embedding')
     parser.add_argument('--pointer_nn',type=bool,default=True,help='Whether to use the pointer networks')
+    parser.add_argument('--enable_mask',type=bool,default=True,help='Whether to use the mask')
+    parser.add_argument('--std_rate',type=float,default=1,help='The std number for the Noraml init')
     args = parser.parse_args()
 
     if args.train_file == '' or args.test_file == '':
