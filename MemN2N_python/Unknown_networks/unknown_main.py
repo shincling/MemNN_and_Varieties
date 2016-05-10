@@ -42,10 +42,12 @@ class SimpleAttentionLayer(lasagne.layers.MergeLayer):
 
 
 class SimplePointerLayer(lasagne.layers.MergeLayer):
-    def __init__(self, incomings, vocab, embedding_size,enable_time, W_h, W_q,W_o, nonlinearity=lasagne.nonlinearities.tanh, **kwargs):
+    def __init__(self, incomings, vocab, embedding_size,enable_time, W_h, W_q,W_o, nonlinearity=lasagne.nonlinearities.tanh,**kwargs):
         super(SimplePointerLayer, self).__init__(incomings, **kwargs) #？？？不知道这个super到底做什么的，会引入input_layers和input_shapes这些属性
-        if len(incomings) != 2:
+        if len(incomings) != 3:
             raise NotImplementedError
+        # if mask_input is not None:
+        #     incomings.append(mask_input)
         batch_size, max_sentlen ,embedding_size = self.input_shapes[0]
         self.batch_size,self.max_sentlen,self.embedding_size=batch_size,max_sentlen,embedding_size
         self.W_h=self.add_param(W_h,(embedding_size,embedding_size), name='Pointer_layer_W_h')
@@ -59,11 +61,13 @@ class SimplePointerLayer(lasagne.layers.MergeLayer):
     def get_output_shape_for(self, input_shapes):
         return (self.batch_size,self.max_sentlen)
     def get_output_for(self, inputs, **kwargs):
-        #input[0]:(BS,max_senlen,emb_size),input[1]:(BS,1,emb_size)
+        #input[0]:(BS,max_senlen,emb_size),input[1]:(BS,1,emb_size),input[2]:(BS,max_sentlen)
         activation0=(T.dot(inputs[0],self.W_h))
         activation1=T.dot(inputs[1],self.W_q).reshape([self.batch_size,self.embedding_size]).dimshuffle(0,'x',1)
         activation=self.nonlinearity(activation0+activation1)#.dimshuffle(0,'x',2)#.repeat(self.max_sentlen,axis=1)
         final=T.dot(activation,self.W_o) #(BS,max_sentlen)
+        if inputs[2] is not None:
+            final=inputs[2]*final-(1-inputs[2])*1000
         alpha=lasagne.nonlinearities.softmax(final) #(BS,max_sentlen)
         # final=T.batched_dot(alpha,inputs[0])#(BS,max_sentlen)*(BS,max_sentlen,emb_size)--(BS,emb_size)
         return alpha
@@ -167,46 +171,50 @@ class Model:
         # q = T.ivector()
         q = T.imatrix()
         y = T.imatrix()
+        mask= T.imatrix()
         # c_pe = T.tensor4()
         # q_pe = T.tensor4()
         self.s_shared = theano.shared(np.zeros((batch_size, max_sentlen), dtype=np.int32), borrow=True)
+        self.mask_shared = theano.shared(np.zeros((batch_size, max_sentlen), dtype=np.int32), borrow=True)
         self.q_shared = theano.shared(np.zeros((batch_size, 1), dtype=np.int32), borrow=True)
         '''最后的softmax层的参数'''
         self.a_shared = theano.shared(np.zeros((batch_size, self.num_classes), dtype=np.int32), borrow=True)
-        S_shared = theano.shared(self.S, borrow=True)#这个S把train test放到了一起来干事情#
+        # S_shared = theano.shared(self.S, borrow=True)#这个S把train test放到了一起来干事情#
 
         l_context_in = lasagne.layers.InputLayer(shape=(batch_size, max_sentlen))
+        l_mask_in = lasagne.layers.InputLayer(shape=(batch_size, max_sentlen))
         l_question_in = lasagne.layers.InputLayer(shape=(batch_size,1))
 
-        w_emb=lasagne.init.Normal(std=1)
+        w_emb=lasagne.init.Normal(std=0.5)
         l_context_emb = lasagne.layers.EmbeddingLayer(l_context_in,self.num_classes,embedding_size,W=w_emb,name='sentence_embedding') #(BS,max_sentlen,emb_size)
         l_question_emb= lasagne.layers.EmbeddingLayer(l_question_in,self.num_classes,embedding_size,W=l_context_emb.W,name='question_embedding') #(BS,1,d)
 
-        l_context_rnn=lasagne.layers.LSTMLayer(l_context_emb,embedding_size,name='context_lstm') #(BS,max_sentlen,emb_size)
+        # mask=None
+        l_context_rnn=lasagne.layers.LSTMLayer(l_context_emb,embedding_size,name='context_lstm',mask_input=l_mask_in) #(BS,max_sentlen,emb_size)
         # l_context_rnn=lasagne.layers.GRULayer(l_context_emb,embedding_size,name='context_lstm') #(BS,max_sentlen,emb_size)
 
-        w_h,w_q,w_o=lasagne.init.Normal(std=1),lasagne.init.Normal(std=1),lasagne.init.Normal(std=1)
+        w_h,w_q,w_o=lasagne.init.Normal(std=0.5),lasagne.init.Normal(std=0.5),lasagne.init.Normal(std=0.5)
         #下面这个层是用来利用question做attention，得到文档在当前q下的最后一个表示,输出一个(BS,emb_size)的东西
         #得到一个(BS,emb_size)的加权平均后的向量
         if not self.pointer_nn:
             l_context_attention=SimpleAttentionLayer((l_context_rnn,l_question_emb),vocab, embedding_size,enable_time, W_h=w_h, W_q=w_q,W_o=w_o, nonlinearity=lasagne.nonlinearities.tanh)
-            w_merge_r,w_merge_q=lasagne.init.Normal(std=1),lasagne.init.Normal(std=1)
+            w_merge_r,w_merge_q=lasagne.init.Normal(std=0.5),lasagne.init.Normal(std=0.5)
             l_merge=TmpMergeLayer((l_context_attention,l_question_emb),W_merge_r=w_merge_r,W_merge_q=w_merge_q, nonlinearity=lasagne.nonlinearities.tanh)
 
-            w_final_softmax=lasagne.init.Normal(std=1)
+            w_final_softmax=lasagne.init.Normal(std=0.5)
             # l_pred = TransposedDenseLayer(l_merge, self.num_classes,embedding_size=embedding_size,vocab_size=self.num_classes,W_final_softmax=w_final_softmax, b=None, nonlinearity=lasagne.nonlinearities.softmax)
             l_pred = lasagne.layers.DenseLayer(l_merge, self.num_classes, W=w_final_softmax, b=None, nonlinearity=lasagne.nonlinearities.softmax,name='l_final')
 
-            probas=lasagne.layers.helper.get_output(l_pred,{l_context_in:s,l_question_in:q})
+            probas=lasagne.layers.helper.get_output(l_pred,{l_context_in:s,l_question_in:q,l_mask_in:mask})
             probas = T.clip(probas, 1e-7, 1.0-1e-7)
 
             pred = T.argmax(probas, axis=1)
 
-            cost = T.nnet.categorical_crossentropy(probas, y).sum()
+            cost = T.nnet.binary_crossentropy(probas, y).sum()
         else :
-            l_context_pointer=SimplePointerLayer((l_context_rnn,l_question_emb),vocab, embedding_size,enable_time, W_h=w_h, W_q=w_q,W_o=w_o, nonlinearity=lasagne.nonlinearities.tanh)
+            l_context_pointer=SimplePointerLayer((l_context_rnn,l_question_emb,l_mask_in),vocab, embedding_size,enable_time, W_h=w_h, W_q=w_q,W_o=w_o, nonlinearity=lasagne.nonlinearities.tanh)
             l_pred=l_context_pointer
-            probas=lasagne.layers.helper.get_output(l_context_pointer,{l_context_in:s,l_question_in:q})
+            probas=lasagne.layers.helper.get_output(l_context_pointer,{l_context_in:s,l_question_in:q,l_mask_in:mask})
             probas = T.clip(probas, 1e-7, 1.0-1e-7)
             pred = T.argmax(probas, axis=1)
 
@@ -226,6 +234,7 @@ class Model:
             s: self.s_shared,
             q: self.q_shared,
             y: self.a_shared,
+            mask: self.mask_shared
         }
 
         # test_output=lasagne.layers.helper.get_output(l_context_attention,{l_context_in:s,l_question_in:q}).flatten().sum()
@@ -286,6 +295,7 @@ class Model:
 
     def set_shared_variables(self, dataset, index,enable_time):
         c = np.zeros((self.batch_size, self.max_sentlen), dtype=np.int32)
+        # mask = np.zeros((self.batch_size, self.max_sentlen), dtype=np.int32)
         q = np.zeros((self.batch_size, 1), dtype=np.int32)
         y = np.zeros((self.batch_size, self.num_classes), dtype=np.int32)
 
@@ -293,6 +303,7 @@ class Model:
         for i, row in enumerate(dataset['S'][indices]):
             row = row[:self.max_sentlen]
             c[i, :len(row)] = row
+        mask=np.int32(c!=0)
 
         q[:len(indices),:] = dataset['Q'][indices] #问题的行数组成的列表
         '''底下这个整个循环是得到一个batch对应的那个调整的矩阵'''
@@ -300,6 +311,7 @@ class Model:
         y[:len(indices), 1:self.num_classes] = label_binarize([self.idx_to_word[i] for i in dataset['Y'][indices]],self.vocab)#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
         # y[:len(indices), 1:self.embedding_size] = self.mem_layers[0].A[[self.word_to_idx(i) for i in list(dataset['Y'][indices])]]#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
         self.s_shared.set_value(c)
+        self.mask_shared.set_value(mask)
         self.q_shared.set_value(q)
         self.a_shared.set_value(y)
 
@@ -312,7 +324,7 @@ class Model:
         for i, row in enumerate(dataset['S'][indices]):
             row = row[:self.max_sentlen]
             c[i, :len(row)] = row
-
+        mask=np.int32(c!=0)
         q[:len(indices),:] = dataset['Q'][indices] #问题的行数组成的列表
         '''底下这个整个循环是得到一个batch对应的那个调整的矩阵'''
         # y[:len(indices), 1:self.num_classes] = self.lb.transform(dataset['Y'][indices])#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
@@ -324,6 +336,7 @@ class Model:
 
         # y[:len(indices), 1:self.embedding_size] = self.mem_layers[0].A[[self.word_to_idx(i) for i in list(dataset['Y'][indices])]]#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
         self.s_shared.set_value(c)
+        self.mask_shared.set_value(mask)
         self.q_shared.set_value(q)
         self.a_shared.set_value(y)
 
@@ -484,7 +497,7 @@ def main():
     parser.add_argument('--batch_size', type=int, default=32, help='Batch size')
     parser.add_argument('--embedding_size', type=int, default=100, help='Embedding size')
     parser.add_argument('--max_norm', type=float, default=40.0, help='Max norm')
-    parser.add_argument('--lr', type=float, default=0.01, help='Learning rate')
+    parser.add_argument('--lr', type=float, default=0.003, help='Learning rate')
     parser.add_argument('--num_hops', type=int, default=3, help='Num hops')
     parser.add_argument('--linear_start', type='bool', default=True, help='Whether to start with linear activations')
     parser.add_argument('--shuffle_batch', type='bool', default=True, help='Whether to shuffle minibatches')
