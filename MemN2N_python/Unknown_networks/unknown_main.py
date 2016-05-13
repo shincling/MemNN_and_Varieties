@@ -193,7 +193,8 @@ class Model:
 
         l_context_rnn_f=lasagne.layers.LSTMLayer(l_context_emb,embedding_size,name='contexut_lstm',mask_input=l_mask_in,backwards=False) #(BS,max_sentlen,emb_size)
         l_context_rnn_b=lasagne.layers.LSTMLayer(l_context_emb,embedding_size,name='context_lstm',mask_input=l_mask_in,backwards=True) #(BS,max_sentlen,emb_size)
-        # l_context_rnn=lasagne.layers.GRULayer(l_context_emb,embedding_size,name='context_lstm') #(BS,max_sentlen,emb_size)
+        # l_context_rnn_f=lasagne.layers.GRULayer(l_context_emb,embedding_size,name='context_lstm',mask_input=l_mask_in,backwards=False) #(BS,max_sentlen,emb_size)
+        # l_context_rnn_b=lasagne.layers.GRULayer(l_context_emb,embedding_size,name='context_lstm',mask_input=l_mask_in,backwards=True) #(BS,max_sentlen,emb_size)
         l_context_rnn=lasagne.layers.ElemwiseSumLayer((l_context_rnn_f,l_context_rnn_b))
         w_h,w_q,w_o=lasagne.init.Normal(std=self.std),lasagne.init.Normal(std=self.std),lasagne.init.Normal(std=self.std)
         #下面这个层是用来利用question做attention，得到文档在当前q下的最后一个表示,输出一个(BS,emb_size)的东西
@@ -220,7 +221,7 @@ class Model:
             probas = T.clip(probas, 1e-7, 1.0-1e-7)
             pred = T.argmax(probas, axis=1)
 
-            cost = T.nnet.categorical_crossentropy(probas, y).sum()
+            cost = T.nnet.binary_crossentropy(probas, y).sum()
             pass
         params = lasagne.layers.helper.get_all_params(l_pred, trainable=True)
         print 'params:', params
@@ -418,8 +419,8 @@ class Model:
         else:
             self.set_shared_variables_pointer(dataset, index,self.enable_time)
         result=self.compute_pred()
-        print 'probas:\n'
-        print result[0][-1]
+        # print 'probas:\n'
+        # print result[0][-1]
         return result[1]
 
     def compute_f1(self, dataset):
@@ -499,7 +500,7 @@ def main():
     parser.add_argument('--batch_size', type=int, default=32, help='Batch size')
     parser.add_argument('--embedding_size', type=int, default=100, help='Embedding size')
     parser.add_argument('--max_norm', type=float, default=40.0, help='Max norm')
-    parser.add_argument('--lr', type=float, default=0.01, help='Learning rate')
+    parser.add_argument('--lr', type=float, default=0.0001, help='Learning rate')
     parser.add_argument('--num_hops', type=int, default=3, help='Num hops')
     parser.add_argument('--linear_start', type='bool', default=True, help='Whether to start with linear activations')
     parser.add_argument('--shuffle_batch', type='bool', default=True, help='Whether to shuffle minibatches')
@@ -507,7 +508,7 @@ def main():
     parser.add_argument('--enable_time', type=bool, default=False, help='time word embedding')
     parser.add_argument('--pointer_nn',type=bool,default=True,help='Whether to use the pointer networks')
     parser.add_argument('--enable_mask',type=bool,default=True,help='Whether to use the mask')
-    parser.add_argument('--std_rate',type=float,default=0.5,help='The std number for the Noraml init')
+    parser.add_argument('--std_rate',type=float,default=0.1,help='The std number for the Noraml init')
     args = parser.parse_args()
 
     if args.train_file == '' or args.test_file == '':
