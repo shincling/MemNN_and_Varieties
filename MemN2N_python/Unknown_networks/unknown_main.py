@@ -66,8 +66,8 @@ class SimplePointerLayer(lasagne.layers.MergeLayer):
         activation1=T.dot(inputs[1],self.W_q).reshape([self.batch_size,self.embedding_size]).dimshuffle(0,'x',1)
         activation=self.nonlinearity(activation0+activation1)#.dimshuffle(0,'x',2)#.repeat(self.max_sentlen,axis=1)
         final=T.dot(activation,self.W_o) #(BS,max_sentlen)
-        if inputs[2] is not None:
-            final=inputs[2]*final-(1-inputs[2])*1000
+        # if inputs[2] is not None:
+        #     final=inputs[2]*final-(1-inputs[2])*1000
         alpha=lasagne.nonlinearities.softmax(final) #(BS,max_sentlen)
         # final=T.batched_dot(alpha,inputs[0])#(BS,max_sentlen)*(BS,max_sentlen,emb_size)--(BS,emb_size)
         return alpha
@@ -189,12 +189,14 @@ class Model:
 
         w_emb=lasagne.init.Normal(std=self.std)
         l_context_emb = lasagne.layers.EmbeddingLayer(l_context_in,self.num_classes,embedding_size,W=w_emb,name='sentence_embedding') #(BS,max_sentlen,emb_size)
-        l_question_emb= lasagne.layers.EmbeddingLayer(l_question_in,self.num_classes,embedding_size,W=l_context_emb.W,name='question_embedding') #(BS,1,d)
 
-        l_context_rnn_f=lasagne.layers.LSTMLayer(l_context_emb,embedding_size,name='contexut_lstm',mask_input=l_mask_in,backwards=False) #(BS,max_sentlen,emb_size)
-        l_context_rnn_b=lasagne.layers.LSTMLayer(l_context_emb,embedding_size,name='context_lstm',mask_input=l_mask_in,backwards=True) #(BS,max_sentlen,emb_size)
-        # l_context_rnn_f=lasagne.layers.GRULayer(l_context_emb,embedding_size,name='context_lstm',mask_input=l_mask_in,backwards=False) #(BS,max_sentlen,emb_size)
-        # l_context_rnn_b=lasagne.layers.GRULayer(l_context_emb,embedding_size,name='context_lstm',mask_input=l_mask_in,backwards=True) #(BS,max_sentlen,emb_size)
+        w_emb_query=lasagne.init.Normal(std=self.std)
+        l_question_emb= lasagne.layers.EmbeddingLayer(l_question_in,self.num_classes,embedding_size,W=w_emb_query,name='question_embedding') #(BS,1,d)
+
+        # l_context_rnn_f=lasagne.layers.LSTMLayer(l_context_emb,embedding_size,name='contexut_lstm',mask_input=l_mask_in,backwards=False) #(BS,max_sentlen,emb_size)
+        # l_context_rnn_b=lasagne.layers.LSTMLayer(l_context_emb,embedding_size,name='context_lstm',mask_input=l_mask_in,backwards=True) #(BS,max_sentlen,emb_size)
+        l_context_rnn_f=lasagne.layers.GRULayer(l_context_emb,embedding_size,name='context_lstm',mask_input=l_mask_in,backwards=False) #(BS,max_sentlen,emb_size)
+        l_context_rnn_b=lasagne.layers.GRULayer(l_context_emb,embedding_size,name='context_lstm',mask_input=l_mask_in,backwards=True) #(BS,max_sentlen,emb_size)
         l_context_rnn=lasagne.layers.ElemwiseSumLayer((l_context_rnn_f,l_context_rnn_b))
         w_h,w_q,w_o=lasagne.init.Normal(std=self.std),lasagne.init.Normal(std=self.std),lasagne.init.Normal(std=self.std)
         #下面这个层是用来利用question做attention，得到文档在当前q下的最后一个表示,输出一个(BS,emb_size)的东西
@@ -217,11 +219,12 @@ class Model:
         else :
             l_context_pointer=SimplePointerLayer((l_context_rnn,l_question_emb,l_mask_in),vocab, embedding_size,enable_time, W_h=w_h, W_q=w_q,W_o=w_o, nonlinearity=lasagne.nonlinearities.tanh)
             l_pred=l_context_pointer
-            probas=lasagne.layers.helper.get_output(l_context_pointer,{l_context_in:s,l_question_in:q,l_mask_in:mask})
+            probas=lasagne.layers.helper.get_output(l_pred,{l_context_in:s,l_question_in:q,l_mask_in:mask})
             probas = T.clip(probas, 1e-7, 1.0-1e-7)
             pred = T.argmax(probas, axis=1)
 
-            cost = T.nnet.binary_crossentropy(probas, y).sum()
+            cost = T.nnet.categorical_crossentropy(probas, y).sum()
+            # cost = cost*batch_size/mask.sum()*10
             pass
         params = lasagne.layers.helper.get_all_params(l_pred, trainable=True)
         print 'params:', params
@@ -231,6 +234,8 @@ class Model:
             updates = lasagne.updates.sgd(scaled_grads, params, learning_rate=self.lr)
         elif self.optimizer=='adagrad':
             updates = lasagne.updates.adagrad(scaled_grads, params, learning_rate=self.lr)
+        else:
+            updates = lasagne.updates.adadelta(scaled_grads, params, learning_rate=self.lr)
 
 
         givens = {
@@ -384,7 +389,7 @@ class Model:
             print 'TRAIN_ERROR:', (1-train_f1)*100
             if False:
                 for i, pred in train_errors[:10]:
-                    print 'context: ', self.to_words(self.data['train']['C'][i])
+                    print 'context: ', self.to_words(self.data['train']['S'][i])
                     print 'question: ', self.to_words([self.data['train']['Q'][i]])
                     print 'correct answer: ', self.data['train']['Y'][i]
                     print 'predicted answer: ', pred
@@ -404,12 +409,12 @@ class Model:
 
                 print 'test_f1,test_errors:',test_f1,len(test_errors)
                 print '*** TEST_ERROR:', (1-test_f1)*100
-                if 0 :
-                    for i, pred in test_errors[:10]:
+                if 1 and (30<epoch or epoch<3) :
+                    for i, pred in test_errors[:30]:
                         print 'context: ', self.to_words(self.data['test']['S'][i],'S')
                         print 'question: ', self.to_words([self.data['test']['Q'][i]],'Q')
                         print 'correct answer: ', self.to_words(self.data['test']['Y'][i],'Y')
-                        print 'predicted answer: ', pred
+                        print 'predicted answer: ', self.idx_to_word[self.data['test']['S'][i][pred]]
                         print '---' * 20
 
             prev_train_f1 = train_f1
@@ -419,8 +424,8 @@ class Model:
         else:
             self.set_shared_variables_pointer(dataset, index,self.enable_time)
         result=self.compute_pred()
-        # print 'probas:\n'
-        # print result[0][-1]
+        # print 'probas:{}\n'.format(index)
+        # print result[0]
         return result[1]
 
     def compute_f1(self, dataset):
@@ -455,8 +460,10 @@ class Model:
         errors = []
         for i, (t, p) in enumerate(zip(y_true, y_pred)):
             if t != p:
+                # print t,p
                 # errors.append((i, self.lb.classes_[p]))
-                errors.append((i, self.vocab[p]))
+                # errors.append((i, self.vocab[p]))
+                errors.append((i, p))
                 pass
         return metrics.f1_score(y_true, y_pred, average='weighted', pos_label=None), errors
 
@@ -497,10 +504,10 @@ def main():
     parser.add_argument('--train_file', type=str, default='', help='Train file')
     parser.add_argument('--test_file', type=str, default='', help='Test file')
     parser.add_argument('--back_method', type=str, default='sgd', help='Train Method to bp')
-    parser.add_argument('--batch_size', type=int, default=32, help='Batch size')
+    parser.add_argument('--batch_size', type=int, default=1000, help='Batch size')
     parser.add_argument('--embedding_size', type=int, default=100, help='Embedding size')
     parser.add_argument('--max_norm', type=float, default=40.0, help='Max norm')
-    parser.add_argument('--lr', type=float, default=0.0001, help='Learning rate')
+    parser.add_argument('--lr', type=float, default=0.03, help='Learning rate')
     parser.add_argument('--num_hops', type=int, default=3, help='Num hops')
     parser.add_argument('--linear_start', type='bool', default=True, help='Whether to start with linear activations')
     parser.add_argument('--shuffle_batch', type='bool', default=True, help='Whether to shuffle minibatches')
@@ -516,6 +523,8 @@ def main():
         args.test_file = glob.glob('*_real_test.txt' )[0]
         # args.train_file = glob.glob('*_onlyName_train.txt' )[0]
         # args.test_file = glob.glob('*_onlyName_test.txt' )[0]
+        # args.train_file = glob.glob('*_sent_train.txt' )[0]
+        # args.test_file = glob.glob('*_sent_test.txt' )[0]
         # args.train_file = glob.glob('*_toy_train.txt' )[0]
         # args.test_file = glob.glob('*_toy_test.txt' )[0]
         # args.train_file = '/home/shin/DeepLearning/MemoryNetwork/MemN2N_python/MemN2N-master/data/en/qqq_train.txt'
