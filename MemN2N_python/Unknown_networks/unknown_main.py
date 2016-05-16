@@ -66,8 +66,8 @@ class SimplePointerLayer(lasagne.layers.MergeLayer):
         activation1=T.dot(inputs[1],self.W_q).reshape([self.batch_size,self.embedding_size]).dimshuffle(0,'x',1)
         activation=self.nonlinearity(activation0+activation1)#.dimshuffle(0,'x',2)#.repeat(self.max_sentlen,axis=1)
         final=T.dot(activation,self.W_o) #(BS,max_sentlen)
-        # if inputs[2] is not None:
-        #     final=inputs[2]*final-(1-inputs[2])*1000
+        if inputs[2] is not None:
+            final=inputs[2]*final-(1-inputs[2])*1000
         alpha=lasagne.nonlinearities.softmax(final) #(BS,max_sentlen)
         # final=T.batched_dot(alpha,inputs[0])#(BS,max_sentlen)*(BS,max_sentlen,emb_size)--(BS,emb_size)
         return alpha
@@ -189,14 +189,15 @@ class Model:
 
         w_emb=lasagne.init.Normal(std=self.std)
         l_context_emb = lasagne.layers.EmbeddingLayer(l_context_in,self.num_classes,embedding_size,W=w_emb,name='sentence_embedding') #(BS,max_sentlen,emb_size)
+        l_question_emb= lasagne.layers.EmbeddingLayer(l_question_in,self.num_classes,embedding_size,W=l_context_emb.W,name='question_embedding') #(BS,1,d)
 
-        w_emb_query=lasagne.init.Normal(std=self.std)
-        l_question_emb= lasagne.layers.EmbeddingLayer(l_question_in,self.num_classes,embedding_size,W=w_emb_query,name='question_embedding') #(BS,1,d)
+        # w_emb_query=lasagne.init.Normal(std=self.std)
+        # l_question_emb= lasagne.layers.EmbeddingLayer(l_question_in,self.num_classes,embedding_size,W=w_emb_query,name='question_embedding') #(BS,1,d)
 
-        # l_context_rnn_f=lasagne.layers.LSTMLayer(l_context_emb,embedding_size,name='contexut_lstm',mask_input=l_mask_in,backwards=False) #(BS,max_sentlen,emb_size)
-        # l_context_rnn_b=lasagne.layers.LSTMLayer(l_context_emb,embedding_size,name='context_lstm',mask_input=l_mask_in,backwards=True) #(BS,max_sentlen,emb_size)
-        l_context_rnn_f=lasagne.layers.GRULayer(l_context_emb,embedding_size,name='context_lstm',mask_input=l_mask_in,backwards=False) #(BS,max_sentlen,emb_size)
-        l_context_rnn_b=lasagne.layers.GRULayer(l_context_emb,embedding_size,name='context_lstm',mask_input=l_mask_in,backwards=True) #(BS,max_sentlen,emb_size)
+        l_context_rnn_f=lasagne.layers.LSTMLayer(l_context_emb,embedding_size,name='contexut_lstm',mask_input=l_mask_in,backwards=False) #(BS,max_sentlen,emb_size)
+        l_context_rnn_b=lasagne.layers.LSTMLayer(l_context_emb,embedding_size,name='context_lstm',mask_input=l_mask_in,backwards=True) #(BS,max_sentlen,emb_size)
+        # l_context_rnn_f=lasagne.layers.GRULayer(l_context_emb,embedding_size,name='context_lstm',mask_input=l_mask_in,backwards=False) #(BS,max_sentlen,emb_size)
+        # l_context_rnn_b=lasagne.layers.GRULayer(l_context_emb,embedding_size,name='context_lstm',mask_input=l_mask_in,backwards=True) #(BS,max_sentlen,emb_size)
         l_context_rnn=lasagne.layers.ElemwiseSumLayer((l_context_rnn_f,l_context_rnn_b))
         w_h,w_q,w_o=lasagne.init.Normal(std=self.std),lasagne.init.Normal(std=self.std),lasagne.init.Normal(std=self.std)
         #下面这个层是用来利用question做attention，得到文档在当前q下的最后一个表示,输出一个(BS,emb_size)的东西
@@ -409,8 +410,8 @@ class Model:
 
                 print 'test_f1,test_errors:',test_f1,len(test_errors)
                 print '*** TEST_ERROR:', (1-test_f1)*100
-                if 1 and (30<epoch or epoch<3) :
-                    for i, pred in test_errors[:30]:
+                if 1 and (50<epoch) :
+                    for i, pred in test_errors[:10]:
                         print 'context: ', self.to_words(self.data['test']['S'][i],'S')
                         print 'question: ', self.to_words([self.data['test']['Q'][i]],'Q')
                         print 'correct answer: ', self.to_words(self.data['test']['Y'][i],'Y')
@@ -515,7 +516,7 @@ def main():
     parser.add_argument('--enable_time', type=bool, default=False, help='time word embedding')
     parser.add_argument('--pointer_nn',type=bool,default=True,help='Whether to use the pointer networks')
     parser.add_argument('--enable_mask',type=bool,default=True,help='Whether to use the mask')
-    parser.add_argument('--std_rate',type=float,default=0.1,help='The std number for the Noraml init')
+    parser.add_argument('--std_rate',type=float,default=0.5,help='The std number for the Noraml init')
     args = parser.parse_args()
 
     if args.train_file == '' or args.test_file == '':
