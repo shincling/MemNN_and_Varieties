@@ -118,7 +118,10 @@ class TransposedDenseLayer(lasagne.layers.DenseLayer):
 
 class Model:
     def __init__(self, train_file, test_file, batch_size=32, embedding_size=20, max_norm=40, lr=0.01, num_hops=3, adj_weight_tying=True, linear_start=True, enable_time=False,pointer_nn=False,optimizer='sgd',enable_mask=True,std_rate=0.1,**kwargs):
-        train_stories,test_stories=self.get_stories(train_file),self.get_stories(test_file)
+        max_sentlen,max_storylen,vocab=0,0,set()
+        max_sentlen,max_storylen,vocab,total_train=self.get_stories(train_file,max_sentlen,max_storylen,vocab)
+        max_sentlen,max_storylen,vocab,total_test=self.get_stories(train_file,max_sentlen,max_storylen,vocab)
+
         train_lines, test_lines = self.get_lines(train_file), self.get_lines(test_file)
         lines = np.concatenate([train_lines, test_lines], axis=0) #直接头尾拼接
         vocab, word_to_idx, idx_to_word, max_sentlen = self.get_vocab(lines)
@@ -273,11 +276,8 @@ class Model:
             lines.append({'id':id,'sentence':sentence,'question':question,'target':answer})
         return np.array(lines)
 
-    def get_stories(self,fname):
-        vocab=set()
+    def get_stories(self,fname,max_sentlen,max_storylen,vocab):
         total=[]
-        max_sentlen=0
-        max_storylen=0
         all=open(fname).read()
         story_list=all.split('***************************************************')[1:]
         for i,story in enumerate(story_list):
@@ -296,26 +296,26 @@ class Model:
                                          'A':re.findall('A\) (.*?)\r\n',questions[0])[0],
                                          'B':re.findall('B\) (.*?)\r\n',questions[0])[0],
                                          'C':re.findall('C\) (.*?)\r\n',questions[0])[0],
-                                         'D':re.findall('D\) (.*?)\r\n',questions[0])[0],
-                                         'target':re.findall('\*([A-D])',questions[0])[0]}
+                                         'D':re.findall('D\) (.*?)\r\n',questions[0])[0],}
+                                         # 'target':re.findall('\*([A-D])',questions[0])[0]}
             one_story_dict['question2']={'q':re.findall('\d:.*?: (.*?)\r\n',questions[1])[0],
                                          'A':re.findall('A\) (.*?)\r\n',questions[1])[0],
                                          'B':re.findall('B\) (.*?)\r\n',questions[1])[0],
                                          'C':re.findall('C\) (.*?)\r\n',questions[1])[0],
-                                         'D':re.findall('D\) (.*?)\r\n',questions[1])[0],
-                                         'target':re.findall('\*([A-D])',questions[1])[0]}
+                                         'D':re.findall('D\) (.*?)\r\n',questions[1])[0],}
+                                         # 'target':re.findall('\*([A-D])',questions[1])[0]}
             one_story_dict['question3']={'q':re.findall('\d:.*?: (.*?)\r\n',questions[2])[0],
                                          'A':re.findall('A\) (.*?)\r\n',questions[2])[0],
                                          'B':re.findall('B\) (.*?)\r\n',questions[2])[0],
                                          'C':re.findall('C\) (.*?)\r\n',questions[2])[0],
-                                         'D':re.findall('D\) (.*?)\r\n',questions[2])[0],
-                                         'target':re.findall('\*([A-D])',questions[2])[0]}
+                                         'D':re.findall('D\) (.*?)\r\n',questions[2])[0],}
+                                         # 'target':re.findall('\*([A-D])',questions[2])[0]}
             one_story_dict['question4']={'q':re.findall('\d:.*?: (.*?)\r\n',questions[3])[0],
                                          'A':re.findall('A\) (.*?)\r\n',questions[3])[0],
                                          'B':re.findall('B\) (.*?)\r\n',questions[3])[0],
                                          'C':re.findall('C\) (.*?)\r\n',questions[3])[0],
-                                         'D':re.findall('D\) (.*?)\r\n',questions[3])[0],
-                                         'target':re.findall('\*([A-D])',questions[3])[0]}
+                                         'D':re.findall('D\) (.*?)\r\n',questions[3])[0],}
+                                         # 'target':re.findall('\*([A-D])',questions[3])[0]}
             total.append(one_story_dict)
 
 
@@ -325,8 +325,15 @@ class Model:
                 for w in words:
                     vocab.add(w)
 
+            for i in range(1,5):
+                for j in ['q','A','B','C','D']:
+                    words=nltk.word_tokenize(one_story_dict['question%d'%i][j])
+                    max_sentlen=max(max_sentlen,len(words))
+                    for w in words:
+                        vocab.add(w)
 
-        return
+
+        return max_sentlen,max_storylen,vocab,total
 
 
 
