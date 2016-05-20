@@ -67,7 +67,7 @@ class SimplePointerLayer(lasagne.layers.MergeLayer):
         activation=self.nonlinearity(activation0+activation1)#.dimshuffle(0,'x',2)#.repeat(self.max_sentlen,axis=1)
         final=T.dot(activation,self.W_o) #(BS,max_sentlen)
         if inputs[2] is not None:
-            final=inputs[2]*final-(1-inputs[2])*1000
+            final=inputs[2]*final-(1-inputs[2])*1000000
         alpha=lasagne.nonlinearities.softmax(final) #(BS,max_sentlen)
         # final=T.batched_dot(alpha,inputs[0])#(BS,max_sentlen)*(BS,max_sentlen,emb_size)--(BS,emb_size)
         return alpha
