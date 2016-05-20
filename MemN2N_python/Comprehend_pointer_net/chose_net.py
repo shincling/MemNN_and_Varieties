@@ -122,9 +122,14 @@ class Model:
         max_sentlen,max_storylen,vocab,total_train=self.get_stories(train_file,max_sentlen,max_storylen,vocab)
         max_sentlen,max_storylen,vocab,total_test=self.get_stories(train_file,max_sentlen,max_storylen,vocab)
 
-        train_lines, test_lines = self.get_lines(train_file), self.get_lines(test_file)
-        lines = np.concatenate([train_lines, test_lines], axis=0) #直接头尾拼接
-        vocab, word_to_idx, idx_to_word, max_sentlen = self.get_vocab(lines)
+        word_to_idx = {}
+        for w in vocab:
+            word_to_idx[w] = len(word_to_idx) + 1
+
+        idx_to_word = {}
+        for w, idx in word_to_idx.iteritems():
+            idx_to_word[idx] = w
+
         #C是document的列表，Q是定位问题序列的列表，Y是答案组成的列表，目前为知都是字符形式的，没有向量化#
         self.data = {'train': {}, 'test': {}}  #各是一个字典
         S_train, self.data['train']['Q'], self.data['train']['Y'] = self.process_dataset(train_lines, word_to_idx, max_sentlen, offset=0)
