@@ -132,8 +132,8 @@ class Model:
 
         #C是document的列表，Q是定位问题序列的列表，Y是答案组成的列表，目前为知都是字符形式的，没有向量化#
         self.data = {'train': {}, 'test': {}}  #各是一个字典
-        S_train, self.data['train']['Q'], self.data['train']['Y'] = self.process_dataset(train_lines, word_to_idx, max_sentlen, offset=0)
-        S_test, self.data['test']['Q'], self.data['test']['Y'] = self.process_dataset(test_lines, word_to_idx, max_sentlen)
+        S_train, self.data['train']['Q'], self.data['train']['Y'] = self.process_dataset(total_train, word_to_idx, max_sentlen, offset=0)
+        S_test, self.data['test']['Q'], self.data['test']['Y'] = self.process_dataset(total_test, word_to_idx, max_sentlen)
         S = np.concatenate([np.zeros((1, max_sentlen), dtype=np.int32), S_train, S_test], axis=0)
         self.data['train']['S'],self.data['test']['S']=S_train,S_test
         for i in range(min(10,len(self.data['test']['Y']))):
@@ -292,7 +292,7 @@ class Model:
             contents=story[(story.find('\r\n\r\n')+2):part_index]
             sent_detector = nltk.data.load('/home/shin/nltk_data/tokenizers/punkt/english.pickle')
             sentences=sent_detector.tokenize(contents)
-            one_story_dict['story']=sentences
+            one_story_dict['story']=[sen.replace('\r\n','') for sen in sentences]
             max_storylen=len(sentences) if len(sentences)>max_storylen else max_storylen
             print 'The story{} covers:{} sentences'.format(i,len(sentences))
 
