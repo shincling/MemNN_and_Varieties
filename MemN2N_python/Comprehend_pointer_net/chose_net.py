@@ -292,7 +292,8 @@ class Model:
             contents=story[(story.find('\r\n\r\n')+2):part_index]
             sent_detector = nltk.data.load('/home/shin/nltk_data/tokenizers/punkt/english.pickle')
             sentences=sent_detector.tokenize(contents)
-            one_story_dict['story']=[sen.replace('\r\n','') for sen in sentences]
+            sentences=[sen.replace('\r\n','') for sen in sentences]
+            one_story_dict['story']=sentences
             max_storylen=len(sentences) if len(sentences)>max_storylen else max_storylen
             print 'The story{} covers:{} sentences'.format(i,len(sentences))
 
