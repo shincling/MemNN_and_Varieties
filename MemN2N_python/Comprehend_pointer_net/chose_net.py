@@ -120,7 +120,7 @@ class Model:
     def __init__(self, train_file, test_file, batch_size=32, embedding_size=20, max_norm=40, lr=0.01, num_hops=3, adj_weight_tying=True, linear_start=True, enable_time=False,pointer_nn=False,optimizer='sgd',enable_mask=True,std_rate=0.1,choice_num=4,**kwargs):
         max_sentlen, max_storylen, vocab= 0, 0, set()
         max_sentlen, max_storylen, vocab, total_train = self.get_stories(train_file,max_sentlen,max_storylen,vocab)
-        max_sentlen, max_storylen, vocab, total_test = self.get_stories(train_file,max_sentlen,max_storylen,vocab)
+        max_sentlen, max_storylen, vocab, total_test = self.get_stories(test_file,max_sentlen,max_storylen,vocab)
 
         word_to_idx = {}
         for w in vocab:
@@ -132,19 +132,20 @@ class Model:
 
         #C是document的列表，Q是定位问题序列的列表，Y是候选答案，T是正确答案，目前为知都是字符形式的，没有向量化#
         self.data = {'train': {}, 'test': {}}  #各是一个字典
-        self.data['train']['S'], self.data['train']['Q'], self.data['train']['Y'],self.data['train']['T'] = self.process_dataset(total_train, word_to_idx, max_storylen,max_sentlen)
-        self.data['test']['S'], self.data['test']['Q'], self.data['test']['Y'],self.data['test']['T'] = self.process_dataset(total_test, word_to_idx, max_storylen,max_sentlen)
+        train_file_ans='mc160.train.ans'
+        test_file_ans='mc160.test.ans'
+        self.data['train']['S'], self.data['train']['Q'], self.data['train']['Y'],self.data['train']['T'] = self.process_dataset(train_file_ans,total_train, word_to_idx, max_storylen,max_sentlen)
+        self.data['test']['S'], self.data['test']['Q'], self.data['test']['Y'],self.data['test']['T'] = self.process_dataset(test_file_ans,total_test, word_to_idx, max_storylen,max_sentlen)
 
-        for i in range(min(10,len(self.data['test']['Y']))):
-            for k in ['S', 'Q', 'Y']:
-                print k, self.data['test'][k][i]
-        print 'batch_size:', batch_size, 'max_sentlen:', max_sentlen
-        print 'sentences:', S.shape
+        # for i in range(min(10,len(self.data['test']['Y']))):
+        #     for k in ['S', 'Q', 'Y']:
+        #         print k, self.data['test'][k][i]
+        print 'batch_size:', batch_size, 'max_storylen:', max_storylen ,'max_sentlen:', max_sentlen
         print 'vocab size:', len(vocab)
 
         for d in ['train', 'test']:
             print d,
-            for k in ['S', 'Q', 'Y']:
+            for k in ['S', 'Q', 'Y','T']:
                 print k, self.data[d][k].shape,
             print ''
 
@@ -167,7 +168,6 @@ class Model:
         self.init_lr = lr
         self.lr = self.init_lr
         self.max_norm = max_norm
-        self.S = S
         self.idx_to_word = idx_to_word
         self.nonlinearity = None if linear_start else lasagne.nonlinearities.softmax
         self.word_to_idx=word_to_idx
@@ -366,7 +366,7 @@ class Model:
         return vocab, word_to_idx, idx_to_word, max_sentlen
 
 
-    def process_dataset(self,total, word_to_idx, max_storylen,max_sentlen, offset=0):
+    def process_dataset(self,train_or_test,total, word_to_idx, max_storylen,max_sentlen, offset=0):
         S,Q,Y,T=[],[],[],[]
         for one_passage in total:
             s=np.zeros([max_storylen,max_sentlen],dtype=np.int32)
@@ -394,7 +394,12 @@ class Model:
                     y[jdx,:]=one_answer
                 Y.append(y)
 
-        return np.array(S),np.array(Q),np.array(Y)
+        target=open(train_or_test).read()
+        target_list=re.findall('[A-D]',target)
+        assert len(target_list)==len(Y)
+        T=[label_binarize([t],['A','B','C','D']) for t in target_list]
+
+        return np.array(S),np.array(Q),np.array(Y),np.array(T)
 
     def set_shared_variables(self, dataset, index,enable_time):
         c = np.zeros((self.batch_size, self.max_sentlen), dtype=np.int32)
