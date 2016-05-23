@@ -117,10 +117,10 @@ class TransposedDenseLayer(lasagne.layers.DenseLayer):
 
 
 class Model:
-    def __init__(self, train_file, test_file, batch_size=32, embedding_size=20, max_norm=40, lr=0.01, num_hops=3, adj_weight_tying=True, linear_start=True, enable_time=False,pointer_nn=False,optimizer='sgd',enable_mask=True,std_rate=0.1,**kwargs):
-        max_sentlen,max_storylen,vocab=0,0,set()
-        max_sentlen,max_storylen,vocab,total_train=self.get_stories(train_file,max_sentlen,max_storylen,vocab)
-        max_sentlen,max_storylen,vocab,total_test=self.get_stories(train_file,max_sentlen,max_storylen,vocab)
+    def __init__(self, train_file, test_file, batch_size=32, embedding_size=20, max_norm=40, lr=0.01, num_hops=3, adj_weight_tying=True, linear_start=True, enable_time=False,pointer_nn=False,optimizer='sgd',enable_mask=True,std_rate=0.1,choice_num=4,**kwargs):
+        max_sentlen, max_storylen, vocab= 0, 0, set()
+        max_sentlen, max_storylen, vocab, total_train = self.get_stories(train_file,max_sentlen,max_storylen,vocab)
+        max_sentlen, max_storylen, vocab, total_test = self.get_stories(train_file,max_sentlen,max_storylen,vocab)
 
         word_to_idx = {}
         for w in vocab:
@@ -130,12 +130,11 @@ class Model:
         for w, idx in word_to_idx.iteritems():
             idx_to_word[idx] = w
 
-        #C是document的列表，Q是定位问题序列的列表，Y是答案组成的列表，目前为知都是字符形式的，没有向量化#
+        #C是document的列表，Q是定位问题序列的列表，Y是候选答案，T是正确答案，目前为知都是字符形式的，没有向量化#
         self.data = {'train': {}, 'test': {}}  #各是一个字典
-        S_train, self.data['train']['Q'], self.data['train']['Y'] = self.process_dataset(total_train, word_to_idx, max_sentlen, offset=0)
-        S_test, self.data['test']['Q'], self.data['test']['Y'] = self.process_dataset(total_test, word_to_idx, max_sentlen)
-        S = np.concatenate([np.zeros((1, max_sentlen), dtype=np.int32), S_train, S_test], axis=0)
-        self.data['train']['S'],self.data['test']['S']=S_train,S_test
+        self.data['train']['S'], self.data['train']['Q'], self.data['train']['Y'],self.data['train']['T'] = self.process_dataset(total_train, word_to_idx, max_storylen,max_sentlen)
+        self.data['test']['S'], self.data['test']['Q'], self.data['test']['Y'],self.data['test']['T'] = self.process_dataset(total_test, word_to_idx, max_storylen,max_sentlen)
+
         for i in range(min(10,len(self.data['test']['Y']))):
             for k in ['S', 'Q', 'Y']:
                 print k, self.data['test'][k][i]
@@ -367,14 +366,34 @@ class Model:
         return vocab, word_to_idx, idx_to_word, max_sentlen
 
 
-    def process_dataset(self,lines, word_to_idx, max_sentlen, offset=0):
-        S,Q,Y=[],[],[]
-        for i, line in enumerate(lines):
-            word_indices = [word_to_idx[w] for w in line['sentence'].split(' ')]
-            word_indices += [0] * (max_sentlen - len(word_indices)) #这是补零，把句子填充到max_sentLen
-            S.append(word_indices)
-            Q.append([word_to_idx[line['question']]])
-            Y.append(word_to_idx[line['target']])
+    def process_dataset(self,total, word_to_idx, max_storylen,max_sentlen, offset=0):
+        S,Q,Y,T=[],[],[],[]
+        for one_passage in total:
+            s=np.zeros([max_storylen,max_sentlen],dtype=np.int32)
+            mask_story=np.zeros(max_storylen,dtype=np.int32)
+            mask_story[:len(one_passage['story'])]=1 # 一篇阅读的story的mask
+            for idx,sen in enumerate(one_passage['story']):
+                one_sen=np.zeros(max_sentlen,dtype=np.int32)
+                words=nltk.word_tokenize(sen)
+                one_sen[:len(words)]=[word_to_idx[w] for w in words]
+                s[idx,:]=one_sen
+
+            for i in range(1,5): #对于每篇文章里的四个问题
+                S.append(s)
+                one_question=np.zeros(max_sentlen,dtype=np.int32)
+                q=one_passage['question{}'.format(i)]
+                q_words=nltk.word_tokenize(q['q'])
+                one_question[:len(q_words)]=[word_to_idx[w] for w in q_words]
+                Q.append(one_question)
+
+                y=np.zeros([4,max_sentlen],dtype=np.int32)
+                for jdx,j in enumerate(['A','B','C','D']):
+                    one_answer=np.zeros(max_sentlen,dtype=np.int32)
+                    ans_words=nltk.word_tokenize(one_passage['question{}'.format(i)][j])
+                    one_answer[:len(ans_words)]=[word_to_idx[w] for w in ans_words]
+                    y[jdx,:]=one_answer
+                Y.append(y)
+
         return np.array(S),np.array(Q),np.array(Y)
 
     def set_shared_variables(self, dataset, index,enable_time):
@@ -382,7 +401,6 @@ class Model:
         # mask = np.zeros((self.batch_size, self.max_sentlen), dtype=np.int32)
         q = np.zeros((self.batch_size, 1), dtype=np.int32)
         y = np.zeros((self.batch_size, self.num_classes), dtype=np.int32)
-
         indices = range(index*self.batch_size, (index+1)*self.batch_size)
         for i, row in enumerate(dataset['S'][indices]):
             row = row[:self.max_sentlen]
