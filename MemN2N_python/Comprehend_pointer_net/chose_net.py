@@ -134,8 +134,8 @@ class Model:
         self.data = {'train': {}, 'test': {}}  #各是一个字典
         train_file_ans='mc160.train.ans'
         test_file_ans='mc160.test.ans'
-        self.data['train']['S'], self.data['train']['Q'], self.data['train']['Y'],self.data['train']['T'] = self.process_dataset(train_file_ans,total_train, word_to_idx, max_storylen,max_sentlen)
-        self.data['test']['S'], self.data['test']['Q'], self.data['test']['Y'],self.data['test']['T'] = self.process_dataset(test_file_ans,total_test, word_to_idx, max_storylen,max_sentlen)
+        self.data['train']['S'], self.data['train']['Q'], self.data['train']['Y'],self.data['train']['T'], self.data['train']['Mask']= self.process_dataset(train_file_ans,total_train, word_to_idx, max_storylen,max_sentlen)
+        self.data['test']['S'], self.data['test']['Q'], self.data['test']['Y'],self.data['test']['T'], self.data['test']['Mask'] = self.process_dataset(test_file_ans,total_test, word_to_idx, max_storylen,max_sentlen)
 
         # for i in range(min(10,len(self.data['test']['Y']))):
         #     for k in ['S', 'Q', 'Y']:
@@ -145,7 +145,7 @@ class Model:
 
         for d in ['train', 'test']:
             print d,
-            for k in ['S', 'Q', 'Y','T']:
+            for k in ['S', 'Q', 'Y','T','Mask']:
                 print k, self.data[d][k].shape,
             print ''
 
@@ -174,7 +174,7 @@ class Model:
         self.pointer_nn=pointer_nn
         self.std=std_rate
         self.enable_mask=enable_mask
-        self.build_network()
+        # self.build_network()
 
     def build_network(self):
         batch_size, max_sentlen, embedding_size, vocab, enable_time = self.batch_size, self.max_sentlen, self.embedding_size, self.vocab,self.enable_time
@@ -367,7 +367,7 @@ class Model:
 
 
     def process_dataset(self,train_or_test,total, word_to_idx, max_storylen,max_sentlen, offset=0):
-        S,Q,Y,T=[],[],[],[]
+        S,Q,Y,T,Mask=[],[],[],[],[]
         for one_passage in total:
             s=np.zeros([max_storylen,max_sentlen],dtype=np.int32)
             mask_story=np.zeros(max_storylen,dtype=np.int32)
@@ -380,6 +380,7 @@ class Model:
 
             for i in range(1,5): #对于每篇文章里的四个问题
                 S.append(s)
+                Mask.append(mask_story)
                 one_question=np.zeros(max_sentlen,dtype=np.int32)
                 q=one_passage['question{}'.format(i)]
                 q_words=nltk.word_tokenize(q['q'])
@@ -399,7 +400,7 @@ class Model:
         assert len(target_list)==len(Y)
         T=[label_binarize([t],['A','B','C','D']) for t in target_list]
 
-        return np.array(S),np.array(Q),np.array(Y),np.array(T)
+        return np.array(S),np.array(Q),np.array(Y),np.array(T),np.array(Mask)
 
     def set_shared_variables(self, dataset, index,enable_time):
         c = np.zeros((self.batch_size, self.max_sentlen), dtype=np.int32)
