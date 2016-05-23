@@ -10,7 +10,7 @@ import theano.tensor as T
 import time
 import nltk
 from sklearn import metrics
-from sklearn.preprocessing import LabelBinarizer,label_binarize
+from sklearn.preprocessing import label_binarize
 
 class SimpleAttentionLayer(lasagne.layers.MergeLayer):
     def __init__(self, incomings, vocab, embedding_size,enable_time, W_h, W_q,W_o, nonlinearity=lasagne.nonlinearities.tanh, **kwargs):
@@ -155,7 +155,7 @@ class Model:
         idx_to_word[0]='#'
         word_to_idx['#']=0
 
-        lb = LabelBinarizer()
+        # lb = LabelBinarizer()
 
         self.enable_time=enable_time
         self.optimizer=optimizer
@@ -267,19 +267,6 @@ class Model:
         self.set_zero = theano.function([zero_vec_tensor], updates=[(x, T.set_subtensor(x[0, :], zero_vec_tensor)) for x in [l_context_emb.W]])
 
 
-
-
-    def get_lines(self, fname):
-        lines = [] #每个元素是个字典看来
-        for i, line in enumerate(open(fname)):
-            ll=line.split('\t')
-            id = int(ll[0])
-            sentence=ll[1]
-            question=ll[2][0:ll[2].find(' ')]
-            answer=ll[3].strip()
-            lines.append({'id':id,'sentence':sentence,'question':question,'target':answer})
-        return np.array(lines)
-
     def get_stories(self,fname,max_sentlen,max_storylen,vocab):
         total=[]
         all=open(fname).read()
@@ -336,35 +323,7 @@ class Model:
                     max_sentlen=max(max_sentlen,len(words))
                     for w in words:
                         vocab.add(w)
-
-
         return max_sentlen,max_storylen,vocab,total
-
-
-
-
-    def get_vocab(self, lines): #这个函数相当于预处理的函数
-        vocab = set()
-        max_sentlen = 0
-        for i, line in enumerate(lines):
-            #words = nltk.word_tokenize(line['text'])
-            words=line['sentence'].split(' ')  #这里做了一个修改，替换掉了nltk的工具
-            max_sentlen = max(max_sentlen, len(words))
-            for w in words:
-                vocab.add(w)
-            vocab.add(line['question'])
-            vocab.add(line['target'])
-
-        word_to_idx = {}
-        for w in vocab:
-            word_to_idx[w] = len(word_to_idx) + 1
-
-        idx_to_word = {}
-        for w, idx in word_to_idx.iteritems():
-            idx_to_word[idx] = w
-
-        return vocab, word_to_idx, idx_to_word, max_sentlen
-
 
     def process_dataset(self,train_or_test,total, word_to_idx, max_storylen,max_sentlen, offset=0):
         S,Q,Y,T,Mask=[],[],[],[],[]
