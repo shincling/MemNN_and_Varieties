@@ -160,43 +160,46 @@ class Model:
         self.enable_time=enable_time
         self.optimizer=optimizer
         self.batch_size = batch_size
+        self.max_storylen = max_storylen
+        self.choice_num=choice_num
         self.max_sentlen = max_sentlen if not enable_time else max_sentlen+1
         self.embedding_size = embedding_size
         self.num_classes = len(vocab) + 1
         self.vocab = vocab
-        self.lb = lb
+        # self.lb = lb
         self.init_lr = lr
         self.lr = self.init_lr
         self.max_norm = max_norm
         self.idx_to_word = idx_to_word
         self.nonlinearity = None if linear_start else lasagne.nonlinearities.softmax
         self.word_to_idx=word_to_idx
-        self.pointer_nn=pointer_nn
         self.std=std_rate
-        self.enable_mask=enable_mask
-        # self.build_network()
+        self.build_network()
 
     def build_network(self):
-        batch_size, max_sentlen, embedding_size, vocab, enable_time = self.batch_size, self.max_sentlen, self.embedding_size, self.vocab,self.enable_time
+        batch_size, max_storylen , max_sentlen,choice_num, embedding_size, vocab, enable_time = self.batch_size, self.max_storylen,self.max_sentlen, self.choice_num,self.embedding_size, self.vocab,self.enable_time
+        '''
+        batch_size: 1000 max_storylen: 42 max_sentlen: 57
+        vocab size: 3744
+        train S (280, 42, 57) Q (280, 57) Y (280, 4, 57) T (280, 4) Mask (280, 42)
+        test S (240, 42, 57) Q (240, 57) Y (240, 4, 57) T (240, 4) Mask (240, 42)
+        '''
 
-        s = T.imatrix()
-        s = T.imatrix()
-        # q = T.ivector()
+        s = T.ltensor3()
         q = T.imatrix()
-        y = T.imatrix()
-        mask= T.imatrix()# if self.enable_mask else None
-        # c_pe = T.tensor4()
-        # q_pe = T.tensor4()
-        self.s_shared = theano.shared(np.zeros((batch_size, max_sentlen), dtype=np.int32), borrow=True)
-        self.mask_shared = theano.shared(np.zeros((batch_size, max_sentlen), dtype=np.int32), borrow=True)
-        self.q_shared = theano.shared(np.zeros((batch_size, 1), dtype=np.int32), borrow=True)
+        y = T.ltensor3()
+        t = T.imatrix()
+        mask= T.imatrix()
+        self.s_shared = theano.shared(np.zeros((batch_size, max_storylen, max_sentlen), dtype=np.int32), borrow=True)
+        self.q_shared = theano.shared(np.zeros((batch_size, max_sentlen), dtype=np.int32), borrow=True)
         '''最后的softmax层的参数'''
-        self.a_shared = theano.shared(np.zeros((batch_size, self.num_classes), dtype=np.int32), borrow=True)
-        # S_shared = theano.shared(self.S, borrow=True)#这个S把train test放到了一起来干事情#
+        self.y_shared = theano.shared(np.zeros((batch_size,choice_num,max_sentlen ), dtype=np.int32), borrow=True)
+        self.mask_shared = theano.shared(np.zeros((batch_size, max_storylen), dtype=np.int32), borrow=True)
 
-        l_context_in = lasagne.layers.InputLayer(shape=(batch_size, max_sentlen))
-        l_mask_in = lasagne.layers.InputLayer(shape=(batch_size, max_sentlen))
-        l_question_in = lasagne.layers.InputLayer(shape=(batch_size,1))
+        l_context_in = lasagne.layers.InputLayer(shape=(batch_size, max_storylen,max_sentlen))
+        l_mask_in = lasagne.layers.InputLayer(shape=(batch_size, max_storylen))
+        l_question_in = lasagne.layers.InputLayer(shape=(batch_size,max_sentlen))
+        l_choice_in = lasagne.layers.InputLayer(shape=(choice_num,max_sentlen))
 
         w_emb=lasagne.init.Normal(std=self.std)
         l_context_emb = lasagne.layers.EmbeddingLayer(l_context_in,self.num_classes,embedding_size,W=w_emb,name='sentence_embedding') #(BS,max_sentlen,emb_size)
@@ -357,7 +360,7 @@ class Model:
         target=open(train_or_test).read()
         target_list=re.findall('[A-D]',target)
         assert len(target_list)==len(Y)
-        T=[label_binarize([t],['A','B','C','D']) for t in target_list]
+        T=[label_binarize([t],['A','B','C','D']).flatten() for t in target_list]
 
         return np.array(S),np.array(Q),np.array(Y),np.array(T),np.array(Mask)
 
@@ -572,8 +575,8 @@ def main():
     parser.add_argument('--shuffle_batch', type='bool', default=True, help='Whether to shuffle minibatches')
     parser.add_argument('--n_epochs', type=int, default=500, help='Num epochs')
     parser.add_argument('--enable_time', type=bool, default=False, help='time word embedding')
-    parser.add_argument('--pointer_nn',type=bool,default=True,help='Whether to use the pointer networks')
-    parser.add_argument('--enable_mask',type=bool,default=True,help='Whether to use the mask')
+    # parser.add_argument('--pointer_nn',type=bool,default=True,help='Whether to use the pointer networks')
+    # parser.add_argument('--enable_mask',type=bool,default=True,help='Whether to use the mask')
     parser.add_argument('--std_rate',type=float,default=0.5,help='The std number for the Noraml init')
     args = parser.parse_args()
 
