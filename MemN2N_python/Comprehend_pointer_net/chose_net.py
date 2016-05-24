@@ -145,7 +145,7 @@ class Model:
 
         for d in ['train', 'test']:
             print d,
-            for k in ['S', 'Q', 'Y','T','Mask']:
+            for k in ['S', 'Q', 'Y','T']:
                 print k, self.data[d][k].shape,
             print ''
 
@@ -216,12 +216,14 @@ class Model:
         # l_context_rnn_b=lasagne.layers.GRULayer(l_context_emb,embedding_size,name='context_gru',mask_input=l_mask_sent_in,backwards=True) #(BS,max_sentlen,emb_size)
         l_context_rnn=lasagne.layers.ElemwiseSumLayer((l_context_rnn_f,l_context_rnn_b))
         l_context_rnn=lasagne.layers.ReshapeLayer(l_context_rnn,[batch_size,max_storylen,max_sentlen,embedding_size])
+        l_context_rnn=lasagne.layers.SliceLayer(l_context_rnn,indices=0,axis=-2)
 
         l_question_rnn_f=lasagne.layers.LSTMLayer(l_question_emb,embedding_size,name='question_lstm',mask_input=l_mask_question_in,backwards=False) #(BS,max_sentlen,emb_size)
         l_question_rnn_b=lasagne.layers.LSTMLayer(l_question_emb,embedding_size,name='question_lstm',mask_input=l_mask_question_in,backwards=True) #(BS,max_sentlen,emb_size)
         # l_question_rnn_f=lasagne.layers.GRULayer(l_question_emb,embedding_size,name='question_gru',mask_input=l_mask_question_in,backwards=False) #(BS,max_sentlen,emb_size)
         # l_question_rnn_b=lasagne.layers.GRULayer(l_question_emb,embedding_size,name='question_gru',mask_input=l_mask_question_in,backwards=True) #(BS,max_sentlen,emb_size)
         l_question_rnn=lasagne.layers.ElemwiseSumLayer((l_question_rnn_f,l_question_rnn_b))
+        l_question_rnn=lasagne.layers.SliceLayer(l_question_rnn,indices=0,axis=-2)
 
         l_choice_emb=lasagne.layers.ReshapeLayer(l_choice_emb,[batch_size*choice_num,max_sentlen,embedding_size])
         l_choice_rnn_f=lasagne.layers.LSTMLayer(l_choice_emb,embedding_size,name='choice_lstm',mask_input=l_mask_choice_in,backwards=False) #(BS,max_sentlen,emb_size)
@@ -230,6 +232,7 @@ class Model:
         # l_choice_rnn_b=lasagne.layers.GRULayer(l_choice_emb,embedding_size,name='choice_lstm',mask_input=l_mask_choice_in,backwards=True) #(BS,max_sentlen,emb_size)
         l_choice_rnn=lasagne.layers.ElemwiseSumLayer((l_choice_rnn_f,l_choice_rnn_b))
         l_choice_rnn=lasagne.layers.ReshapeLayer(l_choice_rnn,[batch_size,choice_num,max_sentlen,embedding_size])
+        l_choice_rnn=lasagne.layers.SliceLayer(l_choice_rnn,indices=0,axis=-2)
 
 
         w_h,w_q,w_o=lasagne.init.Normal(std=self.std),lasagne.init.Normal(std=self.std),lasagne.init.Normal(std=self.std)
@@ -348,7 +351,7 @@ class Model:
         return max_sentlen,max_storylen,vocab,total
 
     def process_dataset(self,train_or_test,total, word_to_idx, max_storylen,max_sentlen, offset=0):
-        S,Q,Y,T,Mask=[],[],[],[],[]
+        S,Q,Y,T,Mask_story,Mask_sent,Mask_question,Mask_choice=[],[],[],[],[],[],[],[]
         for one_passage in total:
             s=np.zeros([max_storylen,max_sentlen],dtype=np.int32)
             mask_story=np.zeros(max_storylen,dtype=np.int32)
@@ -361,12 +364,14 @@ class Model:
 
             for i in range(1,5): #对于每篇文章里的四个问题
                 S.append(s)
-                Mask.append(mask_story)
+                Mask_story.append(mask_story)
                 one_question=np.zeros(max_sentlen,dtype=np.int32)
                 q=one_passage['question{}'.format(i)]
                 q_words=nltk.word_tokenize(q['q'])
                 one_question[:len(q_words)]=[word_to_idx[w] for w in q_words]
+                one_question_mask=np.int32(one_question!=0)
                 Q.append(one_question)
+                Mask_question.append(one_question_mask)
 
                 y=np.zeros([4,max_sentlen],dtype=np.int32)
                 for jdx,j in enumerate(['A','B','C','D']):
@@ -375,13 +380,17 @@ class Model:
                     one_answer[:len(ans_words)]=[word_to_idx[w] for w in ans_words]
                     y[jdx,:]=one_answer
                 Y.append(y)
+                mask_choice=np.int32(y!=0)
+                Mask_choice.append(mask_choice)
 
         target=open(train_or_test).read()
         target_list=re.findall('[A-D]',target)
         assert len(target_list)==len(Y)
         T=[label_binarize([t],['A','B','C','D']).flatten() for t in target_list]
 
-        return np.array(S),np.array(Q),np.array(Y),np.array(T),np.array(Mask)
+        Mask_sent=np.int32(np.array(S)!=0)
+
+        return np.array(S),np.array(Q),np.array(Y),np.array(T),[np.array(Mask_story),Mask_sent,np.array(Mask_question),np.array(Mask_choice)]
 
     def set_shared_variables(self, dataset, index,enable_time):
         c = np.zeros((self.batch_size, self.max_sentlen), dtype=np.int32)
