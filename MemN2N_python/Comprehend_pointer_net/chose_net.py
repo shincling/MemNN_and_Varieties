@@ -45,7 +45,7 @@ class SimpleAttentionLayer(lasagne.layers.MergeLayer):
 class finalChoiceLayer(lasagne.layers.MergeLayer):
     def __init__(self, incomings, vocab, embedding_size,enable_time, W_h, W_q,W_o, nonlinearity=lasagne.nonlinearities.tanh,**kwargs):
         super(finalChoiceLayer, self).__init__(incomings, **kwargs) #？？？不知道这个super到底做什么的，会引入input_layers和input_shapes这些属性
-        if len(incomings) != 3:
+        if len(incomings) != 2:
             raise NotImplementedError
         # if mask_input is not None:
         #     incomings.append(mask_input)
@@ -67,8 +67,8 @@ class finalChoiceLayer(lasagne.layers.MergeLayer):
         activation1=T.dot(inputs[1],self.W_q).reshape([self.batch_size,self.embedding_size]).dimshuffle(0,'x',1)
         activation=self.nonlinearity(activation0+activation1)#.dimshuffle(0,'x',2)#.repeat(self.max_sentlen,axis=1)
         final=T.dot(activation,self.W_o) #(BS,max_sentlen)
-        if inputs[2] is not None:
-            final=inputs[2]*final-(1-inputs[2])*1000000
+        # if inputs[2] is not None:
+        #     final=inputs[2]*final-(1-inputs[2])*1000000
         alpha=lasagne.nonlinearities.softmax(final) #(BS,max_sentlen)
         # final=T.batched_dot(alpha,inputs[0])#(BS,max_sentlen)*(BS,max_sentlen,emb_size)--(BS,emb_size)
         return alpha
@@ -222,7 +222,10 @@ class Model:
         q = T.imatrix()
         y = T.ltensor3()
         t = T.imatrix()
-        mask= T.imatrix()
+        mask_story= T.imatrix()
+        mask_sent=T.ltensor3()
+        mask_question=T.imatrix()
+        mask_choice=T.ltensor3()
         self.s_shared = theano.shared(np.zeros((batch_size, max_storylen, max_sentlen), dtype=np.int32), borrow=True)
         self.q_shared = theano.shared(np.zeros((batch_size, max_sentlen), dtype=np.int32), borrow=True)
         '''最后的softmax层的参数'''
@@ -251,8 +254,8 @@ class Model:
         l_context_rnn=lasagne.layers.ReshapeLayer(l_context_rnn,[batch_size,max_storylen,max_sentlen,embedding_size])
         l_context_rnn=lasagne.layers.SliceLayer(l_context_rnn,indices=0,axis=-2)
 
-        l_context_rnn_ff=lasagne.layers.LSTMLayer(l_context_rnn,embedding_size,name='contexut_sentlevel_lstm',mask_input=l_mask_sent_in,backwards=False) #(BS,max_sentlen,emb_size)
-        l_context_rnn_bb=lasagne.layers.LSTMLayer(l_context_rnn,embedding_size,name='context_sentlevel_lstm',mask_input=l_mask_sent_in,backwards=True) #(BS,max_sentlen,emb_size)
+        l_context_rnn_ff=lasagne.layers.LSTMLayer(l_context_rnn,embedding_size,name='contexut_sentlevel_lstm',mask_input=l_mask_story_in,backwards=False) #(BS,max_sentlen,emb_size)
+        l_context_rnn_bb=lasagne.layers.LSTMLayer(l_context_rnn,embedding_size,name='context_sentlevel_lstm',mask_input=l_mask_story_in,backwards=True) #(BS,max_sentlen,emb_size)
         l_context_rnn=lasagne.layers.ElemwiseSumLayer((l_context_rnn_ff,l_context_rnn_bb))
 
         l_question_rnn_f=lasagne.layers.LSTMLayer(l_question_emb,embedding_size,name='question_lstm',mask_input=l_mask_question_in,backwards=False) #(BS,max_sentlen,emb_size)
@@ -281,15 +284,16 @@ class Model:
             l_context_attention=SimpleAttentionLayer((l_context_rnn,l_question_rnn),vocab, embedding_size,enable_time, W_h=w_h, W_q=w_q,W_o=w_o, nonlinearity=lasagne.nonlinearities.tanh)
             w_merge_r,w_merge_q=lasagne.init.Normal(std=self.std),lasagne.init.Normal(std=self.std)
             l_merge=TmpMergeLayer((l_context_attention,l_question_rnn),W_merge_r=w_merge_r,W_merge_q=w_merge_q, nonlinearity=lasagne.nonlinearities.tanh)
+            l_merge=lasagne.layers.ReshapeLayer(l_merge,[batch_size,1,embedding_size])
 
-            l_choice_result=finalChoiceLayer((l_merge,l_choice_rnn),vocab, embedding_size,enable_time, W_question=w_choice_h, W_choice=w_choice_q,W_out=w_choice_o, nonlinearity=lasagne.nonlinearities.tanh)
+            l_choice_result=finalChoiceLayer((l_choice_rnn,l_merge),vocab, embedding_size,enable_time, W_question=w_choice_h, W_choice=w_choice_q,W_out=w_choice_o, nonlinearity=lasagne.nonlinearities.tanh)
+            l_pred=l_choice_result
 
-
-            w_final_softmax=lasagne.init.Normal(std=self.std)
+            # w_final_softmax=lasagne.init.Normal(std=self.std)
             # l_pred = TransposedDenseLayer(l_merge, self.num_classes,embedding_size=embedding_size,vocab_size=self.num_classes,W_final_softmax=w_final_softmax, b=None, nonlinearity=lasagne.nonlinearities.softmax)
-            l_pred = lasagne.layers.DenseLayer(l_merge, self.num_classes, W=w_final_softmax, b=None, nonlinearity=lasagne.nonlinearities.softmax,name='l_final')
+            # l_pred = lasagne.layers.DenseLayer(l_merge, self.num_classes, W=w_final_softmax, b=None, nonlinearity=lasagne.nonlinearities.softmax,name='l_final')
 
-            probas=lasagne.layers.helper.get_output(l_pred,{l_context_in:s,l_question_in:q,l_mask_in:mask})
+            probas=lasagne.layers.helper.get_output(l_pred,{l_context_in:s,l_question_in:q,l_mask_story_in:mask_story,l_mask_sent_in:mask_sent,l_mask_choice_in:mask_choice,l_mask_question_in:mask_question})
             probas = T.clip(probas, 1e-7, 1.0-1e-7)
 
             pred = T.argmax(probas, axis=1)
