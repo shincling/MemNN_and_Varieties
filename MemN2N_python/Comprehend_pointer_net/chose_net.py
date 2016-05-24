@@ -199,14 +199,12 @@ class Model:
         l_context_in = lasagne.layers.InputLayer(shape=(batch_size, max_storylen,max_sentlen))
         l_mask_in = lasagne.layers.InputLayer(shape=(batch_size, max_storylen))
         l_question_in = lasagne.layers.InputLayer(shape=(batch_size,max_sentlen))
-        l_choice_in = lasagne.layers.InputLayer(shape=(choice_num,max_sentlen))
+        l_choice_in = lasagne.layers.InputLayer(shape=(batch_size,choice_num,max_sentlen))
 
         w_emb=lasagne.init.Normal(std=self.std)
-        l_context_emb = lasagne.layers.EmbeddingLayer(l_context_in,self.num_classes,embedding_size,W=w_emb,name='sentence_embedding') #(BS,max_sentlen,emb_size)
+        l_context_emb = lasagne.layers.EmbeddingLayer(l_context_in,self.num_classes,embedding_size,W=w_emb,name='sentence_embedding') #(BS,max_storylen,max_sentlen,emb_size)
         l_question_emb= lasagne.layers.EmbeddingLayer(l_question_in,self.num_classes,embedding_size,W=l_context_emb.W,name='question_embedding') #(BS,1,d)
-
-        # w_emb_query=lasagne.init.Normal(std=self.std)
-        # l_question_emb= lasagne.layers.EmbeddingLayer(l_question_in,self.num_classes,embedding_size,W=w_emb_query,name='question_embedding') #(BS,1,d)
+        l_choice_emb= lasagne.layers.EmbeddingLayer(l_choice_in,self.num_classes,embedding_size,W=l_context_emb.W,name='choice_embedding') #(BS,1,d)
 
         l_context_rnn_f=lasagne.layers.LSTMLayer(l_context_emb,embedding_size,name='contexut_lstm',mask_input=l_mask_in,backwards=False) #(BS,max_sentlen,emb_size)
         l_context_rnn_b=lasagne.layers.LSTMLayer(l_context_emb,embedding_size,name='context_lstm',mask_input=l_mask_in,backwards=True) #(BS,max_sentlen,emb_size)
