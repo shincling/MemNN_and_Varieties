@@ -223,9 +223,9 @@ class Model:
         y = T.itensor3()
         t = T.imatrix()
         mask_story= T.imatrix()
-        mask_sent=T.itensor3()
+        mask_sent=T.imatrix() # 注意这里，本来是(BS,max_storylen,max_sentlen) 得变为(BS*max_storylen,max_sentlen)才不会报错
         mask_question=T.imatrix()
-        mask_choice=T.itensor3()
+        mask_choice=T.imatrix()
         self.s_shared = theano.shared(np.zeros((batch_size, max_storylen, max_sentlen), dtype=np.int32), borrow=True)
         self.q_shared = theano.shared(np.zeros((batch_size, max_sentlen), dtype=np.int32), borrow=True)
         '''最后的softmax层的参数'''
@@ -234,19 +234,21 @@ class Model:
 
         l_context_in = lasagne.layers.InputLayer(shape=(batch_size, max_storylen,max_sentlen))
         l_mask_story_in = lasagne.layers.InputLayer(shape=(batch_size, max_storylen))
-        l_mask_sent_in = lasagne.layers.InputLayer(shape=(batch_size, max_storylen,max_sentlen))
+        # l_mask_sent_in = lasagne.layers.InputLayer(shape=(batch_size, max_storylen,max_sentlen))
+        l_mask_sent_in = lasagne.layers.InputLayer(shape=(batch_size*max_storylen,max_sentlen))
         l_question_in = lasagne.layers.InputLayer(shape=(batch_size,max_sentlen))
         l_mask_question_in = lasagne.layers.InputLayer(shape=(batch_size,max_sentlen))
         l_choice_in = lasagne.layers.InputLayer(shape=(batch_size,choice_num,max_sentlen))
-        l_mask_choice_in = lasagne.layers.InputLayer(shape=(batch_size, choice_num,max_sentlen))
+        # l_mask_choice_in = lasagne.layers.InputLayer(shape=(batch_size, choice_num,max_sentlen))
+        l_mask_choice_in = lasagne.layers.InputLayer(shape=(batch_size*choice_num,max_sentlen))
 
         w_emb=lasagne.init.Normal(std=self.std)
         l_context_emb = lasagne.layers.EmbeddingLayer(l_context_in,self.num_classes,embedding_size,W=w_emb,name='sentence_embedding') #(BS,max_storylen,max_sentlen,emb_size)
         l_question_emb= lasagne.layers.EmbeddingLayer(l_question_in,self.num_classes,embedding_size,W=l_context_emb.W,name='question_embedding') #(BS,1,d)
         l_choice_emb= lasagne.layers.EmbeddingLayer(l_choice_in,self.num_classes,embedding_size,W=l_context_emb.W,name='choice_embedding') #(BS,1,d)
 
-        l_context_emb=lasagne.layers.ReshapeLayer(l_context_emb,[batch_size*max_storylen,max_sentlen,embedding_size])
-        l_mask_sent_in=lasagne.layers.ReshapeLayer(l_mask_sent_in,[batch_size*max_storylen,max_sentlen])
+        l_context_emb=lasagne.layers.ReshapeLayer(l_context_emb,(batch_size*max_storylen,max_sentlen,embedding_size))
+        # l_mask_sent_in=lasagne.layers.ReshapeLayer(l_mask_sent_in,(batch_size*max_storylen,max_sentlen))
         l_context_rnn_f=lasagne.layers.LSTMLayer(l_context_emb,embedding_size,name='context_lstm_f',mask_input=l_mask_sent_in,backwards=False) #(BS,max_sentlen,emb_size)
         l_context_rnn_b=lasagne.layers.LSTMLayer(l_context_emb,embedding_size,name='context_lstm_b',mask_input=l_mask_sent_in,backwards=True) #(BS,max_sentlen,emb_size)
         # l_context_rnn_f=lasagne.layers.GRULayer(l_context_emb,embedding_size,name='context_gru',mask_input=l_mask_sent_in,backwards=False) #(BS,max_sentlen,emb_size)
@@ -268,7 +270,7 @@ class Model:
         l_question_rnn=lasagne.layers.reshape(l_question_rnn,[batch_size,1,embedding_size])
 
         l_choice_emb=lasagne.layers.ReshapeLayer(l_choice_emb,[batch_size*choice_num,max_sentlen,embedding_size])
-        l_mask_choice_in=lasagne.layers.ReshapeLayer(l_mask_choice_in,[batch_size*choice_num,max_sentlen])
+        # l_mask_choice_in=lasagne.layers.ReshapeLayer(l_mask_choice_in,[batch_size*choice_num,max_sentlen])
         l_choice_rnn_f=lasagne.layers.LSTMLayer(l_choice_emb,embedding_size,name='choice_lstm',mask_input=l_mask_choice_in,backwards=False) #(BS,max_sentlen,emb_size)
         l_choice_rnn_b=lasagne.layers.LSTMLayer(l_choice_emb,embedding_size,name='choice_lstm',mask_input=l_mask_choice_in,backwards=True) #(BS,max_sentlen,emb_size)
         # l_choice_rnn_f=lasagne.layers.GRULayer(l_choice_emb,embedding_size,name='choice_lstm',mask_input=l_mask_choice_in,backwards=False) #(BS,max_sentlen,emb_size)
@@ -300,7 +302,7 @@ class Model:
 
             pred = T.argmax(probas, axis=1)
 
-            cost = T.nnet.binary_crossentropy(probas, y).sum()
+            cost = T.nnet.binary_crossentropy(probas, t).sum()
         else :
             l_context_pointer=SimplePointerLayer((l_context_rnn,l_question_emb,l_mask_in),vocab, embedding_size,enable_time, W_h=w_h, W_q=w_q,W_o=w_o, nonlinearity=lasagne.nonlinearities.tanh)
             l_pred=l_context_pointer
