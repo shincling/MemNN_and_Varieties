@@ -218,12 +218,17 @@ class Model:
         l_context_rnn=lasagne.layers.ReshapeLayer(l_context_rnn,[batch_size,max_storylen,max_sentlen,embedding_size])
         l_context_rnn=lasagne.layers.SliceLayer(l_context_rnn,indices=0,axis=-2)
 
+        l_context_rnn_ff=lasagne.layers.LSTMLayer(l_context_rnn,embedding_size,name='contexut_sentlevel_lstm',mask_input=l_mask_sent_in,backwards=False) #(BS,max_sentlen,emb_size)
+        l_context_rnn_bb=lasagne.layers.LSTMLayer(l_context_rnn,embedding_size,name='context_sentlevel_lstm',mask_input=l_mask_sent_in,backwards=True) #(BS,max_sentlen,emb_size)
+        l_context_rnn=lasagne.layers.ElemwiseSumLayer((l_context_rnn_ff,l_context_rnn_bb))
+
         l_question_rnn_f=lasagne.layers.LSTMLayer(l_question_emb,embedding_size,name='question_lstm',mask_input=l_mask_question_in,backwards=False) #(BS,max_sentlen,emb_size)
         l_question_rnn_b=lasagne.layers.LSTMLayer(l_question_emb,embedding_size,name='question_lstm',mask_input=l_mask_question_in,backwards=True) #(BS,max_sentlen,emb_size)
         # l_question_rnn_f=lasagne.layers.GRULayer(l_question_emb,embedding_size,name='question_gru',mask_input=l_mask_question_in,backwards=False) #(BS,max_sentlen,emb_size)
         # l_question_rnn_b=lasagne.layers.GRULayer(l_question_emb,embedding_size,name='question_gru',mask_input=l_mask_question_in,backwards=True) #(BS,max_sentlen,emb_size)
         l_question_rnn=lasagne.layers.ElemwiseSumLayer((l_question_rnn_f,l_question_rnn_b))
         l_question_rnn=lasagne.layers.SliceLayer(l_question_rnn,indices=0,axis=-2)
+        l_question_rnn=lasagne.layers.reshape(l_question_rnn,[batch_size,1,embedding_size])
 
         l_choice_emb=lasagne.layers.ReshapeLayer(l_choice_emb,[batch_size*choice_num,max_sentlen,embedding_size])
         l_choice_rnn_f=lasagne.layers.LSTMLayer(l_choice_emb,embedding_size,name='choice_lstm',mask_input=l_mask_choice_in,backwards=False) #(BS,max_sentlen,emb_size)
@@ -238,8 +243,8 @@ class Model:
         w_h,w_q,w_o=lasagne.init.Normal(std=self.std),lasagne.init.Normal(std=self.std),lasagne.init.Normal(std=self.std)
         #下面这个层是用来利用question做attention，得到文档在当前q下的最后一个表示,输出一个(BS,emb_size)的东西
         #得到一个(BS,emb_size)的加权平均后的向量
-        if not self.pointer_nn:
-            l_context_attention=SimpleAttentionLayer((l_context_rnn,l_question_emb),vocab, embedding_size,enable_time, W_h=w_h, W_q=w_q,W_o=w_o, nonlinearity=lasagne.nonlinearities.tanh)
+        if True:
+            l_context_attention=SimpleAttentionLayer((l_context_rnn,l_question_rnn),vocab, embedding_size,enable_time, W_h=w_h, W_q=w_q,W_o=w_o, nonlinearity=lasagne.nonlinearities.tanh)
             w_merge_r,w_merge_q=lasagne.init.Normal(std=self.std),lasagne.init.Normal(std=self.std)
             l_merge=TmpMergeLayer((l_context_attention,l_question_emb),W_merge_r=w_merge_r,W_merge_q=w_merge_q, nonlinearity=lasagne.nonlinearities.tanh)
 
