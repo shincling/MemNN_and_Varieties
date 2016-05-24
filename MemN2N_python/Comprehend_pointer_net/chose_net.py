@@ -246,6 +246,7 @@ class Model:
         l_choice_emb= lasagne.layers.EmbeddingLayer(l_choice_in,self.num_classes,embedding_size,W=l_context_emb.W,name='choice_embedding') #(BS,1,d)
 
         l_context_emb=lasagne.layers.ReshapeLayer(l_context_emb,[batch_size*max_storylen,max_sentlen,embedding_size])
+        l_mask_sent_in=lasagne.layers.ReshapeLayer(l_mask_sent_in,[batch_size*max_storylen,max_sentlen])
         l_context_rnn_f=lasagne.layers.LSTMLayer(l_context_emb,embedding_size,name='context_lstm_f',mask_input=l_mask_sent_in,backwards=False) #(BS,max_sentlen,emb_size)
         l_context_rnn_b=lasagne.layers.LSTMLayer(l_context_emb,embedding_size,name='context_lstm_b',mask_input=l_mask_sent_in,backwards=True) #(BS,max_sentlen,emb_size)
         # l_context_rnn_f=lasagne.layers.GRULayer(l_context_emb,embedding_size,name='context_gru',mask_input=l_mask_sent_in,backwards=False) #(BS,max_sentlen,emb_size)
@@ -267,6 +268,7 @@ class Model:
         l_question_rnn=lasagne.layers.reshape(l_question_rnn,[batch_size,1,embedding_size])
 
         l_choice_emb=lasagne.layers.ReshapeLayer(l_choice_emb,[batch_size*choice_num,max_sentlen,embedding_size])
+        l_mask_choice_in=lasagne.layers.ReshapeLayer(l_mask_choice_in,[batch_size*choice_num,max_sentlen])
         l_choice_rnn_f=lasagne.layers.LSTMLayer(l_choice_emb,embedding_size,name='choice_lstm',mask_input=l_mask_choice_in,backwards=False) #(BS,max_sentlen,emb_size)
         l_choice_rnn_b=lasagne.layers.LSTMLayer(l_choice_emb,embedding_size,name='choice_lstm',mask_input=l_mask_choice_in,backwards=True) #(BS,max_sentlen,emb_size)
         # l_choice_rnn_f=lasagne.layers.GRULayer(l_choice_emb,embedding_size,name='choice_lstm',mask_input=l_mask_choice_in,backwards=False) #(BS,max_sentlen,emb_size)
