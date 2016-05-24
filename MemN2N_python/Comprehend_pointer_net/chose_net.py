@@ -42,6 +42,39 @@ class SimpleAttentionLayer(lasagne.layers.MergeLayer):
     def reset_zero(self):
         self.set_zero(self.zero_vec)
 
+class finalChoiceLayer(lasagne.layers.MergeLayer):
+    def __init__(self, incomings, vocab, embedding_size,enable_time, W_h, W_q,W_o, nonlinearity=lasagne.nonlinearities.tanh,**kwargs):
+        super(finalChoiceLayer, self).__init__(incomings, **kwargs) #？？？不知道这个super到底做什么的，会引入input_layers和input_shapes这些属性
+        if len(incomings) != 3:
+            raise NotImplementedError
+        # if mask_input is not None:
+        #     incomings.append(mask_input)
+        batch_size, max_sentlen ,embedding_size = self.input_shapes[0]
+        self.batch_size,self.max_sentlen,self.embedding_size=batch_size,max_sentlen,embedding_size
+        self.W_h=self.add_param(W_h,(embedding_size,embedding_size), name='Pointer_layer_W_h')
+        self.W_q=self.add_param(W_q,(embedding_size,embedding_size), name='Pointer_layer_W_q')
+        self.W_o=self.add_param(W_o,(embedding_size,), name='Pointer_layer_W_o')
+        self.nonlinearity=nonlinearity
+        zero_vec_tensor = T.vector()
+        self.zero_vec = np.zeros(embedding_size, dtype=theano.config.floatX)
+        # self.set_zero = theano.function([zero_vec_tensor], updates=[(x, T.set_subtensor(x[0, :], zero_vec_tensor)) for x in [self.A,self.C]])
+
+    def get_output_shape_for(self, input_shapes):
+        return (self.batch_size,self.max_sentlen)
+    def get_output_for(self, inputs, **kwargs):
+        #input[0]:(BS,max_senlen,emb_size),input[1]:(BS,1,emb_size),input[2]:(BS,max_sentlen)
+        activation0=(T.dot(inputs[0],self.W_h))
+        activation1=T.dot(inputs[1],self.W_q).reshape([self.batch_size,self.embedding_size]).dimshuffle(0,'x',1)
+        activation=self.nonlinearity(activation0+activation1)#.dimshuffle(0,'x',2)#.repeat(self.max_sentlen,axis=1)
+        final=T.dot(activation,self.W_o) #(BS,max_sentlen)
+        if inputs[2] is not None:
+            final=inputs[2]*final-(1-inputs[2])*1000000
+        alpha=lasagne.nonlinearities.softmax(final) #(BS,max_sentlen)
+        # final=T.batched_dot(alpha,inputs[0])#(BS,max_sentlen)*(BS,max_sentlen,emb_size)--(BS,emb_size)
+        return alpha
+    # TODO:think about the set_zero
+    def reset_zero(self):
+        self.set_zero(self.zero_vec)
 
 class SimplePointerLayer(lasagne.layers.MergeLayer):
     def __init__(self, incomings, vocab, embedding_size,enable_time, W_h, W_q,W_o, nonlinearity=lasagne.nonlinearities.tanh,**kwargs):
@@ -241,12 +274,16 @@ class Model:
 
 
         w_h,w_q,w_o=lasagne.init.Normal(std=self.std),lasagne.init.Normal(std=self.std),lasagne.init.Normal(std=self.std)
+        w_choice_h,w_choice_q,w_choice_o=lasagne.init.Normal(std=self.std),lasagne.init.Normal(std=self.std),lasagne.init.Normal(std=self.std)
         #下面这个层是用来利用question做attention，得到文档在当前q下的最后一个表示,输出一个(BS,emb_size)的东西
         #得到一个(BS,emb_size)的加权平均后的向量
         if True:
             l_context_attention=SimpleAttentionLayer((l_context_rnn,l_question_rnn),vocab, embedding_size,enable_time, W_h=w_h, W_q=w_q,W_o=w_o, nonlinearity=lasagne.nonlinearities.tanh)
             w_merge_r,w_merge_q=lasagne.init.Normal(std=self.std),lasagne.init.Normal(std=self.std)
-            l_merge=TmpMergeLayer((l_context_attention,l_question_emb),W_merge_r=w_merge_r,W_merge_q=w_merge_q, nonlinearity=lasagne.nonlinearities.tanh)
+            l_merge=TmpMergeLayer((l_context_attention,l_question_rnn),W_merge_r=w_merge_r,W_merge_q=w_merge_q, nonlinearity=lasagne.nonlinearities.tanh)
+
+            l_choice_result=finalChoiceLayer((l_merge,l_choice_rnn),vocab, embedding_size,enable_time, W_question=w_choice_h, W_choice=w_choice_q,W_out=w_choice_o, nonlinearity=lasagne.nonlinearities.tanh)
+
 
             w_final_softmax=lasagne.init.Normal(std=self.std)
             # l_pred = TransposedDenseLayer(l_merge, self.num_classes,embedding_size=embedding_size,vocab_size=self.num_classes,W_final_softmax=w_final_softmax, b=None, nonlinearity=lasagne.nonlinearities.softmax)
