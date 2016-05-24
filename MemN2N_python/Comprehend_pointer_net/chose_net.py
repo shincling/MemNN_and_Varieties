@@ -206,11 +206,29 @@ class Model:
         l_question_emb= lasagne.layers.EmbeddingLayer(l_question_in,self.num_classes,embedding_size,W=l_context_emb.W,name='question_embedding') #(BS,1,d)
         l_choice_emb= lasagne.layers.EmbeddingLayer(l_choice_in,self.num_classes,embedding_size,W=l_context_emb.W,name='choice_embedding') #(BS,1,d)
 
+        l_context_emb=lasagne.layers.ReshapeLayer(l_context_emb,[batch_size*max_storylen,max_sentlen,embedding_size])
         l_context_rnn_f=lasagne.layers.LSTMLayer(l_context_emb,embedding_size,name='contexut_lstm',mask_input=l_mask_in,backwards=False) #(BS,max_sentlen,emb_size)
         l_context_rnn_b=lasagne.layers.LSTMLayer(l_context_emb,embedding_size,name='context_lstm',mask_input=l_mask_in,backwards=True) #(BS,max_sentlen,emb_size)
-        # l_context_rnn_f=lasagne.layers.GRULayer(l_context_emb,embedding_size,name='context_lstm',mask_input=l_mask_in,backwards=False) #(BS,max_sentlen,emb_size)
-        # l_context_rnn_b=lasagne.layers.GRULayer(l_context_emb,embedding_size,name='context_lstm',mask_input=l_mask_in,backwards=True) #(BS,max_sentlen,emb_size)
+        # l_context_rnn_f=lasagne.layers.GRULayer(l_context_emb,embedding_size,name='context_gru',mask_input=l_mask_in,backwards=False) #(BS,max_sentlen,emb_size)
+        # l_context_rnn_b=lasagne.layers.GRULayer(l_context_emb,embedding_size,name='context_gru',mask_input=l_mask_in,backwards=True) #(BS,max_sentlen,emb_size)
         l_context_rnn=lasagne.layers.ElemwiseSumLayer((l_context_rnn_f,l_context_rnn_b))
+        l_context_rnn=lasagne.layers.ReshapeLayer(l_context_rnn,[batch_size,max_storylen,max_sentlen,embedding_size])
+
+        l_question_rnn_f=lasagne.layers.LSTMLayer(l_question_emb,embedding_size,name='question_lstm',mask_input=l_mask_in,backwards=False) #(BS,max_sentlen,emb_size)
+        l_question_rnn_b=lasagne.layers.LSTMLayer(l_question_emb,embedding_size,name='question_lstm',mask_input=l_mask_in,backwards=True) #(BS,max_sentlen,emb_size)
+        # l_question_rnn_f=lasagne.layers.GRULayer(l_question_emb,embedding_size,name='question_gru',mask_input=l_mask_in,backwards=False) #(BS,max_sentlen,emb_size)
+        # l_question_rnn_b=lasagne.layers.GRULayer(l_question_emb,embedding_size,name='question_gru',mask_input=l_mask_in,backwards=True) #(BS,max_sentlen,emb_size)
+        l_question_rnn=lasagne.layers.ElemwiseSumLayer((l_question_rnn_f,l_question_rnn_b))
+
+        l_choice_emb=lasagne.layers.ReshapeLayer(l_choice_emb,[batch_size*choice_num,max_sentlen,embedding_size])
+        l_choice_rnn_f=lasagne.layers.LSTMLayer(l_choice_emb,embedding_size,name='choice_lstm',mask_input=l_mask_in,backwards=False) #(BS,max_sentlen,emb_size)
+        l_choice_rnn_b=lasagne.layers.LSTMLayer(l_choice_emb,embedding_size,name='choice_lstm',mask_input=l_mask_in,backwards=True) #(BS,max_sentlen,emb_size)
+        # l_choice_rnn_f=lasagne.layers.GRULayer(l_choice_emb,embedding_size,name='choice_lstm',mask_input=l_mask_in,backwards=False) #(BS,max_sentlen,emb_size)
+        # l_choice_rnn_b=lasagne.layers.GRULayer(l_choice_emb,embedding_size,name='choice_lstm',mask_input=l_mask_in,backwards=True) #(BS,max_sentlen,emb_size)
+        l_choice_rnn=lasagne.layers.ElemwiseSumLayer((l_choice_rnn_f,l_choice_rnn_b))
+        l_choice_rnn=lasagne.layers.ReshapeLayer(l_choice_rnn,[batch_size,choice_num,max_sentlen,embedding_size])
+
+
         w_h,w_q,w_o=lasagne.init.Normal(std=self.std),lasagne.init.Normal(std=self.std),lasagne.init.Normal(std=self.std)
         #下面这个层是用来利用question做attention，得到文档在当前q下的最后一个表示,输出一个(BS,emb_size)的东西
         #得到一个(BS,emb_size)的加权平均后的向量
@@ -564,7 +582,7 @@ def main():
     parser.add_argument('--train_file', type=str, default='', help='Train file')
     parser.add_argument('--test_file', type=str, default='', help='Test file')
     parser.add_argument('--back_method', type=str, default='sgd', help='Train Method to bp')
-    parser.add_argument('--batch_size', type=int, default=1000, help='Batch size')
+    parser.add_argument('--batch_size', type=int, default=32, help='Batch size')
     parser.add_argument('--embedding_size', type=int, default=100, help='Embedding size')
     parser.add_argument('--max_norm', type=float, default=40.0, help='Max norm')
     parser.add_argument('--lr', type=float, default=0.03, help='Learning rate')
@@ -573,8 +591,6 @@ def main():
     parser.add_argument('--shuffle_batch', type='bool', default=True, help='Whether to shuffle minibatches')
     parser.add_argument('--n_epochs', type=int, default=500, help='Num epochs')
     parser.add_argument('--enable_time', type=bool, default=False, help='time word embedding')
-    # parser.add_argument('--pointer_nn',type=bool,default=True,help='Whether to use the pointer networks')
-    # parser.add_argument('--enable_mask',type=bool,default=True,help='Whether to use the mask')
     parser.add_argument('--std_rate',type=float,default=0.5,help='The std number for the Noraml init')
     args = parser.parse_args()
 
