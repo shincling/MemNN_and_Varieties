@@ -167,8 +167,8 @@ class Model:
         self.data = {'train': {}, 'test': {}}  #各是一个字典
         train_file_ans='mc160.train.ans'
         test_file_ans='mc160.test.ans'
-        self.data['train']['S'], self.data['train']['Q'], self.data['train']['Y'],self.data['train']['T'], self.data['train']['Mask']= self.process_dataset(train_file_ans,total_train, word_to_idx, max_storylen,max_sentlen)
-        self.data['test']['S'], self.data['test']['Q'], self.data['test']['Y'],self.data['test']['T'], self.data['test']['Mask'] = self.process_dataset(test_file_ans,total_test, word_to_idx, max_storylen,max_sentlen)
+        self.data['train']['S'], self.data['train']['Q'], self.data['train']['Y'],self.data['train']['T'], self.data['train']['Mask_story'],self.data['train']['Mask_sent'],self.data['train']['Mask_question'],self.data['train']['Mask_choice']= self.process_dataset(train_file_ans,total_train, word_to_idx, max_storylen,max_sentlen)
+        self.data['test']['S'], self.data['test']['Q'], self.data['test']['Y'],self.data['test']['T'], self.data['test']['Mask_story'],self.data['test']['Mask_sent'], self.data['test']['Mask_question'],self.data['test']['Mask_choice']= self.process_dataset(test_file_ans,total_test, word_to_idx, max_storylen,max_sentlen)
 
         # for i in range(min(10,len(self.data['test']['Y']))):
         #     for k in ['S', 'Q', 'Y']:
@@ -178,7 +178,7 @@ class Model:
 
         for d in ['train', 'test']:
             print d,
-            for k in ['S', 'Q', 'Y','T']:
+            for k in ['S', 'Q', 'Y','T','Mask_story','Mask_sent','Mask_question','Mask_choice']:
                 print k, self.data[d][k].shape,
             print ''
 
@@ -448,7 +448,7 @@ class Model:
 
         Mask_sent=np.int32(np.array(S)!=0)
 
-        return np.array(S),np.array(Q),np.array(Y),np.array(T),[np.array(Mask_story),Mask_sent,np.array(Mask_question),np.array(Mask_choice)]
+        return np.array(S),np.array(Q),np.array(Y),np.array(T),np.array(Mask_story),Mask_sent,np.array(Mask_question),np.array(Mask_choice)
 
     def set_shared_variables(self, dataset, index,enable_time):
         c = np.zeros((self.batch_size, self.max_sentlen), dtype=np.int32)
