@@ -207,7 +207,8 @@ class Model:
         self.nonlinearity = None if linear_start else lasagne.nonlinearities.softmax
         self.word_to_idx=word_to_idx
         self.std=std_rate
-        self.build_network()
+        self.pointer_nn=False
+        # self.build_network()
 
     def build_network(self):
         batch_size, max_storylen , max_sentlen,choice_num, embedding_size, vocab, enable_time = self.batch_size, self.max_storylen,self.max_sentlen, self.choice_num,self.embedding_size, self.vocab,self.enable_time
@@ -451,25 +452,43 @@ class Model:
         return np.array(S),np.array(Q),np.array(Y),np.array(T),np.array(Mask_story),Mask_sent,np.array(Mask_question),np.array(Mask_choice)
 
     def set_shared_variables(self, dataset, index,enable_time):
-        c = np.zeros((self.batch_size, self.max_sentlen), dtype=np.int32)
+        '''
+        s = np.zeros((self.batch_size, self.max_storylen,self.max_sentlen), dtype=np.int32)
         # mask = np.zeros((self.batch_size, self.max_sentlen), dtype=np.int32)
-        q = np.zeros((self.batch_size, 1), dtype=np.int32)
-        y = np.zeros((self.batch_size, self.num_classes), dtype=np.int32)
+        q = np.zeros((self.batch_size, self.max_sentlen), dtype=np.int32)
+        y = np.zeros((self.batch_size, self.choice_num ,self.max_sentlen), dtype=np.int32)
+        t = np.zeros((self.batch_size, self.choice_num), dtype=np.int32)
         indices = range(index*self.batch_size, (index+1)*self.batch_size)
         for i, row in enumerate(dataset['S'][indices]):
-            row = row[:self.max_sentlen]
-            c[i, :len(row)] = row
-        mask=np.int32(c!=0) #if self.enable_mask else None
+            # row = row[:self.max_sentlen]
+            # s[i, :len(row)] = row
+            s[i]=row
+        mask_sent=np.int32(s!=0) #if self.enable_mask else None
+        '''
+        indices = range(index*self.batch_size, (index+1)*self.batch_size)
+        s=dataset['S'][indices]
+        q=dataset['Q'][indices]
+        y=dataset['Y'][indices]
+        t=dataset['t'][indices]
+        mask_sent=dataset['Mask_sent']
+        mask_story=dataset['Mask_story']
+        mask_question=dataset['Mask_question']
+        mask_choice=dataset['Mask_choice']
 
-        q[:len(indices),:] = dataset['Q'][indices] #问题的行数组成的列表
-        '''底下这个整个循环是得到一个batch对应的那个调整的矩阵'''
+        # q[:len(indices),:] = dataset['Q'][indices] #问题的行数组成的列表
+        # '''底下这个整个循环是得到一个batch对应的那个调整的矩阵'''
         # y[:len(indices), 1:self.num_classes] = self.lb.transform(dataset['Y'][indices])#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
-        y[:len(indices), 1:self.num_classes] = label_binarize([self.idx_to_word[i] for i in dataset['Y'][indices]],self.vocab)#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
+        # y[:len(indices), 1:self.num_classes] = label_binarize([self.idx_to_word[i] for i in dataset['Y'][indices]],self.vocab)#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
         # y[:len(indices), 1:self.embedding_size] = self.mem_layers[0].A[[self.word_to_idx(i) for i in list(dataset['Y'][indices])]]#竟然是把y变成了而之花的one=hot向量都，每个是字典大小这么长
-        self.s_shared.set_value(c)
-        self.mask_shared.set_value(mask)
+
+        self.s_shared.set_value(s)
         self.q_shared.set_value(q)
-        self.a_shared.set_value(y)
+        self.y_shared.set_value(y)
+        self.t_shared.set_value(t)
+        self.mask_story_shared.set_value(mask_story)
+        self.mask_sent_shared.set_value(mask_sent)
+        self.mask_quesion_shared.set_value(mask_question)
+        self.mask_choice_shared.set_value(mask_choice)
 
     def set_shared_variables_pointer(self, dataset, index,enable_time):
         c = np.zeros((self.batch_size, self.max_sentlen), dtype=np.int32)
