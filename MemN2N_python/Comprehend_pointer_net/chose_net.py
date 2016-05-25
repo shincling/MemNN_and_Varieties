@@ -230,7 +230,11 @@ class Model:
         self.q_shared = theano.shared(np.zeros((batch_size, max_sentlen), dtype=np.int32), borrow=True)
         '''最后的softmax层的参数'''
         self.y_shared = theano.shared(np.zeros((batch_size,choice_num,max_sentlen ), dtype=np.int32), borrow=True)
-        self.mask_shared = theano.shared(np.zeros((batch_size, max_storylen), dtype=np.int32), borrow=True)
+        self.t_shared = theano.shared(np.zeros((batch_size,choice_num),dtype=np.int32))
+        self.mask_story_shared = theano.shared(np.zeros((batch_size, max_storylen), dtype=np.int32), borrow=True)
+        self.mask_sent_shared = theano.shared(np.zeros((batch_size*max_storylen,max_sentlen), dtype=np.int32), borrow=True)
+        self.mask_quesion_shared = theano.shared(np.zeros((batch_size,max_sentlen), dtype=np.int32), borrow=True)
+        self.mask_choice_shared = theano.shared(np.zeros((batch_size*4, max_sentlen), dtype=np.int32), borrow=True)
 
         l_context_in = lasagne.layers.InputLayer(shape=(batch_size, max_storylen,max_sentlen))
         l_mask_story_in = lasagne.layers.InputLayer(shape=(batch_size, max_storylen))
@@ -247,10 +251,10 @@ class Model:
         l_question_emb= lasagne.layers.EmbeddingLayer(l_question_in,self.num_classes,embedding_size,W=l_context_emb.W,name='question_embedding') #(BS,1,d)
         l_choice_emb= lasagne.layers.EmbeddingLayer(l_choice_in,self.num_classes,embedding_size,W=l_context_emb.W,name='choice_embedding') #(BS,1,d)
 
-        l_context_emb=lasagne.layers.ReshapeLayer(l_context_emb,(batch_size*max_storylen,max_sentlen,embedding_size))
+        l_context_emb_re=lasagne.layers.ReshapeLayer(l_context_emb,(batch_size*max_storylen,max_sentlen,embedding_size))
         # l_mask_sent_in=lasagne.layers.ReshapeLayer(l_mask_sent_in,(batch_size*max_storylen,max_sentlen))
-        l_context_rnn_f=lasagne.layers.LSTMLayer(l_context_emb,embedding_size,name='context_lstm_f',mask_input=l_mask_sent_in,backwards=False) #(BS,max_sentlen,emb_size)
-        l_context_rnn_b=lasagne.layers.LSTMLayer(l_context_emb,embedding_size,name='context_lstm_b',mask_input=l_mask_sent_in,backwards=True) #(BS,max_sentlen,emb_size)
+        l_context_rnn_f=lasagne.layers.LSTMLayer(l_context_emb_re,embedding_size,name='context_lstm_f',mask_input=l_mask_sent_in,backwards=False) #(BS,max_sentlen,emb_size)
+        l_context_rnn_b=lasagne.layers.LSTMLayer(l_context_emb_re,embedding_size,name='context_lstm_b',mask_input=l_mask_sent_in,backwards=True) #(BS,max_sentlen,emb_size)
         # l_context_rnn_f=lasagne.layers.GRULayer(l_context_emb,embedding_size,name='context_gru',mask_input=l_mask_sent_in,backwards=False) #(BS,max_sentlen,emb_size)
         # l_context_rnn_b=lasagne.layers.GRULayer(l_context_emb,embedding_size,name='context_gru',mask_input=l_mask_sent_in,backwards=True) #(BS,max_sentlen,emb_size)
         l_context_rnn=lasagne.layers.ElemwiseSumLayer((l_context_rnn_f,l_context_rnn_b))
@@ -328,13 +332,17 @@ class Model:
         givens = {
             s: self.s_shared,
             q: self.q_shared,
-            y: self.a_shared,
-            mask: self.mask_shared
+            y: self.y_shared,
+            t: self.t_shared,
+            mask_story : self.mask_story_shared,
+            mask_sent : self.mask_sent_shared,
+            mask_question : self.mask_quesion_shared,
+            mask_choice : self.mask_choice_shared
         }
 
         # test_output=lasagne.layers.helper.get_output(l_context_attention,{l_context_in:s,l_question_in:q}).flatten().sum()
         # self.train_model1 = theano.function([],test_output, givens=givens,on_unused_input='warn' )
-        self.train_model = theano.function([], cost, givens=givens, updates=updates)
+        self.train_model = theano.function([], cost, givens=givens, updates=updates, on_unused_input='ignore')
         self.compute_pred = theano.function([], outputs= [probas,pred], givens=givens, on_unused_input='ignore')
 
         zero_vec_tensor = T.vector()
