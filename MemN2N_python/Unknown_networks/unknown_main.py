@@ -420,7 +420,8 @@ class Model:
 
             prev_train_f1 = train_f1
     def predict(self, dataset, index):
-        if not self.set_shared_variables_pointer:
+        # if not self.set_shared_variables_pointer:
+        if not self.pointer_nn:
             self.set_shared_variables(dataset, index,self.enable_time)
         else:
             self.set_shared_variables_pointer(dataset, index,self.enable_time)
