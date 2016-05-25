@@ -585,13 +585,14 @@ class Model:
 
             prev_train_f1 = train_f1
     def predict(self, dataset, index):
-        if not self.set_shared_variables_pointer:
+        if not self.pointer_nn:
             self.set_shared_variables(dataset, index,self.enable_time)
         else:
             self.set_shared_variables_pointer(dataset, index,self.enable_time)
         result=self.compute_pred()
-        # print 'probas:{}\n'.format(index)
-        # print result[0]
+        print 'probas:{}\n'.format(index)
+        print result[0]
+        print 'pred:',result[1]
         return result[1]
 
     def compute_f1(self, dataset):
@@ -599,14 +600,14 @@ class Model:
         # TODO: find out why not -1
         y_pred = np.concatenate([self.predict(dataset, i) for i in xrange(n_batches)]).astype(np.int32) #- 1
         # y_true = [self.vocab.index(y) for y in dataset['Y'][:len(y_pred)]]
-        y_true = dataset['Y'][:len(y_pred)]
+        y_true = np.argmax(dataset['T'][:len(y_pred)],axis=1)
         # print metrics.confusion_matrix(y_true, y_pred)
         # print metrics.classification_report(y_true, y_pred)
         errors = []
         for i, (t, p) in enumerate(zip(y_true, y_pred)):
             if t != p:
                 # errors.append((i, self.lb.classes_[p]))
-                errors.append((i, self.vocab[p]))
+                errors.append((i, p))
                 pass
         return metrics.f1_score(y_true, y_pred, average='weighted', pos_label=None), errors
 
@@ -671,9 +672,9 @@ def main():
     parser.add_argument('--test_file', type=str, default='', help='Test file')
     parser.add_argument('--back_method', type=str, default='sgd', help='Train Method to bp')
     parser.add_argument('--batch_size', type=int, default=10, help='Batch size')
-    parser.add_argument('--embedding_size', type=int, default=50, help='Embedding size')
+    parser.add_argument('--embedding_size', type=int, default=100, help='Embedding size')
     parser.add_argument('--max_norm', type=float, default=40.0, help='Max norm')
-    parser.add_argument('--lr', type=float, default=0.03, help='Learning rate')
+    parser.add_argument('--lr', type=float, default=0.05, help='Learning rate')
     parser.add_argument('--num_hops', type=int, default=3, help='Num hops')
     parser.add_argument('--linear_start', type='bool', default=True, help='Whether to start with linear activations')
     parser.add_argument('--shuffle_batch', type='bool', default=True, help='Whether to shuffle minibatches')
