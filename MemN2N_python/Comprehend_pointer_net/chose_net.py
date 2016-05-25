@@ -229,7 +229,6 @@ class Model:
         mask_choice=T.imatrix()
         self.s_shared = theano.shared(np.zeros((batch_size, max_storylen, max_sentlen), dtype=np.int32), borrow=True)
         self.q_shared = theano.shared(np.zeros((batch_size, max_sentlen), dtype=np.int32), borrow=True)
-        '''最后的softmax层的参数'''
         self.y_shared = theano.shared(np.zeros((batch_size,choice_num,max_sentlen ), dtype=np.int32), borrow=True)
         self.t_shared = theano.shared(np.zeros((batch_size,choice_num),dtype=np.int32))
         self.mask_story_shared = theano.shared(np.zeros((batch_size, max_storylen), dtype=np.int32), borrow=True)
@@ -469,11 +468,11 @@ class Model:
         s=dataset['S'][indices]
         q=dataset['Q'][indices]
         y=dataset['Y'][indices]
-        t=dataset['t'][indices]
-        mask_sent=dataset['Mask_sent']
-        mask_story=dataset['Mask_story']
-        mask_question=dataset['Mask_question']
-        mask_choice=dataset['Mask_choice']
+        t=dataset['T'][indices]
+        mask_sent=dataset['Mask_sent'][indices].reshape(self.batch_size*self.max_storylen,self.max_sentlen)
+        mask_story=dataset['Mask_story'][indices]
+        mask_question=dataset['Mask_question'][indices]
+        mask_choice=dataset['Mask_choice'][indices].reshape(self.batch_size*self.choice_num,self.max_sentlen)
 
         # q[:len(indices),:] = dataset['Q'][indices] #问题的行数组成的列表
         # '''底下这个整个循环是得到一个batch对应的那个调整的矩阵'''
