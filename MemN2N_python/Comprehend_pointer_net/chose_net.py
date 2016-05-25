@@ -208,7 +208,7 @@ class Model:
         self.word_to_idx=word_to_idx
         self.std=std_rate
         self.pointer_nn=False
-        # self.build_network()
+        self.build_network()
 
     def build_network(self):
         batch_size, max_storylen , max_sentlen,choice_num, embedding_size, vocab, enable_time = self.batch_size, self.max_storylen,self.max_sentlen, self.choice_num,self.embedding_size, self.vocab,self.enable_time
@@ -444,7 +444,7 @@ class Model:
         target=open(train_or_test).read()
         target_list=re.findall('[A-D]',target)
         assert len(target_list)==len(Y)
-        T=[label_binarize([t],['A','B','C','D']).flatten() for t in target_list]
+        T=[np.int32(label_binarize([t],['A','B','C','D'])).flatten() for t in target_list]
 
         Mask_sent=np.int32(np.array(S)!=0)
 
@@ -670,8 +670,8 @@ def main():
     parser.add_argument('--train_file', type=str, default='', help='Train file')
     parser.add_argument('--test_file', type=str, default='', help='Test file')
     parser.add_argument('--back_method', type=str, default='sgd', help='Train Method to bp')
-    parser.add_argument('--batch_size', type=int, default=32, help='Batch size')
-    parser.add_argument('--embedding_size', type=int, default=100, help='Embedding size')
+    parser.add_argument('--batch_size', type=int, default=10, help='Batch size')
+    parser.add_argument('--embedding_size', type=int, default=50, help='Embedding size')
     parser.add_argument('--max_norm', type=float, default=40.0, help='Max norm')
     parser.add_argument('--lr', type=float, default=0.03, help='Learning rate')
     parser.add_argument('--num_hops', type=int, default=3, help='Num hops')
