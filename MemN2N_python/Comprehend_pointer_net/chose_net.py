@@ -165,7 +165,11 @@ class Model:
 
         #C是document的列表，Q是定位问题序列的列表，Y是候选答案，T是正确答案，目前为知都是字符形式的，没有向量化#
         self.data = {'train': {}, 'test': {}}  #各是一个字典
-        train_file_ans='mc160.train.ans'
+        # train_file_ans='mc160.train.ans'
+        # test_file_ans='mc160.test.ans'
+        # train_file_ans='mc500.train.ans'
+        # test_file_ans='mc500.test.ans'
+        train_file_ans='mc666.train.ans'
         test_file_ans='mc160.test.ans'
         self.data['train']['S'], self.data['train']['Q'], self.data['train']['Y'],self.data['train']['T'], self.data['train']['Mask_story'],self.data['train']['Mask_sent'],self.data['train']['Mask_question'],self.data['train']['Mask_choice']= self.process_dataset(train_file_ans,total_train, word_to_idx, max_storylen,max_sentlen)
         self.data['test']['S'], self.data['test']['Q'], self.data['test']['Y'],self.data['test']['T'], self.data['test']['Mask_story'],self.data['test']['Mask_sent'], self.data['test']['Mask_question'],self.data['test']['Mask_choice']= self.process_dataset(test_file_ans,total_test, word_to_idx, max_storylen,max_sentlen)
@@ -257,8 +261,9 @@ class Model:
         l_context_rnn_b=lasagne.layers.LSTMLayer(l_context_emb_re,embedding_size,name='context_lstm_b',mask_input=l_mask_sent_in,backwards=True) #(BS,max_sentlen,emb_size)
         # l_context_rnn_f=lasagne.layers.GRULayer(l_context_emb,embedding_size,name='context_gru',mask_input=l_mask_sent_in,backwards=False) #(BS,max_sentlen,emb_size)
         # l_context_rnn_b=lasagne.layers.GRULayer(l_context_emb,embedding_size,name='context_gru',mask_input=l_mask_sent_in,backwards=True) #(BS,max_sentlen,emb_size)
+        # l_context_rnn=lasagne.layers.ConcatLayer((l_context_rnn_f,l_context_rnn_b))
         l_context_rnn=lasagne.layers.ElemwiseSumLayer((l_context_rnn_f,l_context_rnn_b))
-        l_context_rnn=lasagne.layers.ReshapeLayer(l_context_rnn,[batch_size,max_storylen,max_sentlen,embedding_size])
+        l_context_rnn=lasagne.layers.ReshapeLayer(l_context_rnn,[batch_size,max_storylen,max_sentlen,1*embedding_size])
         l_context_rnn=lasagne.layers.SliceLayer(l_context_rnn,indices=0,axis=-2)
 
         l_context_rnn_ff=lasagne.layers.LSTMLayer(l_context_rnn,embedding_size,name='contexut_sentlevel_lstm',mask_input=l_mask_story_in,backwards=False) #(BS,max_sentlen,emb_size)
@@ -364,7 +369,7 @@ class Model:
             sentences=[sen.replace('\r\n','') for sen in sentences]
             one_story_dict['story']=sentences
             max_storylen=len(sentences) if len(sentences)>max_storylen else max_storylen
-            print 'The story{} covers:{} sentences'.format(i,len(sentences))
+            # print 'The story{} covers:{} sentences'.format(i,len(sentences))
 
             questions=re.findall('[1-4]:[\s\S]*?\r\n\r\n',story[part_index:])
             one_story_dict['question1']={'q':re.findall('\d:.*?: (.*?)\r\n',questions[0])[0],
@@ -560,7 +565,7 @@ class Model:
                     print 'correct answer: ', self.data['train']['Y'][i]
                     print 'predicted answer: ', pred
                     print '---' * 20
-            '''这块负责了linearity和softmanx的切换'''
+            '''这块负  责了linearity和softmanx的切换'''
             if False and prev_train_f1 is not None and train_f1 < prev_train_f1 and self.nonlinearity is None:
                 print 'The linearity ends.××××××××××××××××××\n\n'
                 prev_weights = lasagne.layers.helper.get_all_param_values(self.network)
@@ -575,7 +580,7 @@ class Model:
 
                 print 'test_f1,test_errors:',test_f1,len(test_errors)
                 print '*** TEST_ERROR:', (1-test_f1)*100
-                if 1 and (50<epoch) :
+                if 0 and (50<epoch) :
                     for i, pred in test_errors[:10]:
                         print 'context: ', self.to_words(self.data['test']['S'][i],'S')
                         print 'question: ', self.to_words([self.data['test']['Q'][i]],'Q')
@@ -590,9 +595,9 @@ class Model:
         else:
             self.set_shared_variables_pointer(dataset, index,self.enable_time)
         result=self.compute_pred()
-        print 'probas:{}\n'.format(index)
-        print result[0]
-        print 'pred:',result[1]
+        # print 'probas:{}\n'.format(index)
+        # print result[0]
+        # print 'pred:',result[1]
         return result[1]
 
     def compute_f1(self, dataset):
@@ -671,20 +676,24 @@ def main():
     parser.add_argument('--train_file', type=str, default='', help='Train file')
     parser.add_argument('--test_file', type=str, default='', help='Test file')
     parser.add_argument('--back_method', type=str, default='sgd', help='Train Method to bp')
-    parser.add_argument('--batch_size', type=int, default=10, help='Batch size')
-    parser.add_argument('--embedding_size', type=int, default=100, help='Embedding size')
+    parser.add_argument('--batch_size', type=int, default=20, help='Batch size')
+    parser.add_argument('--embedding_size', type=int, default=50, help='Embedding size')
     parser.add_argument('--max_norm', type=float, default=40.0, help='Max norm')
-    parser.add_argument('--lr', type=float, default=0.05, help='Learning rate')
+    parser.add_argument('--lr', type=float, default=0.02, help='Learning rate')
     parser.add_argument('--num_hops', type=int, default=3, help='Num hops')
     parser.add_argument('--linear_start', type='bool', default=True, help='Whether to start with linear activations')
     parser.add_argument('--shuffle_batch', type='bool', default=True, help='Whether to shuffle minibatches')
     parser.add_argument('--n_epochs', type=int, default=500, help='Num epochs')
     parser.add_argument('--enable_time', type=bool, default=False, help='time word embedding')
-    parser.add_argument('--std_rate',type=float,default=0.5,help='The std number for the Noraml init')
+    parser.add_argument('--std_rate',type=float,default=0.2,help='The std number for the Noraml init')
     args = parser.parse_args()
 
     if args.train_file == '' or args.test_file == '':
-        args.train_file = glob.glob('mc160.train.txt' )[0]
+        # args.train_file = glob.glob('mc160.train.txt' )[0]
+        # args.test_file = glob.glob('mc160.test.txt' )[0]
+        # args.train_file = glob.glob('mc500.train.txt' )[0]
+        # args.test_file = glob.glob('mc500.test.txt' )[0]
+        args.train_file = glob.glob('mc666.train.txt' )[0]
         args.test_file = glob.glob('mc160.test.txt' )[0]
         # args.train_file = glob.glob('*_onlyName_train.txt' )[0]
         # args.test_file = glob.glob('*_onlyName_test.txt' )[0]
