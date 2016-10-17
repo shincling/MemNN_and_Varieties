@@ -9,6 +9,8 @@ import theano.tensor as T
 import time
 from sklearn import metrics
 from sklearn.preprocessing import LabelBinarizer,label_binarize
+import port_list
+
 
 import warnings
 warnings.filterwarnings('ignore', '.*topo.*')
@@ -338,7 +340,7 @@ class Model:
                 # errors.append((i, self.lb.classes_[p]))
                 errors.append((i, self.vocab[p]))
                 pass
-        return metrics.f1_score(y_true, y_pred, average='weighted', pos_label=None), errors
+        return metrics.f1_score(y_true, y_pred, average='weighted', pos_label=None), errors, [(idx,self.vocab[y[0]],self.vocab[y[1]]) for idx,y in enumerate(zip(y_pred,y_true))]
 
     def train(self, n_epochs=100, shuffle_batch=False):
         epoch = 0
@@ -375,7 +377,7 @@ class Model:
             print 'epoch:', epoch, 'cost:', (total_cost / len(indices)), ' took: %d(s)' % (end_time - start_time)
 
             print 'TRAIN', '=' * 40
-            train_f1, train_errors = self.compute_f1(self.data['train'])
+            train_f1, train_errors, _ = self.compute_f1(self.data['train'])
             print 'TRAIN_ERROR:', (1-train_f1)*100
             if False:
                 for i, pred in train_errors[:10]:
@@ -392,16 +394,18 @@ class Model:
                 lasagne.layers.helper.set_all_param_values(self.network, prev_weights)
             else:
                 print 'TEST', '=' * 40
-                test_f1, test_errors = self.compute_f1(self.data['test']) #有点奇怪这里的f1和test_error怎么好像不对应的？
+                test_f1, test_errors, test_predict = self.compute_f1(self.data['test']) #有点奇怪这里的f1和test_error怎么好像不对应的？
                 print 'test_f1,test_errors:',test_f1,len(test_errors)
                 print '*** TEST_ERROR:', (1-test_f1)*100
-                if 1 :
+                if 0 :
                     for i, pred in test_errors[:10]:
                         print 'context: ', self.to_words(self.data['test']['C'][i])
                         print 'question: ', self.to_words([self.data['test']['Q'][i]])
                         print 'correct answer: ', self.data['test']['Y'][i]
                         print 'predicted answer: ', pred
                         print '---' * 20
+                if 1 :
+                    count_logic(test_predict)
 
             prev_train_f1 = train_f1
 
@@ -524,11 +528,14 @@ class Model:
 def str2bool(v):
     return v.lower() in ('yes', 'true', 't', '1')
 
+def count_logic(test_predict):
+    pass
+
 
 def main():
     parser = argparse.ArgumentParser()
     parser.register('type', 'bool', str2bool)
-    parser.add_argument('--task', type=int, default=33, help='Task#')
+    parser.add_argument('--task', type=int, default=331, help='Task#')
     parser.add_argument('--train_file', type=str, default='', help='Train file')
     parser.add_argument('--test_file', type=str, default='', help='Test file')
     parser.add_argument('--batch_size', type=int, default=32, help='Batch size')
