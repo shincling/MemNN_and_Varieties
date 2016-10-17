@@ -1,6 +1,7 @@
 # -*- coding: utf8 -*-
 from __future__ import division
 import argparse
+import re
 import glob
 import lasagne
 import numpy as np
@@ -15,12 +16,51 @@ import port_list
 import warnings
 warnings.filterwarnings('ignore', '.*topo.*')
 
-def count_logic(test_predict):
+def count_logic(test_predict,n_status=8,n_q=7):
+    correct_status=0
+    correct_logic_reply=0
+    correct_answer=0
+
     y_true=[i[2] for i in test_predict]
     story_slots=y_true.index('0000000',1)
-    story_total=len(test_predict)/story_slots
+    story_total=int(len(test_predict)/story_slots)
     for idx in range(int(story_total)):
         story=test_predict[idx*story_slots:(idx+1)*story_slots]
+        for j in range(n_status):
+            status_target=story[j*2][2]
+            status_predict=story[j*2][1]
+            language_predict=story[j*2+1][1]
+            if status_target==status_predict:
+                correct_status+=1
+
+            '''开始判断logic_reply'''
+            rest_list=['已经为您预订完毕。']
+            if status_target[0]=='0':
+                rest_list.extend(port_list.namelist)
+            if status_target[1]=='0':
+                rest_list.extend(port_list.countlist)
+            if status_target[2]=='0':
+                rest_list.extend(port_list.departurelist)
+            if status_target[3]=='0':
+                rest_list.extend(port_list.destinationlist)
+            if status_target[4]=='0':
+                rest_list.extend(port_list.timelist)
+            if status_target[5]=='0':
+                rest_list.extend(port_list.idnumberlist)
+            if status_target[6]=='0':
+                rest_list.extend(port_list.phonelist)
+
+            if language_predict in rest_list:
+                correct_logic_reply+=1
+
+        for j in range(n_q):
+            answer_predict,answer_target=story[-(j+1)][1],story[-(j+1)][2]
+            if answer_predict==answer_target:
+                correct_answer+=1
+
+    print 'number of correct status:',correct_status,correct_status/(story_total*n_status)
+    print 'number of correct logic reply:',correct_logic_reply,correct_logic_reply/(story_total*n_status)
+    print 'number of correct answer:',correct_answer,correct_answer/(story_total*n_q)
 
     pass
 
