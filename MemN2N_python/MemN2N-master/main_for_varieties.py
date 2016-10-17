@@ -15,6 +15,14 @@ import port_list
 import warnings
 warnings.filterwarnings('ignore', '.*topo.*')
 
+def count_logic(test_predict):
+    y_true=[i[2] for i in test_predict]
+    story_slots=y_true.index('0000000',1)
+    story_total=len(test_predict)/story_slots
+    for idx in range(int(story_total)):
+        story=test_predict[idx*story_slots:(idx+1)*story_slots]
+
+    pass
 
 class InnerProductLayer(lasagne.layers.MergeLayer):
 
@@ -528,8 +536,7 @@ class Model:
 def str2bool(v):
     return v.lower() in ('yes', 'true', 't', '1')
 
-def count_logic(test_predict):
-    pass
+
 
 
 def main():
