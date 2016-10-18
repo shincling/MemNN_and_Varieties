@@ -399,8 +399,14 @@ class Model:
         l_question_embedding = lasagne.layers.EmbeddingLayer(l_question_in, len(vocab)+1, embedding_size,W=l_context_embedding_0.W) #reshape变成了32*1*7*20
         l_question_embedding = lasagne.layers.ReshapeLayer(l_question_embedding, shape=(batch_size, max_sentlen, embedding_size))
         l_question_layer=lasagne.layers.LSTMLayer(l_question_embedding,embedding_size)
-        # l_question_layer=lasagne.layers.SliceLayer(l_question_layer,-1,1)
-        l_pred=lasagne.layers.ElemwiseMergeLayer((l_context_layer,l_question_layer),T.sum)
+        l_question_layer=lasagne.layers.SliceLayer(l_question_layer,-1,1)
+
+
+        l_pred=lasagne.layers.ElemwiseMergeLayer((l_context_layer,l_question_layer),T.mul)
+        # l_context_layer = lasagne.layers.ReshapeLayer(l_context_layer,(batch_size*embedding_size,))
+        # l_question_layer = lasagne.layers.ReshapeLayer(l_question_layer,(batch_size*embedding_size,))
+        # l_pred=lasagne.layers.ElemwiseMergeLayer((l_context_layer,l_question_layer),T.sum)
+        # l_pred = lasagne.layers.ReshapeLayer(l_pred,(batch_size,embedding_size))
 
 
         probas = lasagne.layers.helper.get_output(l_pred, {l_context_in: cc, l_question_in: qq })
