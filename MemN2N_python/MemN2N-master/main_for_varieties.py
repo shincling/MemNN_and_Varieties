@@ -58,6 +58,7 @@ def count_logic(test_predict,n_status=8,n_q=7):
             if answer_predict==answer_target:
                 correct_answer+=1
 
+    print 'number of total story',story_total
     print 'number of correct status:',correct_status,correct_status/(story_total*n_status)
     print 'number of correct logic reply:',correct_logic_reply,correct_logic_reply/(story_total*n_status)
     print 'number of correct answer:',correct_answer,correct_answer/(story_total*n_q)
@@ -258,7 +259,8 @@ class Model:
         self.nonlinearity = None if linear_start else lasagne.nonlinearities.softmax
         self.word_to_idx=word_to_idx
 
-        self.build_network(self.nonlinearity)
+        # self.build_network(self.nonlinearity)
+        self.build_other_network(self.nonlinearity)
 
     def build_network(self, nonlinearity):
         batch_size, max_seqlen, max_sentlen, embedding_size, vocab,enable_time = self.batch_size, self.max_seqlen, self.max_sentlen, self.embedding_size, self.vocab,self.enable_time
@@ -360,6 +362,78 @@ class Model:
 
         self.nonlinearity = nonlinearity
         self.network = l_pred
+
+    def build_other_network(self, nonlinearity):
+        batch_size, max_seqlen, max_sentlen, embedding_size, vocab,enable_time = self.batch_size, self.max_seqlen, self.max_sentlen, self.embedding_size, self.vocab,self.enable_time
+
+        c = T.imatrix()
+        q = T.ivector()
+        y = T.imatrix()
+        c_pe = T.tensor4()
+        q_pe = T.tensor4()
+        self.c_shared = theano.shared(np.zeros((batch_size, max_seqlen), dtype=np.int32), borrow=True)
+        self.q_shared = theano.shared(np.zeros((batch_size, ), dtype=np.int32), borrow=True)
+        '''最后的softmax层的参数'''
+        self.a_shared = theano.shared(np.zeros((batch_size, self.num_classes), dtype=np.int32), borrow=True)
+        self.c_pe_shared = theano.shared(np.zeros((batch_size, max_seqlen, max_sentlen, embedding_size), dtype=theano.config.floatX), borrow=True)
+        self.q_pe_shared = theano.shared(np.zeros((batch_size, 1, max_sentlen, embedding_size), dtype=theano.config.floatX), borrow=True)
+        S_shared = theano.shared(self.S, borrow=True)#这个S把train test放到了一起来干事情#
+
+        if enable_time:
+            pass
+
+        cc = S_shared[c.flatten()].reshape((batch_size, max_seqlen, max_sentlen))
+        qq = S_shared[q.flatten()].reshape((batch_size, max_sentlen))
+
+        l_context_in = lasagne.layers.InputLayer(shape=(batch_size, max_seqlen, max_sentlen))
+        W, C = lasagne.init.Normal(std=0.1), lasagne.init.Normal(std=0.1)
+
+        l_context_in = lasagne.layers.ReshapeLayer(l_context_in, shape=(batch_size* max_seqlen*max_sentlen,))
+        l_context_embedding_0 = lasagne.layers.EmbeddingLayer(l_context_in, len(vocab)+1, embedding_size, W=W) #到这变成了224*20
+        l_context_embedding = lasagne.layers.ReshapeLayer(l_context_embedding_0,(batch_size,max_sentlen*max_seqlen,embedding_size))
+        l_context_lstm=lasagne.layers.LSTMLayer(l_context_embedding,embedding_size)
+        l_context_layer=lasagne.layers.SliceLayer(l_context_lstm,-1,1)
+
+        l_question_in = lasagne.layers.InputLayer(shape=(batch_size, max_sentlen))
+        l_question_in = lasagne.layers.ReshapeLayer(l_question_in,shape=(batch_size*max_sentlen,))
+        l_question_embedding = lasagne.layers.EmbeddingLayer(l_question_in, len(vocab)+1, embedding_size,W=l_context_embedding_0.W) #reshape变成了32*1*7*20
+        l_B_embedding = lasagne.layers.ReshapeLayer(l_question_embedding, shape=(batch_size, max_sentlen, embedding_size))
+        l_question_layer=lasagne.layers.LSTMLayer(l_question_in,embedding_size)
+        l_question_layer=lasagne.layers.SliceLayer(l_question_layer,-1,1)
+        l_pred=lasagne.layers.ElemwiseMergeLayer((l_context_layer,l_question_layer),T.sum)
+
+
+        probas = lasagne.layers.helper.get_output(l_pred, {l_context_in: cc, l_question_in: qq })
+        # probas = lasagne.layers.helper.get_output(l_pred,None)
+        probas = T.clip(probas, 1e-7, 1.0-1e-7)
+
+        pred = T.argmax(probas, axis=1)
+
+        cost = T.nnet.categorical_crossentropy(probas, y).sum()
+
+        params = lasagne.layers.helper.get_all_params(l_pred, trainable=True)
+        print 'params:', params
+        grads = T.grad(cost, params)
+        scaled_grads = lasagne.updates.total_norm_constraint(grads, self.max_norm)
+        updates = lasagne.updates.sgd(scaled_grads, params, learning_rate=self.lr)
+
+        givens = {
+            c: self.c_shared,
+            q: self.q_shared,
+            y: self.a_shared,
+        }
+
+        self.train_model = theano.function([], cost, givens=givens, updates=updates)
+        self.compute_pred = theano.function([], outputs= [pred,probas], givens=givens, on_unused_input='ignore')
+
+        zero_vec_tensor = T.vector()
+        self.zero_vec = np.zeros(embedding_size, dtype=theano.config.floatX)
+        self.set_zero = theano.function([zero_vec_tensor], updates=[(x, T.set_subtensor(x[0, :], zero_vec_tensor)) for x in [B]])
+
+        self.nonlinearity = nonlinearity
+        self.network = l_pred
+
+
 
     def reset_zero(self):
         self.set_zero(self.zero_vec)
