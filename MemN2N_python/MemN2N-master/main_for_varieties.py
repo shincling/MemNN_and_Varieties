@@ -409,7 +409,7 @@ class Model:
         l_question_layer=lasagne.layers.SliceLayer(l_question_layer,-1,1)
 
 
-        l_pred=lasagne.layers.ElemwiseMergeLayer((l_context_layer,l_question_layer),T.mul)
+        l_pred=lasagne.layers.ElemwiseMergeLayer((l_context_layer,l_question_layer),T.add)
         # l_context_layer = lasagne.layers.ReshapeLayer(l_context_layer,(batch_size*embedding_size,))
         # l_question_layer = lasagne.layers.ReshapeLayer(l_question_layer,(batch_size*embedding_size,))
         # l_pred=lasagne.layers.ElemwiseMergeLayer((l_context_layer,l_question_layer),T.sum)
