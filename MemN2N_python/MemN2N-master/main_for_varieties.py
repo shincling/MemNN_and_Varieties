@@ -391,32 +391,56 @@ class Model:
         l_mask_c_in = lasagne.layers.InputLayer(shape=(batch_size,max_seqlen*max_sentlen))
         l_mask_q_in = lasagne.layers.InputLayer(shape=(batch_size,max_sentlen))
 
-        l_context_in = lasagne.layers.InputLayer(shape=(batch_size, max_seqlen, max_sentlen))
-        W, C = lasagne.init.Normal(std=0.5), lasagne.init.Normal(std=0.5)
+        method='cnn'
+        if method=='lstm':
+            l_context_in = lasagne.layers.InputLayer(shape=(batch_size, max_seqlen, max_sentlen))
+            W, C = lasagne.init.Normal(std=0.5), lasagne.init.Normal(std=0.5)
 
-        l_context_in = lasagne.layers.ReshapeLayer(l_context_in, shape=(batch_size* max_seqlen*max_sentlen,))
-        l_context_embedding_0 = lasagne.layers.EmbeddingLayer(l_context_in, len(vocab)+1, embedding_size, W=W) #到这变成了224*20
-        B=l_context_embedding_0.W
-        l_context_embedding = lasagne.layers.ReshapeLayer(l_context_embedding_0,(batch_size,max_sentlen*max_seqlen,embedding_size))
-        l_context_lstm=lasagne.layers.LSTMLayer(l_context_embedding,embedding_size,mask_input=l_mask_c_in)
-        l_context_layer=lasagne.layers.SliceLayer(l_context_lstm,-1,1)
+            l_context_in = lasagne.layers.ReshapeLayer(l_context_in, shape=(batch_size* max_seqlen*max_sentlen,))
+            l_context_embedding_0 = lasagne.layers.EmbeddingLayer(l_context_in, len(vocab)+1, embedding_size, W=W) #到这变成了224*20
+            B=l_context_embedding_0.W
+            l_context_embedding = lasagne.layers.ReshapeLayer(l_context_embedding_0,(batch_size,max_sentlen*max_seqlen,embedding_size))
+            l_context_lstm=lasagne.layers.LSTMLayer(l_context_embedding,embedding_size,mask_input=l_mask_c_in)
+            l_context_layer=lasagne.layers.SliceLayer(l_context_lstm,-1,1)
 
-        l_question_in = lasagne.layers.InputLayer(shape=(batch_size, max_sentlen))
-        l_question_in = lasagne.layers.ReshapeLayer(l_question_in,shape=(batch_size*max_sentlen,))
-        l_question_embedding = lasagne.layers.EmbeddingLayer(l_question_in, len(vocab)+1, embedding_size,W=B) #reshape变成了32*1*7*20
-        l_question_embedding = lasagne.layers.ReshapeLayer(l_question_embedding, shape=(batch_size, max_sentlen, embedding_size))
-        l_question_layer=lasagne.layers.LSTMLayer(l_question_embedding,embedding_size,mask_input=l_mask_q_in)
-        l_question_layer=lasagne.layers.SliceLayer(l_question_layer,-1,1)
+            l_question_in = lasagne.layers.InputLayer(shape=(batch_size, max_sentlen))
+            l_question_in = lasagne.layers.ReshapeLayer(l_question_in,shape=(batch_size*max_sentlen,))
+            l_question_embedding = lasagne.layers.EmbeddingLayer(l_question_in, len(vocab)+1, embedding_size,W=B) #reshape变成了32*1*7*20
+            l_question_embedding = lasagne.layers.ReshapeLayer(l_question_embedding, shape=(batch_size, max_sentlen, embedding_size))
+            l_question_layer=lasagne.layers.LSTMLayer(l_question_embedding,embedding_size,mask_input=l_mask_q_in)
+            l_question_layer=lasagne.layers.SliceLayer(l_question_layer,-1,1)
 
 
-        l_pred=lasagne.layers.ElemwiseMergeLayer((l_context_layer,l_question_layer),T.add)
-        # l_context_layer = lasagne.layers.ReshapeLayer(l_context_layer,(batch_size*embedding_size,))
-        # l_question_layer = lasagne.layers.ReshapeLayer(l_question_layer,(batch_size*embedding_size,))
-        # l_pred=lasagne.layers.ElemwiseMergeLayer((l_context_layer,l_question_layer),T.sum)
-        # l_pred = lasagne.layers.ReshapeLayer(l_pred,(batch_size,embedding_size))
+            l_pred=lasagne.layers.ElemwiseMergeLayer((l_context_layer,l_question_layer),T.add)
+            # l_context_layer = lasagne.layers.ReshapeLayer(l_context_layer,(batch_size*embedding_size,))
+            # l_question_layer = lasagne.layers.ReshapeLayer(l_question_layer,(batch_size*embedding_size,))
+            # l_pred=lasagne.layers.ElemwiseMergeLayer((l_context_layer,l_question_layer),T.sum)
+            # l_pred = lasagne.layers.ReshapeLayer(l_pred,(batch_size,embedding_size))
+        elif method=='cnn':
+            l_context_in = lasagne.layers.InputLayer(shape=(batch_size, max_seqlen, max_sentlen))
+            W, C = lasagne.init.Normal(std=0.5), lasagne.init.Normal(std=0.5)
+
+            l_context_in = lasagne.layers.ReshapeLayer(l_context_in, shape=(batch_size* max_seqlen*max_sentlen,))
+            l_context_embedding_0 = lasagne.layers.EmbeddingLayer(l_context_in, len(vocab)+1, embedding_size, W=W) #到这变成了224*20
+            B=l_context_embedding_0.W
+            l_context_embedding = lasagne.layers.ReshapeLayer(l_context_embedding_0,(batch_size,1,max_sentlen*max_seqlen,embedding_size))
+            l_context_cnn=lasagne.layers.Conv2DLayer(l_context_embedding, num_filters=50, filter_size=(5, 5),nonlinearity=lasagne.nonlinearities.rectify,W=C)
+            l_context_cnn1=lasagne.layers.MaxPool2DLayer(l_context_cnn,(2,2))
+            l_context_layer = lasagne.layers.DenseLayer(lasagne.layers.dropout(l_context_cnn1, p=.5),num_units=256,nonlinearity=lasagne.nonlinearities.rectify)
+
+
+            l_question_in = lasagne.layers.InputLayer(shape=(batch_size, max_sentlen))
+            l_question_in = lasagne.layers.ReshapeLayer(l_question_in,shape=(batch_size*max_sentlen,))
+            l_question_embedding = lasagne.layers.EmbeddingLayer(l_question_in, len(vocab)+1, embedding_size,W=B) #reshape变成了32*1*7*20
+            l_question_embedding = lasagne.layers.ReshapeLayer(l_question_embedding, shape=(batch_size, 1,max_sentlen, embedding_size))
+            l_question_cnn=lasagne.layers.Conv2DLayer(l_question_embedding, num_filters=50, filter_size=(5, 5),nonlinearity=lasagne.nonlinearities.rectify,W=C)
+            l_question_cnn1=lasagne.layers.MaxPool2DLayer(l_question_cnn,(2,2))
+            l_question_layer = lasagne.layers.DenseLayer(l_question_cnn1,num_units=256,nonlinearity=lasagne.nonlinearities.rectify)
+
+            l_pred=lasagne.layers.ElemwiseMergeLayer((l_context_layer,l_question_layer),T.add)
+
+
         l_pred = lasagne.layers.DenseLayer(l_pred, self.num_classes, W=lasagne.init.Normal(std=0.1), b=None, nonlinearity=lasagne.nonlinearities.softmax)
-
-
         probas = lasagne.layers.helper.get_output(l_pred, {l_context_in: cc, l_question_in: qq ,l_mask_c_in:c_mask,l_mask_q_in:q_mask})
         # probas = lasagne.layers.helper.get_output(l_pred,None)
         probas = T.clip(probas, 1e-7, 1.0-1e-7)
