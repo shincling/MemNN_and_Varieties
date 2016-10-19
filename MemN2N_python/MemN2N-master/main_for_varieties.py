@@ -259,8 +259,8 @@ class Model:
         self.nonlinearity = None if linear_start else lasagne.nonlinearities.softmax
         self.word_to_idx=word_to_idx
 
-        # self.build_network(self.nonlinearity)
-        self.build_other_network(self.nonlinearity)
+        self.build_network(self.nonlinearity)
+        # self.build_other_network(self.nonlinearity)
 
     def build_network(self, nonlinearity):
         batch_size, max_seqlen, max_sentlen, embedding_size, vocab,enable_time = self.batch_size, self.max_seqlen, self.max_sentlen, self.embedding_size, self.vocab,self.enable_time
@@ -369,14 +369,14 @@ class Model:
         c = T.imatrix()
         q = T.ivector()
         y = T.imatrix()
-        c_pe = T.tensor4()
-        q_pe = T.tensor4()
+        # c_mask = T.imatrix()
+        # q_mask = T.imatrix()
         self.c_shared = theano.shared(np.zeros((batch_size, max_seqlen), dtype=np.int32), borrow=True)
         self.q_shared = theano.shared(np.zeros((batch_size, ), dtype=np.int32), borrow=True)
         '''最后的softmax层的参数'''
         self.a_shared = theano.shared(np.zeros((batch_size, self.num_classes), dtype=np.int32), borrow=True)
-        self.c_pe_shared = theano.shared(np.zeros((batch_size, max_seqlen, max_sentlen, embedding_size), dtype=theano.config.floatX), borrow=True)
-        self.q_pe_shared = theano.shared(np.zeros((batch_size, 1, max_sentlen, embedding_size), dtype=theano.config.floatX), borrow=True)
+        self.c_mask_shared = theano.shared(np.zeros((batch_size, max_seqlen*max_sentlen), dtype=theano.config.floatX), borrow=True)
+        self.q_mask_shared = theano.shared(np.zeros((batch_size, max_sentlen), dtype=theano.config.floatX), borrow=True)
         S_shared = theano.shared(self.S, borrow=True)#这个S把train test放到了一起来干事情#
 
         if enable_time:
@@ -384,22 +384,24 @@ class Model:
 
         cc = S_shared[c.flatten()].reshape((batch_size, max_seqlen, max_sentlen))
         qq = S_shared[q.flatten()].reshape((batch_size, max_sentlen))
+        c_mask = np.int32(S_shared.container.data!=0)[c.flatten()].reshape((batch_size, max_seqlen*max_sentlen))
+        q_mask = np.int32(S_shared.container.data!=0)[q.flatten()].reshape((batch_size, max_sentlen))
 
         l_context_in = lasagne.layers.InputLayer(shape=(batch_size, max_seqlen, max_sentlen))
-        W, C = lasagne.init.Normal(std=0.1), lasagne.init.Normal(std=0.1)
+        W, C = lasagne.init.Normal(std=0.5), lasagne.init.Normal(std=0.5)
 
         l_context_in = lasagne.layers.ReshapeLayer(l_context_in, shape=(batch_size* max_seqlen*max_sentlen,))
         l_context_embedding_0 = lasagne.layers.EmbeddingLayer(l_context_in, len(vocab)+1, embedding_size, W=W) #到这变成了224*20
         B=l_context_embedding_0.W
         l_context_embedding = lasagne.layers.ReshapeLayer(l_context_embedding_0,(batch_size,max_sentlen*max_seqlen,embedding_size))
-        l_context_lstm=lasagne.layers.LSTMLayer(l_context_embedding,embedding_size)
+        l_context_lstm=lasagne.layers.LSTMLayer(l_context_embedding,embedding_size,mask_input=c_mask)
         l_context_layer=lasagne.layers.SliceLayer(l_context_lstm,-1,1)
 
         l_question_in = lasagne.layers.InputLayer(shape=(batch_size, max_sentlen))
         l_question_in = lasagne.layers.ReshapeLayer(l_question_in,shape=(batch_size*max_sentlen,))
         l_question_embedding = lasagne.layers.EmbeddingLayer(l_question_in, len(vocab)+1, embedding_size,W=B) #reshape变成了32*1*7*20
         l_question_embedding = lasagne.layers.ReshapeLayer(l_question_embedding, shape=(batch_size, max_sentlen, embedding_size))
-        l_question_layer=lasagne.layers.LSTMLayer(l_question_embedding,embedding_size)
+        l_question_layer=lasagne.layers.LSTMLayer(l_question_embedding,embedding_size,mask_input=q_mask)
         l_question_layer=lasagne.layers.SliceLayer(l_question_layer,-1,1)
 
 
@@ -429,6 +431,8 @@ class Model:
             c: self.c_shared,
             q: self.q_shared,
             y: self.a_shared,
+            # c_mask:self.c_mask_shared,
+            # q_mask:self.q_mask_shared
         }
 
         self.train_model = theano.function([], cost, givens=givens, updates=updates)
@@ -527,7 +531,7 @@ class Model:
                 test_f1, test_errors, test_predict = self.compute_f1(self.data['test']) #有点奇怪这里的f1和test_error怎么好像不对应的？
                 print 'test_f1,test_errors:',test_f1,len(test_errors)
                 print '*** TEST_ERROR:', (1-test_f1)*100
-                if 0 :
+                if 1 :
                     for i, pred in test_errors[:10]:
                         print 'context: ', self.to_words(self.data['test']['C'][i])
                         print 'question: ', self.to_words([self.data['test']['Q'][i]])
@@ -558,6 +562,8 @@ class Model:
         y = np.zeros((self.batch_size, self.num_classes), dtype=np.int32)
         c_pe = np.zeros((self.batch_size, self.max_seqlen, self.max_sentlen, self.embedding_size), dtype=theano.config.floatX)
         q_pe = np.zeros((self.batch_size, 1, self.max_sentlen, self.embedding_size), dtype=theano.config.floatX)
+        c_mask = np.zeros((self.batch_size, self.max_seqlen*self.max_sentlen), dtype=np.int32)
+        q_mask = np.zeros((self.batch_size, self.max_sentlen), dtype=np.int32)
         # c_pe = np.ones((self.batch_size, self.max_seqlen, self.max_sentlen, self.embedding_size), dtype=theano.config.floatX)
         # q_pe = np.ones((self.batch_size, 1, self.max_sentlen, self.embedding_size), dtype=theano.config.floatX)
 
