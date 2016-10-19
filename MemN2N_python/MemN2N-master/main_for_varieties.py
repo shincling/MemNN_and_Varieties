@@ -390,13 +390,14 @@ class Model:
 
         l_context_in = lasagne.layers.ReshapeLayer(l_context_in, shape=(batch_size* max_seqlen*max_sentlen,))
         l_context_embedding_0 = lasagne.layers.EmbeddingLayer(l_context_in, len(vocab)+1, embedding_size, W=W) #到这变成了224*20
+        B=l_context_embedding_0.W
         l_context_embedding = lasagne.layers.ReshapeLayer(l_context_embedding_0,(batch_size,max_sentlen*max_seqlen,embedding_size))
         l_context_lstm=lasagne.layers.LSTMLayer(l_context_embedding,embedding_size)
         l_context_layer=lasagne.layers.SliceLayer(l_context_lstm,-1,1)
 
         l_question_in = lasagne.layers.InputLayer(shape=(batch_size, max_sentlen))
         l_question_in = lasagne.layers.ReshapeLayer(l_question_in,shape=(batch_size*max_sentlen,))
-        l_question_embedding = lasagne.layers.EmbeddingLayer(l_question_in, len(vocab)+1, embedding_size,W=l_context_embedding_0.W) #reshape变成了32*1*7*20
+        l_question_embedding = lasagne.layers.EmbeddingLayer(l_question_in, len(vocab)+1, embedding_size,W=B) #reshape变成了32*1*7*20
         l_question_embedding = lasagne.layers.ReshapeLayer(l_question_embedding, shape=(batch_size, max_sentlen, embedding_size))
         l_question_layer=lasagne.layers.LSTMLayer(l_question_embedding,embedding_size)
         l_question_layer=lasagne.layers.SliceLayer(l_question_layer,-1,1)
@@ -407,6 +408,7 @@ class Model:
         # l_question_layer = lasagne.layers.ReshapeLayer(l_question_layer,(batch_size*embedding_size,))
         # l_pred=lasagne.layers.ElemwiseMergeLayer((l_context_layer,l_question_layer),T.sum)
         # l_pred = lasagne.layers.ReshapeLayer(l_pred,(batch_size,embedding_size))
+        l_pred = lasagne.layers.DenseLayer(l_pred, self.num_classes, W=lasagne.init.Normal(std=0.1), b=None, nonlinearity=lasagne.nonlinearities.softmax)
 
 
         probas = lasagne.layers.helper.get_output(l_pred, {l_context_in: cc, l_question_in: qq })
@@ -421,7 +423,7 @@ class Model:
         print 'params:', params
         grads = T.grad(cost, params)
         scaled_grads = lasagne.updates.total_norm_constraint(grads, self.max_norm)
-        updates = lasagne.updates.sgd(scaled_grads, params, learning_rate=self.lr)
+        updates = lasagne.updates.adagrad(scaled_grads, params, learning_rate=self.lr)
 
         givens = {
             c: self.c_shared,
@@ -499,7 +501,7 @@ class Model:
             for minibatch_index in indices:#一次进入一个batch的数据
                 self.set_shared_variables(self.data['train'], minibatch_index,self.enable_time)#这里的函数总算把数据传给了模型里面初始化的变量
                 total_cost += self.train_model()
-                self.reset_zero()  #reset是把A,C的第一行（也就是第一个元素，对应字典了的第一个词）reset了一次，变成了0
+                # self.reset_zero()  #reset是把A,C的第一行（也就是第一个元素，对应字典了的第一个词）reset了一次，变成了0
             end_time = time.time()
             print '\n' * 3, '*' * 80
             print 'epoch:', epoch, 'cost:', (total_cost / len(indices)), ' took: %d(s)' % (end_time - start_time)
@@ -534,6 +536,7 @@ class Model:
                         print '---' * 20
                 if 1 :
                     count_logic(test_predict)
+                    print '\n'
 
             prev_train_f1 = train_f1
 
