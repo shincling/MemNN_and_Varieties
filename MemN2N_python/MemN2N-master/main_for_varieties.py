@@ -259,8 +259,8 @@ class Model:
         self.nonlinearity = None if linear_start else lasagne.nonlinearities.softmax
         self.word_to_idx=word_to_idx
 
-        self.build_network(self.nonlinearity)
-        # self.build_other_network(self.nonlinearity)
+        # self.build_network(self.nonlinearity)
+        self.build_other_network(self.nonlinearity)
 
     def build_network(self, nonlinearity):
         batch_size, max_seqlen, max_sentlen, embedding_size, vocab,enable_time = self.batch_size, self.max_seqlen, self.max_sentlen, self.embedding_size, self.vocab,self.enable_time
@@ -375,17 +375,21 @@ class Model:
         self.q_shared = theano.shared(np.zeros((batch_size, ), dtype=np.int32), borrow=True)
         '''最后的softmax层的参数'''
         self.a_shared = theano.shared(np.zeros((batch_size, self.num_classes), dtype=np.int32), borrow=True)
-        self.c_mask_shared = theano.shared(np.zeros((batch_size, max_seqlen*max_sentlen), dtype=theano.config.floatX), borrow=True)
-        self.q_mask_shared = theano.shared(np.zeros((batch_size, max_sentlen), dtype=theano.config.floatX), borrow=True)
+        # self.c_mask_shared = theano.shared(np.zeros((batch_size, max_seqlen*max_sentlen), dtype=theano.config.floatX), borrow=True)
+        # self.q_mask_shared = theano.shared(np.zeros((batch_size, max_sentlen), dtype=theano.config.floatX), borrow=True)
+        self.c_pe_shared = theano.shared(np.zeros((batch_size, max_seqlen, max_sentlen, embedding_size), dtype=theano.config.floatX), borrow=True)
+        self.q_pe_shared = theano.shared(np.zeros((batch_size, 1, max_sentlen, embedding_size), dtype=theano.config.floatX), borrow=True)
         S_shared = theano.shared(self.S, borrow=True)#这个S把train test放到了一起来干事情#
-
+        mask_shared=theano.shared(np.int32(S_shared.container.data!=0),borrow=True)
         if enable_time:
             pass
 
         cc = S_shared[c.flatten()].reshape((batch_size, max_seqlen, max_sentlen))
         qq = S_shared[q.flatten()].reshape((batch_size, max_sentlen))
-        c_mask = np.int32(S_shared.container.data!=0)[c.flatten()].reshape((batch_size, max_seqlen*max_sentlen))
-        q_mask = np.int32(S_shared.container.data!=0)[q.flatten()].reshape((batch_size, max_sentlen))
+        c_mask = mask_shared[c.flatten()].reshape((batch_size, max_seqlen*max_sentlen))
+        q_mask = mask_shared[q.flatten()].reshape((batch_size, max_sentlen))
+        l_mask_c_in = lasagne.layers.InputLayer(shape=(batch_size,max_seqlen*max_sentlen))
+        l_mask_q_in = lasagne.layers.InputLayer(shape=(batch_size,max_sentlen))
 
         l_context_in = lasagne.layers.InputLayer(shape=(batch_size, max_seqlen, max_sentlen))
         W, C = lasagne.init.Normal(std=0.5), lasagne.init.Normal(std=0.5)
@@ -394,14 +398,14 @@ class Model:
         l_context_embedding_0 = lasagne.layers.EmbeddingLayer(l_context_in, len(vocab)+1, embedding_size, W=W) #到这变成了224*20
         B=l_context_embedding_0.W
         l_context_embedding = lasagne.layers.ReshapeLayer(l_context_embedding_0,(batch_size,max_sentlen*max_seqlen,embedding_size))
-        l_context_lstm=lasagne.layers.LSTMLayer(l_context_embedding,embedding_size,mask_input=c_mask)
+        l_context_lstm=lasagne.layers.LSTMLayer(l_context_embedding,embedding_size,mask_input=l_mask_c_in)
         l_context_layer=lasagne.layers.SliceLayer(l_context_lstm,-1,1)
 
         l_question_in = lasagne.layers.InputLayer(shape=(batch_size, max_sentlen))
         l_question_in = lasagne.layers.ReshapeLayer(l_question_in,shape=(batch_size*max_sentlen,))
         l_question_embedding = lasagne.layers.EmbeddingLayer(l_question_in, len(vocab)+1, embedding_size,W=B) #reshape变成了32*1*7*20
         l_question_embedding = lasagne.layers.ReshapeLayer(l_question_embedding, shape=(batch_size, max_sentlen, embedding_size))
-        l_question_layer=lasagne.layers.LSTMLayer(l_question_embedding,embedding_size,mask_input=q_mask)
+        l_question_layer=lasagne.layers.LSTMLayer(l_question_embedding,embedding_size,mask_input=l_mask_q_in)
         l_question_layer=lasagne.layers.SliceLayer(l_question_layer,-1,1)
 
 
@@ -413,7 +417,7 @@ class Model:
         l_pred = lasagne.layers.DenseLayer(l_pred, self.num_classes, W=lasagne.init.Normal(std=0.1), b=None, nonlinearity=lasagne.nonlinearities.softmax)
 
 
-        probas = lasagne.layers.helper.get_output(l_pred, {l_context_in: cc, l_question_in: qq })
+        probas = lasagne.layers.helper.get_output(l_pred, {l_context_in: cc, l_question_in: qq ,l_mask_c_in:c_mask,l_mask_q_in:q_mask})
         # probas = lasagne.layers.helper.get_output(l_pred,None)
         probas = T.clip(probas, 1e-7, 1.0-1e-7)
 
